@@ -64,6 +64,8 @@ All essential scripts are defined in `package.json`.
   import { SessionManager } from "./SessionManager";
   ```
 
+- **Data Models as Interfaces:** Data models in `src/models` **must** be defined as `interface`s, not `class`es. This is because these models represent plain data objects that are often deserialized from sources like the vector store's metadata or created through object literals. These objects do not have the methods or prototype chain of a class instance. Using interfaces ensures type safety for these plain objects without incorrectly assuming they are class instances.
+
 - **`tsconfig.json` is Sacred:** The project **must** be configured to output CommonJS modules (`"module": "NodeNext"` without `"type": "module"` in `package.json`). Previous attempts to use ES Modules caused the VS Code extension test host to hang indefinitely. Do not change `tsconfig.json` to re-enable ES Modules.
 
 - **Singleton Services:** Most services are singletons, accessed via a static `getInstance()` method.
