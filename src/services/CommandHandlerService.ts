@@ -40,7 +40,23 @@ export class CommandHandlerService {
             }
         });
 
-        context.subscriptions.push(addSourceCommand, testCommand, testEmbedding);
+        context.subscriptions.push(
+            addSourceCommand,
+            testCommand,
+            testEmbedding,
+            vscode.commands.registerCommand('markdown-semantic-weaver.addNewDestination', () => this.handleAddNewDestinationDocument()),
+            vscode.commands.registerCommand('markdown-semantic-weaver.deleteDestinationDocument', (item) => this.handleDeleteDestinationDocument(item))
+        );
+    }
+
+    private handleAddNewDestinationDocument(): void {
+        this.sessionManager.createNewDestinationDocument();
+    }
+
+    private handleDeleteDestinationDocument(item: { uri: vscode.Uri }): void {
+        if (item && item.uri) {
+            this.sessionManager.removeDestinationDocument(item.uri);
+        }
     }
 
     private handleAddSource(uri?: vscode.Uri, uris?: vscode.Uri[]): Promise<void> {

@@ -148,6 +148,38 @@ export class SessionManager {
         }
     }
 
+    public createNewDestinationDocument(): void {
+        if (!this.isSessionActive()) {
+            throw new Error("Session is not active.");
+        }
+        const newDoc: DestinationDocumentModel = {
+            uri: vscode.Uri.parse(`untitled:NewDocument-${this._state.destinationDocuments.size + 1}.md`),
+            isNew: true,
+            ast: { type: 'root', children: [] }
+        };
+        const newMap = new Map(this._state.destinationDocuments);
+        newMap.set(newDoc.uri.toString(), newDoc);
+        this._state = {
+            ...this._state,
+            destinationDocuments: newMap
+        };
+        this._onDestinationDocumentsDidChange.fire();
+    }
+
+    public removeDestinationDocument(uri: vscode.Uri): void {
+        if (!this.isSessionActive()) {
+            throw new Error("Session is not active.");
+        }
+        const newMap = new Map(this._state.destinationDocuments);
+        if (newMap.delete(uri.toString())) {
+            this._state = {
+                ...this._state,
+                destinationDocuments: newMap
+            };
+            this._onDestinationDocumentsDidChange.fire();
+        }
+    }
+
     public getSessionUri(): vscode.Uri | null {
         if (!this.isSessionActive()) {
             return null;

@@ -28,6 +28,16 @@
       {
         "command": "markdown-semantic-weaver.testEmbedding",
         "title": "Test Embedding Service"
+      },
+      {
+        "command": "markdown-semantic-weaver.addNewDestination",
+        "title": "Add New Destination Document",
+        "icon": "$(add)"
+      },
+      {
+        "command": "markdown-semantic-weaver.deleteDestinationDocument",
+        "title": "Remove Destination Document",
+        "icon": "$(trash)"
       }
     ],
     "menus": {
@@ -36,6 +46,20 @@
           "when": "resourceLangId == markdown",
           "command": "markdown-semantic-weaver.addSource",
           "group": "navigation"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "markdown-semantic-weaver.addNewDestination",
+          "when": "view == markdown-semantic-weaver.destinationDocuments",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "markdown-semantic-weaver.deleteDestinationDocument",
+          "when": "view == markdown-semantic-weaver.destinationDocuments && viewItem == 'destinationDocument'",
+          "group": "inline"
         }
       ]
     },
