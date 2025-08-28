@@ -64,6 +64,8 @@ All essential scripts are defined in `package.json`.
   import { SessionManager } from "./SessionManager";
   ```
 
+- **`tsconfig.json` is Sacred:** The project **must** be configured to output CommonJS modules (`"module": "NodeNext"` without `"type": "module"` in `package.json`). Previous attempts to use ES Modules caused the VS Code extension test host to hang indefinitely. Do not change `tsconfig.json` to re-enable ES Modules.
+
 - **Singleton Services:** Most services are singletons, accessed via a static `getInstance()` method.
 - **Dependency Injection:** Services are instantiated once in `extension.ts` and their dependencies are injected through the constructor. This makes them easier to test with mocks.
 - **VS Code API Usage:** Only services that directly interact with the VS Code UI or workspace should import the `vscode` module. Keep business logic decoupled from the VS Code API where possible.
