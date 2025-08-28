@@ -14,6 +14,13 @@ The extension follows a service-oriented architecture with a strict unidirection
 - **`DataAccessService` (`src/services/DataAccessService.ts`):** The sole component responsible for querying the vector store and in-memory data. It abstracts the data sources from the UI and other services.
 - **`VectorStoreService` (`src/services/VectorStoreService.ts`):** A low-level wrapper around the `Vectra` library, managing the on-disk index.
 
+**Folder Structure:**
+
+- **`src/models`**: Contains the data models for the application (e.g., `DestinationDocument`, `ContentBlock`).
+- **`src/services`**: Contains the core business logic of the application, with each service having a specific responsibility.
+- **`src/views`**: Contains the UI components, primarily the `TreeDataProvider` implementations for the VS Code sidebar views.
+- **`src/test`**: Contains the unit and integration tests for the extension.
+
 **Data Flow:**
 
 1.  A user action triggers a command in the `CommandHandlerService`.

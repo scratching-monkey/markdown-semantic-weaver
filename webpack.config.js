@@ -5,6 +5,7 @@ import { resolve as _resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import nodeExternals from 'webpack-node-externals';
+import CopyPlugin from 'copy-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -34,6 +35,21 @@ const extensionConfig = {
       '.js': ['.ts', '.js']
     }
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: 'resources', to: 'resources' },
+        { from: 'node_modules/natural/lib/natural/brill_pos_tagger/data/English/lexicon.json', to: 'lexicon.json' },
+        { from: 'node_modules/natural/lib/natural/brill_pos_tagger/data/English/rules.json', to: 'rules.json' },
+        { from: 'node_modules/natural/lib/natural/wordnet/data/index.json', to: 'index.json' },
+        { from: 'node_modules/natural/lib/natural/wordnet/data/revindex.json', to: 'revindex.json' },
+        { from: 'node_modules/natural/lib/natural/wordnet/data/words.json', to: 'words.json' },
+        { from: 'node_modules/natural/lib/natural/wordnet/data/exc.json', to: 'exc.json' },
+        { from: 'node_modules/natural/lib/natural/wordnet/data/sentiwords.json', to: 'sentiwords.json' },
+        { from: 'node_modules/natural/lib/natural/wordnet/data/dict', to: 'dict' },
+      ],
+    }),
+  ],
   module: {
     rules: [
       {

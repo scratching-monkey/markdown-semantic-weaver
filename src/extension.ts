@@ -10,6 +10,7 @@ import { EmbeddingService } from './services/EmbeddingService.js';
 import { SourceProcessingService } from './services/SourceProcessingService.js';
 import { MarkdownASTParser } from './services/MarkdownASTParser.js';
 import { ContentSegmenter } from './services/ContentSegmenter.js';
+import { DestinationDocumentsProvider } from './views/DestinationDocumentsProvider.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -26,6 +27,9 @@ export function activate(context: vscode.ExtensionContext) {
 	const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStoreService, logger);
 	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService);
 	commandHandlerService.registerCommands(context);
+
+	const destinationDocumentsProvider = new DestinationDocumentsProvider(sessionManager);
+	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.destinationDocuments', destinationDocumentsProvider);
 
 	// Initialize the EmbeddingService
 	EmbeddingService.getInstance(context);
@@ -52,9 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 
 	logger.info('Extension activation complete.');
-}
-
-// This method is called when your extension is deactivated
+}// This method is called when your extension is deactivated
 export function deactivate() {
 	const logger = LoggerService.getInstance();
 	logger.info('Extension deactivating.');

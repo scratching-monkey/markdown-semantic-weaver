@@ -2,13 +2,13 @@ import * as vscode from 'vscode';
 import { v4 as uuidv4 } from 'uuid';
 import type { Root } from 'mdast';
 
-interface DestinationDocumentModel {
+export interface DestinationDocumentModel {
     uri: vscode.Uri;
     isNew: boolean;
     ast: Root;
 }
 
-interface WeavingSessionState {
+export interface WeavingSessionState {
     readonly sessionId: string;
     readonly status: 'Inactive' | 'Initializing' | 'Active' | 'Terminating';
     readonly sourceFileUris: Readonly<vscode.Uri[]>;
@@ -29,6 +29,9 @@ export class SessionManager {
 
     private readonly _onDestinationDocumentDidChange = new vscode.EventEmitter<{ documentUri: vscode.Uri }>();
     public readonly onDestinationDocumentDidChange = this._onDestinationDocumentDidChange.event;
+
+    private readonly _onDestinationDocumentsDidChange = new vscode.EventEmitter<void>();
+    public readonly onDestinationDocumentsDidChange = this._onDestinationDocumentsDidChange.event;
 
     private readonly _onSourceFileDidChange = new vscode.EventEmitter<{ files: vscode.Uri[] }>();
     public readonly onSourceFileDidChange = this._onSourceFileDidChange.event;
