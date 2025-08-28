@@ -12,6 +12,8 @@ import { MarkdownASTParser } from './services/MarkdownASTParser.js';
 import { ContentSegmenter } from './services/ContentSegmenter.js';
 import { DestinationDocumentsProvider } from './views/DestinationDocumentsProvider.js';
 import { DestinationDocumentOutlinerProvider } from './views/DestinationDocumentOutlinerProvider.js';
+import { SectionsProvider } from './views/SectionsProvider.js';
+import { TermsProvider } from './views/TermsProvider.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -34,6 +36,30 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const destinationDocumentOutlinerProvider = new DestinationDocumentOutlinerProvider(sessionManager, dataAccessService);
 	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.documentOutliner', destinationDocumentOutlinerProvider);
+
+	const sectionsProvider = new SectionsProvider(dataAccessService);
+	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.sections', sectionsProvider);
+
+	const termsProvider = new TermsProvider(dataAccessService);
+	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.terms', termsProvider);
+
+	context.subscriptions.push(
+		vscode.workspace.onDidSaveTextDocument(document => {
+			if (document.languageId === 'markdown') {
+				sectionsProvider.refresh();
+				termsProvider.refresh();
+			}
+		})
+	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('markdown-semantic-weaver.refreshViews', () => {
+			destinationDocumentsProvider.refresh();
+			destinationDocumentOutlinerProvider.refresh();
+			sectionsProvider.refresh();
+			termsProvider.refresh();
+		})
+	);
 
 	// Initialize the EmbeddingService
 	EmbeddingService.getInstance(context);

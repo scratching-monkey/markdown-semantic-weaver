@@ -69,6 +69,7 @@ export class SourceProcessingService {
                     ...segment.metadata,
                     contentType: 'section',
                     resolved: false,
+                    content: segment.rawContent,
                 }
             }));
 
@@ -79,6 +80,7 @@ export class SourceProcessingService {
                     ...term,
                     contentType: 'term',
                     resolved: false,
+                    content: term.definition || term.term,
                 }
             }));
 

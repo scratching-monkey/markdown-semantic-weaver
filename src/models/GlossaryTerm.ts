@@ -5,7 +5,7 @@ export interface GlossaryTerm {
     definition: string; // The surrounding sentence or paragraph as a definition
     embedding: number[]; // The vector embedding of the definition for similarity search
     metadata: {
-      groupId?: string; // The ID of the TermGroup this term belongs to, if any
+      termGroupId?: string; // The ID of the TermGroup this term belongs to, if any
       isResolved: boolean; // Flag indicating if the user has addressed this term
     };
   }

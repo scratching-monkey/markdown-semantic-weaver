@@ -99,22 +99,12 @@ export class VectorStoreService {
                 return;
             }
 
-            // Vectra doesn't support in-place metadata updates, so we delete and re-insert.
-            await index.deleteItem(id);
-
-            const updatedItem = {
-                ...item,
-                metadata: {
-                    ...item.metadata,
-                    ...metadata,
-                }
-            };
-
-            await index.insertItem(updatedItem as IndexItem);
-            this.logger.info(`Successfully updated metadata for item ${id}`);
+            const updatedMetadata = { ...item.metadata, ...metadata };
+            await index.upsertItem({ ...item, metadata: updatedMetadata as Record<string, any> });
+            this.logger.info(`Updated metadata for item ${id}`);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
-            this.logger.error(`Error updating metadata for item ${id}: ${errorMessage}`);
+            this.logger.error(`Error updating item metadata for ${id}: ${errorMessage}`);
             throw error;
         }
     }
@@ -123,10 +113,11 @@ export class VectorStoreService {
         try {
             const index = await this.getIndex();
             const items = await index.listItems();
-            return items as IndexItem[];
+            this.logger.info(`Retrieved ${items.length} items from index.`);
+            return items;
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
-            this.logger.error(`Error getting all items: ${errorMessage}`);
+            this.logger.error(`Error getting all items from index: ${errorMessage}`);
             return [];
         }
     }

@@ -14,6 +14,7 @@ import { CommandHandlerService } from '../../services/CommandHandlerService.js';
 suite('Integration Test: addSource command', () => {
     let dataAccessService: DataAccessService;
     let commandHandlerService: CommandHandlerService;
+    let vectorStore: VectorStoreService;
 
     suiteSetup(async function() {
         this.timeout(60000); // 60 seconds timeout for model download
@@ -26,12 +27,12 @@ suite('Integration Test: addSource command', () => {
         // Instantiate services
         const logger = LoggerService.getInstance();
         const sessionManager = SessionManager.getInstance();
-        const vectorStoreService = VectorStoreService.getInstance(sessionManager, logger);
+        vectorStore = VectorStoreService.getInstance(sessionManager, logger);
         const parser = new MarkdownASTParser();
         const segmenter = new ContentSegmenter();
         const embeddingService = EmbeddingService.getInstance(context);
-        const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStoreService, logger);
-        dataAccessService = DataAccessService.getInstance(sessionManager, vectorStoreService);
+        const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStore, logger);
+        dataAccessService = DataAccessService.getInstance(sessionManager, vectorStore);
 
         // Manually activate services and register commands
         commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService);
@@ -49,7 +50,8 @@ suite('Integration Test: addSource command', () => {
     });
 
     test('should populate the vector store with all sections', async () => {
-        const allSections = await dataAccessService.getAllSections();
+        const allItems = await vectorStore.getAllItems();
+        const allSections = allItems.filter(item => item.metadata.contentType === 'section');
         // Each file has a root block, a title block (#), and two subsection blocks (##) = 4 blocks per file
         assert.strictEqual(allSections.length, 8, 'Should find 8 total sections from 2 files');
     });
