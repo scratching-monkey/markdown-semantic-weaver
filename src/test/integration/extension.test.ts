@@ -6,6 +6,11 @@ import { ModelAssetService } from '../../services/ModelAssetService.js';
 suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests.');
 
+    suiteSetup(async () => {
+        // Set log level to trace for tests
+        await vscode.workspace.getConfiguration('markdown-semantic-weaver').update('logging.level', 'trace', vscode.ConfigurationTarget.Global);
+    });
+
     let sandbox: sinon.SinonSandbox;
 
     setup(() => {

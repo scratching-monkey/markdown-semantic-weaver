@@ -3,7 +3,6 @@
   "displayName": "Markdown Semantic Weaver",
   "description": "Semantically combine markdown files",
   "version": "0.0.1",
-  "type": "module",
   "engines": {
     "vscode": "^1.103.0"
   },
@@ -22,7 +21,23 @@
         "command": "markdown-semantic-weaver.testCommand",
         "title": "Test Command"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Markdown Semantic Weaver",
+      "properties": {
+        "markdown-semantic-weaver.logging.level": {
+          "type": "string",
+          "enum": [
+            "trace",
+            "info",
+            "warn",
+            "error"
+          ],
+          "default": "error",
+          "description": "The logging level for the extension."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -60,8 +75,10 @@
   },
   "dependencies": {
     "@types/follow-redirects": "^1.14.4",
+    "@types/natural": "^5.1.5",
     "follow-redirects": "^1.15.11",
     "mdast-util-to-markdown": "^2.1.2",
+    "natural": "^8.1.0",
     "remark": "^15.0.1",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0",

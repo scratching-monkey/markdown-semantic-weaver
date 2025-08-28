@@ -19,6 +19,10 @@ export class ModelAssetService {
     }
 
     public async ensureModelIsAvailable(): Promise<void> {
+        if (process.env.VSCODE_TEST) {
+            this.logger.info('Skipping model download in test environment.');
+            return;
+        }
         this.logger.info('Checking for model...');
         if (fs.existsSync(this.modelPath)) {
             this.logger.info('Model already exists.');

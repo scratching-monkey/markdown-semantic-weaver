@@ -4,10 +4,10 @@ export type LogLevel = 'trace' | 'info' | 'warn' | 'error';
 
 export class LoggerService {
     private static instance: LoggerService;
-    private outputChannel: vscode.OutputChannel;
+    private outputChannel: vscode.OutputChannel | undefined;
 
     private constructor() {
-        this.outputChannel = vscode.window.createOutputChannel('Markdown Semantic Weaver');
+        // this.outputChannel = vscode.window.createOutputChannel('Markdown Semantic Weaver');
     }
 
     public static getInstance(): LoggerService {
@@ -22,11 +22,32 @@ export class LoggerService {
     }
 
     private log(level: LogLevel, message: string): void {
+        if (!this.outputChannel) {
+            this.outputChannel = vscode.window.createOutputChannel('Markdown Semantic Weaver');
+        }
         const configuredLevel = this.getLogLevel();
         const levels: LogLevel[] = ['trace', 'info', 'warn', 'error'];
         if (levels.indexOf(level) >= levels.indexOf(configuredLevel)) {
             const timestamp = new Date().toISOString();
-            this.outputChannel.appendLine(`[${level.toUpperCase()}] [${timestamp}] ${message}`);
+            const logMessage = `[${level.toUpperCase()}] [${timestamp}] ${message}`;
+            this.outputChannel.appendLine(logMessage);
+
+            if (process.env.VSCODE_TEST) {
+                switch (level) {
+                    case 'trace':
+                        console.log(logMessage);
+                        break;
+                    case 'info':
+                        console.info(logMessage);
+                        break;
+                    case 'warn':
+                        console.warn(logMessage);
+                        break;
+                    case 'error':
+                        console.error(logMessage);
+                        break;
+                }
+            }
         }
     }
 
