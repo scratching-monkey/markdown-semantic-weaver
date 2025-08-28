@@ -4,68 +4,49 @@ A Visual Studio Code extension to weave data from multiple markdown sources
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Markdown Semantic Weaver helps you author new documents from existing Markdown files by analyzing semantic similarities and providing a structured editing environment.
 
-For example if there is an image subfolder under your extension project workspace:
+- **Session-Based Authoring:** Work in a temporary, focused session. Add source files for analysis and destination files for authoring.
 
-\!\[feature X\]\(images/feature-x.png\)
+- **Semantic Analysis:** Automatically processes source files to:
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+  - Divide content into logical sections.
+  - Identify and extract key terms and definitions.
+  - Find semantically similar sections and terms across all your source files.
+
+- **The Weaving View:** A dedicated sidebar view to manage your authoring session:
+
+  - **Sections View:** See a list of all unique sections from your sources, plus groups of sections that are semantically similar. Insert them directly into your new document or resolve similarities in a specialized editor.
+  - **Terms View:** Manage a glossary of key terms extracted from your sources. Refine definitions and resolve similar terms.
+  - **Destination Outliner:** View and manage the structure of your new document as a hierarchical outline of content blocks. Add, edit, delete, and reorder blocks with ease.
+
+- **Advanced Editors:**
+
+  - **Comparison Editor:** A powerful diff-like view to compare and merge semantically similar sections, helping you synthesize information from multiple sources.
+  - **Glossary Editor:** A webview-based editor to manage and consolidate definitions for similar terms.
+
+- **Publish with Confidence:**
+  - **Live Preview:** Generate a read-only preview of your composed document at any time.
+  - **Publish:** Finalize your work by saving your new, structured documents as standard Markdown files, complete with a relevant glossary appended to each.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+This extension is designed to be self-contained and works offline. The only requirements are:
+
+- A recent version of Visual Studio Code (1.80 or newer is recommended).
+- An internet connection is required on first use to download the necessary language model for semantic analysis. After this one-time download, the extension can be used completely offline.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-- `myExtension.enable`: Enable/disable this extension.
-- `myExtension.thing`: Set to `blah` to do something.
+- `markdown-semantic-weaver.logging.level`: Controls the verbosity of the extension's log output. Options: "error", "warn", "info", "trace". (Default: `"error"`)
+- `markdown-semantic-weaver.performance.maxSourceCorpusSizeMB`: The maximum total size (in MB) of source files to process before displaying a performance warning to the user. (Default: `100`)
+
+## Status
+
+As of August 2025, [**Phase 2: Source Data Ingestion & Analysis Pipeline**](docs/03_phased_implementation_plan.md) is complete. All core data processing features—including file parsing, content segmentation, term extraction, vector embedding, and similarity analysis—are implemented and validated with integration tests.
+
+The project is now beginning **Phase 3: Destination Document Authoring & Core Workflow**. This phase will focus on building the user-facing UI components, including the tree views for managing sections and terms, and enabling the core authoring commands to manipulate destination documents.
 
 ## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-- [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-- Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-- Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-- Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
