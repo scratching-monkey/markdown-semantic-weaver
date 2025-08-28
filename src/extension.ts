@@ -1,11 +1,11 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { ModelAssetService } from './services/ModelAssetService';
-import { LoggerService } from './services/LoggerService';
-import { SessionManager } from './services/SessionManager';
-import { DataAccessService } from './services/DataAccessService';
-import { CommandHandlerService } from './services/CommandHandlerService';
+import { ModelAssetService } from './services/ModelAssetService.js';
+import { LoggerService } from './services/LoggerService.js';
+import { SessionManager } from './services/SessionManager.js';
+import { DataAccessService } from './services/DataAccessService.js';
+import { CommandHandlerService } from './services/CommandHandlerService.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed

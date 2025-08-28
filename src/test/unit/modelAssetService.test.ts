@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as sinon from 'sinon';
-import { ModelAssetService } from '../../services/ModelAssetService';
+import { ModelAssetService } from '../../services/ModelAssetService.js';
 
 suite('ModelAssetService Test Suite', () => {
     let sandbox: sinon.SinonSandbox;

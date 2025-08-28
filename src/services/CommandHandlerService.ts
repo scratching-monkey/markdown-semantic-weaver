@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { SessionManager } from './SessionManager';
-import { DataAccessService } from './DataAccessService';
-import { LoggerService } from './LoggerService';
+import { SessionManager } from './SessionManager.js';
+import { DataAccessService } from './DataAccessService.js';
+import { LoggerService } from './LoggerService.js';
 
 export class CommandHandlerService {
     private logger = LoggerService.getInstance();
@@ -16,7 +16,7 @@ export class CommandHandlerService {
             this.logger.info("Test command executed.");
             if (this.sessionManager.isSessionActive()) {
                 this.logger.info("Session is active.");
-                this.dataAccessService.getSimilarityGroups().then(groups => {
+                this.dataAccessService.getSimilarityGroups().then((groups: any) => {
                     this.logger.info(`Found ${groups.length} similarity groups.`);
                 });
             } else {

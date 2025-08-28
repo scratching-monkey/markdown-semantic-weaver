@@ -1,11 +1,6 @@
 import * as vscode from 'vscode';
-import { Root } from 'unist';
 import { v4 as uuidv4 } from 'uuid';
-import { Node } from 'unist';
-
-interface Root extends Node {
-    children: Node[];
-}
+import type { Root } from 'mdast';
 
 interface DestinationDocumentModel {
     uri: vscode.Uri;

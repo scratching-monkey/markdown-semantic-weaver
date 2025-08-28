@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SessionManager } from './SessionManager';
+import { SessionManager } from './SessionManager.js';
 
 export class DataAccessService {
     private static instance: DataAccessService;

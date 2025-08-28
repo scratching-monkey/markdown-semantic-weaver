@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { https } from 'follow-redirects';
 import { IncomingMessage } from 'http';
-import { LoggerService } from './LoggerService';
+import { LoggerService } from './LoggerService.js';
 
 const MODEL_URL = 'https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/main/onnx/model.onnx';
 const MODEL_DIR = 'models';
