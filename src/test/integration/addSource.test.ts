@@ -35,7 +35,7 @@ suite('Integration Test: addSource command', () => {
         dataAccessService = DataAccessService.getInstance(sessionManager, vectorStore);
 
         // Manually activate services and register commands
-        commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService);
+        commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser);
         commandHandlerService.registerCommands(context);
 
         // Ensure model is ready before running tests

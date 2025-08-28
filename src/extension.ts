@@ -28,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const parser = new MarkdownASTParser();
 	const segmenter = new ContentSegmenter();
 	const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStoreService, logger);
-	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService);
+	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser);
 	commandHandlerService.registerCommands(context);
 
 	const destinationDocumentsProvider = new DestinationDocumentsProvider(sessionManager);

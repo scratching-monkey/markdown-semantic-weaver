@@ -107,6 +107,10 @@ export class SessionManager {
         return this._state.destinationDocuments.get(this._state.activeDestinationDocumentUri.toString());
     }
 
+    public getActiveDestinationDocumentUri(): vscode.Uri | null {
+        return this._state.activeDestinationDocumentUri;
+    }
+
     public setActiveDestinationDocument(uri: vscode.Uri | null) {
         const uriString = uri ? uri.toString() : null;
         const currentUriString = this._state.activeDestinationDocumentUri ? this._state.activeDestinationDocumentUri.toString() : null;
