@@ -74,6 +74,9 @@
     "webpack-cli": "^6.0.1",
     "webpack-node-externals": "^3.0.0"
   },
+  "overrides": {
+    "axios": "^1.7.2"
+  },
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited"

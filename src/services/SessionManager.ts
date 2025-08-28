@@ -93,6 +93,18 @@ export class SessionManager {
         }
     }
 
+    public getSessionUri(): vscode.Uri | null {
+        if (!this.isSessionActive()) {
+            return null;
+        }
+        // This needs to be a real path, for now we'll use a placeholder
+        // In a real implementation, this would be derived from the workspace state
+        // or a specific configuration.
+        const tempDir = require('os').tmpdir();
+        const path = require('path');
+        return vscode.Uri.file(path.join(tempDir, 'markdown-semantic-weaver', this._state.sessionId));
+    }
+
     public async updateDestinationDocumentAst(uri: vscode.Uri, newAst: Root): Promise<void> {
         if (!this.isSessionActive()) {
             throw new Error("Session is not active.");

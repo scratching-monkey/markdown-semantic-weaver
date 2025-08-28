@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import { LoggerService } from './services/LoggerService.js';
 import { SessionManager } from './services/SessionManager.js';
 import { DataAccessService } from './services/DataAccessService.js';
+import { VectorStoreService } from './services/VectorStoreService.js';
 import { CommandHandlerService } from './services/CommandHandlerService.js';
 import { EmbeddingService } from './services/EmbeddingService.js';
 
@@ -14,7 +15,8 @@ export function activate(context: vscode.ExtensionContext) {
 	logger.info('Extension activating.');
 
 	const sessionManager = SessionManager.getInstance();
-	const dataAccessService = DataAccessService.getInstance(sessionManager);
+	const vectorStoreService = VectorStoreService.getInstance(sessionManager, logger);
+	const dataAccessService = DataAccessService.getInstance(sessionManager, vectorStoreService);
 	const embeddingService = EmbeddingService.getInstance(context);
 	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, embeddingService);
 	commandHandlerService.registerCommands(context);
