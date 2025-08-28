@@ -3,12 +3,15 @@
 import * as vscode from 'vscode';
 import { ModelAssetService } from './services/ModelAssetService';
 import { LoggerService } from './services/LoggerService';
+import { SessionManager } from './services/SessionManager';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 	const logger = LoggerService.getInstance();
 	logger.info('Extension activating.');
+
+	const sessionManager = SessionManager.getInstance();
 
 	const modelAssetService = new ModelAssetService(context);
 	modelAssetService.ensureModelIsAvailable();
@@ -29,6 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from Markdown Semantic Weaver!');
+		sessionManager.startSession();
 	});
 
 	context.subscriptions.push(disposable);
@@ -40,4 +44,5 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
 	const logger = LoggerService.getInstance();
 	logger.info('Extension deactivating.');
+	SessionManager.getInstance().endSession();
 }
