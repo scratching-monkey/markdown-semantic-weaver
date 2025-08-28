@@ -14,6 +14,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "markdown-semantic-weaver.addSource",
+        "title": "Add as Source"
+      },
+      {
         "command": "markdown-semantic-weaver.helloWorld",
         "title": "Hello World"
       },
@@ -26,6 +30,15 @@
         "title": "Test Embedding Service"
       }
     ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "resourceLangId == markdown",
+          "command": "markdown-semantic-weaver.addSource",
+          "group": "navigation"
+        }
+      ]
+    },
     "configuration": {
       "title": "Markdown Semantic Weaver",
       "properties": {

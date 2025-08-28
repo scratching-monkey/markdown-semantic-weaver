@@ -30,6 +30,9 @@ export class SessionManager {
     private readonly _onDestinationDocumentDidChange = new vscode.EventEmitter<{ documentUri: vscode.Uri }>();
     public readonly onDestinationDocumentDidChange = this._onDestinationDocumentDidChange.event;
 
+    private readonly _onSourceFileDidChange = new vscode.EventEmitter<{ files: vscode.Uri[] }>();
+    public readonly onSourceFileDidChange = this._onSourceFileDidChange.event;
+
     private constructor() {
         this._state = {
             sessionId: '',
@@ -56,7 +59,7 @@ export class SessionManager {
         return this._state;
     }
 
-    public async startSession(): Promise<void> {
+    public async startSessionIfNeeded(): Promise<void> {
         if (this._state.status === 'Inactive') {
             this._state = {
                 ...this._state,
@@ -70,6 +73,7 @@ export class SessionManager {
                 status: 'Active'
             };
             this._onSessionDidStart.fire({ sessionId: this._state.sessionId });
+            await vscode.commands.executeCommand('setContext', 'markdown-semantic-weaver.sessionActive', true);
         }
     }
 
@@ -90,6 +94,29 @@ export class SessionManager {
                 vectraDbPath: null,
                 canonicalGlossary: new Map()
             };
+            await vscode.commands.executeCommand('setContext', 'markdown-semantic-weaver.sessionActive', false);
+        }
+    }
+
+    public addSourceFiles(files: vscode.Uri[]): void {
+        if (!this.isSessionActive()) {
+            throw new Error("Session is not active.");
+        }
+        const newSourceFiles = [...this._state.sourceFileUris];
+        let changed = false;
+        for (const file of files) {
+            if (!newSourceFiles.find(f => f.toString() === file.toString())) {
+                newSourceFiles.push(file);
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            this._state = {
+                ...this._state,
+                sourceFileUris: newSourceFiles
+            };
+            this._onSourceFileDidChange.fire({ files });
         }
     }
 

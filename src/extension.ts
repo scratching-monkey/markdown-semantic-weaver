@@ -7,6 +7,9 @@ import { DataAccessService } from './services/DataAccessService.js';
 import { VectorStoreService } from './services/VectorStoreService.js';
 import { CommandHandlerService } from './services/CommandHandlerService.js';
 import { EmbeddingService } from './services/EmbeddingService.js';
+import { SourceProcessingService } from './services/SourceProcessingService.js';
+import { MarkdownASTParser } from './services/MarkdownASTParser.js';
+import { ContentSegmenter } from './services/ContentSegmenter.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -18,7 +21,10 @@ export function activate(context: vscode.ExtensionContext) {
 	const vectorStoreService = VectorStoreService.getInstance(sessionManager, logger);
 	const dataAccessService = DataAccessService.getInstance(sessionManager, vectorStoreService);
 	const embeddingService = EmbeddingService.getInstance(context);
-	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, embeddingService);
+	const parser = new MarkdownASTParser();
+	const segmenter = new ContentSegmenter();
+	const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStoreService, logger);
+	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService);
 	commandHandlerService.registerCommands(context);
 
 	// Initialize the EmbeddingService
@@ -40,7 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from Markdown Semantic Weaver!');
-		sessionManager.startSession();
+		sessionManager.startSessionIfNeeded();
 	});
 
 	context.subscriptions.push(disposable);
