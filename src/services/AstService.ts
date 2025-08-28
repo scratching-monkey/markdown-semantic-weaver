@@ -82,4 +82,17 @@ export class AstService {
 
         return newAst;
     }
+
+    public addPathsToAst(node: Node, path: number[] = []) {
+        if (!node.data) {
+            node.data = {};
+        }
+        (node.data as any).path = path;
+
+        if ('children' in node && Array.isArray(node.children)) {
+            node.children.forEach((child, index) => {
+                this.addPathsToAst(child, [...path, index]);
+            });
+        }
+    }
 }

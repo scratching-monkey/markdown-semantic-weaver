@@ -10,6 +10,7 @@ import { MarkdownASTParser } from '../../services/MarkdownASTParser.js';
 import { ContentSegmenter } from '../../services/ContentSegmenter.js';
 import { EmbeddingService } from '../../services/EmbeddingService.js';
 import { CommandHandlerService } from '../../services/CommandHandlerService.js';
+import { DestinationDocumentManager } from "../../services/DestinationDocumentManager.js";
 import { AstService } from '../../services/AstService.js';
 import { VectorQueryService } from '../../services/VectorQueryService.js';
 import { DestinationDocumentsProvider } from "../../views/DestinationDocumentsProvider.js";
@@ -17,6 +18,7 @@ import { DestinationDocumentsProvider } from "../../views/DestinationDocumentsPr
 suite("UI Reactivity Integration Tests", () => {
   let sessionManager: SessionManager;
   let destinationDocumentsProvider: DestinationDocumentsProvider;
+  let documentManager: DestinationDocumentManager;
 
   suiteSetup(async function() {
     this.timeout(60000); // Generous timeout for setup
@@ -37,11 +39,12 @@ suite("UI Reactivity Integration Tests", () => {
     const astService = AstService.getInstance();
     const vectorQueryService = VectorQueryService.getInstance(vectorStore);
     const dataAccessService = DataAccessService.getInstance(sessionManager, vectorQueryService, astService);
-    const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser);
+    documentManager = DestinationDocumentManager.getInstance();
+    const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser, documentManager);
     commandHandlerService.registerCommands(context);
 
     // Instantiate UI provider
-    destinationDocumentsProvider = new DestinationDocumentsProvider(sessionManager);
+    destinationDocumentsProvider = new DestinationDocumentsProvider(documentManager);
 
     // Ensure model is ready before running tests
     await embeddingService.embed(['test']);

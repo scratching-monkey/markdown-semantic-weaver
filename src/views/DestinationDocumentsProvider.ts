@@ -1,17 +1,14 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { SessionManager, WeavingSessionState } from '../services/SessionManager.js';
+import { DestinationDocumentManager } from '../services/DestinationDocumentManager.js';
 import { DestinationDocument } from '../models/DestinationDocument.js';
 
 export class DestinationDocumentsProvider implements vscode.TreeDataProvider<DestinationDocument> {
     private _onDidChangeTreeData: vscode.EventEmitter<DestinationDocument | undefined | null | void> = new vscode.EventEmitter<DestinationDocument | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<DestinationDocument | undefined | null | void> = this._onDidChangeTreeData.event;
 
-    private sessionManager: SessionManager;
-
-    constructor(sessionManager: SessionManager) {
-        this.sessionManager = sessionManager;
-        this.sessionManager.onDestinationDocumentsDidChange(() => {
+    constructor(private documentManager: DestinationDocumentManager) {
+        this.documentManager.onDestinationDocumentsDidChange(() => {
             this.refresh();
         });
     }
@@ -42,12 +39,7 @@ export class DestinationDocumentsProvider implements vscode.TreeDataProvider<Des
             return Promise.resolve([]);
         }
 
-        const session: WeavingSessionState = this.sessionManager.getState();
-        if (session.status !== 'Active') {
-            return Promise.resolve([]);
-        }
-
-        const destinationDocuments = Array.from(session.destinationDocuments.values()).map(doc => new DestinationDocument(doc.uri, doc.ast));
+        const destinationDocuments = Array.from(this.documentManager.getAll().values()).map(doc => new DestinationDocument(doc.uri, doc.ast));
         return Promise.resolve(destinationDocuments);
     }
 }

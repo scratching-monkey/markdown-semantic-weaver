@@ -16,6 +16,7 @@ import { SectionsProvider } from './views/SectionsProvider.js';
 import { TermsProvider } from './views/TermsProvider.js';
 
 import { AstService } from './services/AstService.js';
+import { DestinationDocumentManager } from './services/DestinationDocumentManager.js';
 import { VectorQueryService } from './services/VectorQueryService.js';
 
 // This method is called when your extension is activated
@@ -27,19 +28,20 @@ export function activate(context: vscode.ExtensionContext) {
 	const sessionManager = SessionManager.getInstance();
 	const vectorStoreService = VectorStoreService.getInstance(sessionManager, logger);
 	const astService = AstService.getInstance();
+	const documentManager = DestinationDocumentManager.getInstance();
 	const vectorQueryService = VectorQueryService.getInstance(vectorStoreService);
 	const dataAccessService = DataAccessService.getInstance(sessionManager, vectorQueryService, astService);
 	const embeddingService = EmbeddingService.getInstance(context);
 	const parser = new MarkdownASTParser();
 	const segmenter = new ContentSegmenter();
 	const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStoreService, logger);
-	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser);
+	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser, documentManager);
 	commandHandlerService.registerCommands(context);
 
-	const destinationDocumentsProvider = new DestinationDocumentsProvider(sessionManager);
+	const destinationDocumentsProvider = new DestinationDocumentsProvider(documentManager);
 	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.destinationDocuments', destinationDocumentsProvider);
 
-	const destinationDocumentOutlinerProvider = new DestinationDocumentOutlinerProvider(sessionManager, dataAccessService);
+	const destinationDocumentOutlinerProvider = new DestinationDocumentOutlinerProvider(documentManager, dataAccessService);
 	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.documentOutliner', destinationDocumentOutlinerProvider);
 
 	const sectionsProvider = new SectionsProvider(dataAccessService);

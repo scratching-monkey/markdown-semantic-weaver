@@ -10,12 +10,14 @@ import { MarkdownASTParser } from '../../services/MarkdownASTParser.js';
 import { ContentSegmenter } from '../../services/ContentSegmenter.js';
 import { EmbeddingService } from '../../services/EmbeddingService.js';
 import { CommandHandlerService } from '../../services/CommandHandlerService.js';
+import { DestinationDocumentManager } from '../../services/DestinationDocumentManager.js';
 import { AstService } from '../../services/AstService.js';
 import { VectorQueryService } from '../../services/VectorQueryService.js';
 
 suite("Commands Integration Tests", () => {
   let sessionManager: SessionManager;
   let commandHandlerService: CommandHandlerService;
+  let documentManager: DestinationDocumentManager;
 
   suiteSetup(async function() {
     this.timeout(60000); // Generous timeout for setup
@@ -36,9 +38,10 @@ suite("Commands Integration Tests", () => {
     const astService = AstService.getInstance();
     const vectorQueryService = VectorQueryService.getInstance(vectorStore);
     const dataAccessService = DataAccessService.getInstance(sessionManager, vectorQueryService, astService);
+    documentManager = DestinationDocumentManager.getInstance();
 
     // Manually activate services and register commands
-    commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser);
+    commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser, documentManager);
     commandHandlerService.registerCommands(context);
 
     // Ensure model is ready before running tests

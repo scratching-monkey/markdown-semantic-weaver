@@ -31,7 +31,7 @@ export class VectorStoreService {
             return this.index;
         }
 
-        const sessionUri = this.sessionManager.getSessionUri();
+        const sessionUri = this.getSessionUri();
         if (!sessionUri) {
             const message = 'Session URI not available. Cannot initialize vector store.';
             this.logger.error(message);
@@ -50,6 +50,15 @@ export class VectorStoreService {
         }
 
         return this.index;
+    }
+
+    public getSessionUri(): vscode.Uri | null {
+        if (!this.sessionManager.isSessionActive()) {
+            return null;
+        }
+        const tempDir = require('os').tmpdir();
+        const path = require('path');
+        return vscode.Uri.file(path.join(tempDir, 'markdown-semantic-weaver', this.sessionManager.getState().sessionId));
     }
 
     public async addItems(items: IndexItem[]): Promise<void> {

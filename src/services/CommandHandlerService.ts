@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { SessionManager } from './SessionManager.js';
+import { DestinationDocumentManager } from './DestinationDocumentManager.js';
 import { DataAccessService } from './DataAccessService.js';
 import { LoggerService } from './LoggerService.js';
 import { ContentBlock } from '../models/ContentBlock.js';
@@ -21,7 +22,8 @@ export class CommandHandlerService {
         private dataAccessService: DataAccessService,
         private sourceProcessingService: SourceProcessingService,
         private embeddingService: EmbeddingService,
-        private markdownASTParser: MarkdownASTParser
+        private markdownASTParser: MarkdownASTParser,
+        private documentManager: DestinationDocumentManager
     ) {}
 
     public registerCommands(context: vscode.ExtensionContext) {
@@ -70,7 +72,7 @@ export class CommandHandlerService {
     }
 
     private async handleInsertSection(item: SourceSection) {
-        const activeDocumentUri = this.sessionManager.getActiveDestinationDocumentUri();
+        const activeDocumentUri = this.documentManager.getActiveUri();
         if (!activeDocumentUri) {
             vscode.window.showErrorMessage("No active destination document.");
             return;
@@ -84,7 +86,7 @@ export class CommandHandlerService {
 
         const newBlock = this.markdownASTParser.parse(item.content).children[0];
         const newAst = this.dataAccessService.computeAstWithNewBlock(document.ast, [document.ast.children.length], newBlock);
-        await this.sessionManager.updateDestinationDocumentAst(activeDocumentUri, newAst);
+        await this.documentManager.updateAst(activeDocumentUri, newAst);
     }
 
     private async handleAddContentBlock(item: ContentBlock) {
@@ -95,7 +97,7 @@ export class CommandHandlerService {
                 const newBlock = this.markdownASTParser.parse('\n\nNew Paragraph\n\n').children[0];
                 const targetPath = [...item.path.slice(0, -1), item.path[item.path.length - 1] + 1];
                 const newAst = this.dataAccessService.computeAstWithNewBlock(document.ast, targetPath, newBlock);
-                await this.sessionManager.updateDestinationDocumentAst(documentUri, newAst);
+                await this.documentManager.updateAst(documentUri, newAst);
             }
         }
     }
@@ -118,7 +120,7 @@ export class CommandHandlerService {
             // Adjust destination path to be after the target item
             const destinationPath = [...targetItem.path.slice(0, -1), targetItem.path[targetItem.path.length - 1] + 1];
             const newAst = this.dataAccessService.computeAstWithBlockMoved(document.ast, sourceItem.path, destinationPath);
-            await this.sessionManager.updateDestinationDocumentAst(sourceDocUri, newAst);
+            await this.documentManager.updateAst(sourceDocUri, newAst);
         }
     }
 
@@ -128,18 +130,18 @@ export class CommandHandlerService {
             const document = this.sessionManager.getState().destinationDocuments.get(documentUri.toString());
             if (document) {
                 const newAst = this.dataAccessService.computeAstWithBlockDeleted(document.ast, item.path);
-                await this.sessionManager.updateDestinationDocumentAst(documentUri, newAst);
+                await this.documentManager.updateAst(documentUri, newAst);
             }
         }
     }
 
     private handleAddNewDestinationDocument(): void {
-        this.sessionManager.createNewDestinationDocument();
+        this.documentManager.createNew();
     }
 
     private handleDeleteDestinationDocument(item: { uri: vscode.Uri }): void {
         if (item && item.uri) {
-            this.sessionManager.removeDestinationDocument(item.uri);
+            this.documentManager.remove(item.uri);
         }
     }
 
