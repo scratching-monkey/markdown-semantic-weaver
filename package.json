@@ -16,6 +16,10 @@
       {
         "command": "markdown-semantic-weaver.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "markdown-semantic-weaver.testCommand",
+        "title": "Test Command"
       }
     ]
   },

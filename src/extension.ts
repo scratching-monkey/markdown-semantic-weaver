@@ -4,6 +4,8 @@ import * as vscode from 'vscode';
 import { ModelAssetService } from './services/ModelAssetService';
 import { LoggerService } from './services/LoggerService';
 import { SessionManager } from './services/SessionManager';
+import { DataAccessService } from './services/DataAccessService';
+import { CommandHandlerService } from './services/CommandHandlerService';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -12,6 +14,9 @@ export function activate(context: vscode.ExtensionContext) {
 	logger.info('Extension activating.');
 
 	const sessionManager = SessionManager.getInstance();
+	const dataAccessService = DataAccessService.getInstance(sessionManager);
+	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService);
+	commandHandlerService.registerCommands(context);
 
 	const modelAssetService = new ModelAssetService(context);
 	modelAssetService.ensureModelIsAvailable();
