@@ -49,7 +49,8 @@ All essential scripts are defined in `package.json`.
 ### One task at a time
 
 - We are following the `docs/03_phased_implementation_plan.md`.
-- After every task, we compile, run tests, debug F5, and then commit before we move on to the next task.
+- Make it clear when the task has been completed or when there is still additional work to do.
+- After completing every task, we compile, run tests, debug F5, and then commit before we move on to the next task.
 
 ## Code Conventions
 

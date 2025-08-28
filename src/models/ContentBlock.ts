@@ -42,6 +42,10 @@ export interface ContentBlock {
          */
         heading: string;
     };
+    /**
+     * Child blocks for hierarchical representation.
+     */
+    children?: ContentBlock[];
 }
 
 

@@ -13,6 +13,7 @@ export interface WeavingSessionState {
     readonly status: 'Inactive' | 'Initializing' | 'Active' | 'Terminating';
     readonly sourceFileUris: Readonly<vscode.Uri[]>;
     readonly destinationDocuments: Readonly<Map<string, DestinationDocumentModel>>;
+    readonly activeDestinationDocumentUri: vscode.Uri | null;
     readonly vectraDbPath: string | null;
     readonly canonicalGlossary: Readonly<Map<string, string>>;
 }
@@ -26,6 +27,9 @@ export class SessionManager {
 
     private readonly _onSessionWillEnd = new vscode.EventEmitter<{ sessionId: string }>();
     public readonly onSessionWillEnd = this._onSessionWillEnd.event;
+
+    private readonly _onActiveDocumentChanged = new vscode.EventEmitter<vscode.Uri | null>();
+    public readonly onActiveDocumentChanged = this._onActiveDocumentChanged.event;
 
     private readonly _onDestinationDocumentDidChange = new vscode.EventEmitter<{ documentUri: vscode.Uri }>();
     public readonly onDestinationDocumentDidChange = this._onDestinationDocumentDidChange.event;
@@ -43,7 +47,8 @@ export class SessionManager {
             sourceFileUris: [],
             destinationDocuments: new Map(),
             vectraDbPath: null,
-            canonicalGlossary: new Map()
+            canonicalGlossary: new Map(),
+            activeDestinationDocumentUri: null
         };
     }
 
@@ -80,6 +85,25 @@ export class SessionManager {
         }
     }
 
+    public getActiveDestinationDocument(): DestinationDocumentModel | undefined {
+        if (!this._state.activeDestinationDocumentUri) {
+            return undefined;
+        }
+        return this._state.destinationDocuments.get(this._state.activeDestinationDocumentUri.toString());
+    }
+
+    public setActiveDestinationDocument(uri: vscode.Uri | null) {
+        const uriString = uri ? uri.toString() : null;
+        const currentUriString = this._state.activeDestinationDocumentUri ? this._state.activeDestinationDocumentUri.toString() : null;
+
+        if (uriString !== currentUriString) {
+            this._state = {
+                ...this._state,
+                activeDestinationDocumentUri: uri
+            };
+            this._onActiveDocumentChanged.fire(uri);
+        }
+    }
     public async endSession(): Promise<void> {
         if (this.isSessionActive()) {
             this._onSessionWillEnd.fire({ sessionId: this._state.sessionId });
@@ -95,7 +119,8 @@ export class SessionManager {
                 sourceFileUris: [],
                 destinationDocuments: new Map(),
                 vectraDbPath: null,
-                canonicalGlossary: new Map()
+                canonicalGlossary: new Map(),
+                activeDestinationDocumentUri: null
             };
             await vscode.commands.executeCommand('setContext', 'markdown-semantic-weaver.sessionActive', false);
         }

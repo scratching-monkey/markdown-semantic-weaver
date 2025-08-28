@@ -6,6 +6,11 @@ import { SourceSection } from '../models/SourceSection.js';
 import { TermGroup } from '../models/TermGroup.js';
 import { GlossaryTerm } from '../models/GlossaryTerm.js';
 import { IndexItem } from 'vectra';
+import { v4 as uuidv4 } from 'uuid';
+import { ContentBlock } from '../models/ContentBlock.js';
+import { visit, SKIP } from 'unist-util-visit';
+import { Node } from 'unist';
+import { toMarkdown } from 'mdast-util-to-markdown';
 
 export class DataAccessService {
     private static instance: DataAccessService;
@@ -47,6 +52,69 @@ export class DataAccessService {
         }
 
         return similarityGroups.filter(g => !g.isResolved);
+    }
+
+    public async getDocumentContent(documentUri: vscode.Uri): Promise<ContentBlock[]> {
+        const document = this.sessionManager.getState().destinationDocuments.get(documentUri.toString());
+        if (!document) {
+            return [];
+        }
+
+        const contentBlocks: ContentBlock[] = [];
+        let currentHeading: string | null = null;
+        let headingLevel = 0;
+
+        visit(document.ast, (node: Node) => {
+            if (node.type === 'heading') {
+                currentHeading = toMarkdown({ type: 'root', children: [node as any] }).trim();
+                headingLevel = (node as any).depth;
+                return; // Continue to next node
+            }
+
+            if (node.type !== 'definition' && node.type !== 'yaml') {
+                const content = toMarkdown({ type: 'root', children: [node as any] }).trim();
+                if (content) {
+                    contentBlocks.push({
+                        id: uuidv4(),
+                        blockType: node.type as any,
+                        rawContent: content,
+                        metadata: {
+                            source: documentUri.toString(),
+                            level: headingLevel,
+                            heading: currentHeading || ''
+                        },
+                        children: this.extractChildren(node, documentUri.toString(), headingLevel, currentHeading || '')
+                    });
+                    return SKIP; // Skip children of this node as they are handled by extractChildren
+                }
+            }
+            return;
+        });
+
+        return contentBlocks;
+    }
+
+    private extractChildren(node: Node, source: string, level: number, heading: string): ContentBlock[] {
+        const children: ContentBlock[] = [];
+        if ('children' in node && Array.isArray(node.children)) {
+            for (const child of node.children) {
+                const content = toMarkdown({ type: 'root', children: [child as any] }).trim();
+                if (content) {
+                    children.push({
+                        id: uuidv4(),
+                        blockType: child.type as any,
+                        rawContent: content,
+                        metadata: {
+                            source,
+                            level,
+                            heading
+                        },
+                        children: this.extractChildren(child, source, level, heading)
+                    });
+                }
+            }
+        }
+        return children;
     }
 
     public async getUniqueSections(): Promise<SourceSection[]> {

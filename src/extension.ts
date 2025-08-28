@@ -11,6 +11,7 @@ import { SourceProcessingService } from './services/SourceProcessingService.js';
 import { MarkdownASTParser } from './services/MarkdownASTParser.js';
 import { ContentSegmenter } from './services/ContentSegmenter.js';
 import { DestinationDocumentsProvider } from './views/DestinationDocumentsProvider.js';
+import { DestinationDocumentOutlinerProvider } from './views/DestinationDocumentOutlinerProvider.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -30,6 +31,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const destinationDocumentsProvider = new DestinationDocumentsProvider(sessionManager);
 	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.destinationDocuments', destinationDocumentsProvider);
+
+	const destinationDocumentOutlinerProvider = new DestinationDocumentOutlinerProvider(sessionManager, dataAccessService);
+	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.documentOutliner', destinationDocumentOutlinerProvider);
 
 	// Initialize the EmbeddingService
 	EmbeddingService.getInstance(context);
