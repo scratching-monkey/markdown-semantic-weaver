@@ -40,8 +40,10 @@
     "typescript": "^5.9.2",
     "ts-loader": "^9.5.2",
     "webpack": "^5.101.0",
-    "webpack-cli": "^6.0.1",
-    "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2"
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited"
+    }
+  },
   }
 }
