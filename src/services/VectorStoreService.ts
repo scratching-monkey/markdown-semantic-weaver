@@ -1,8 +1,11 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { LocalIndex, IndexItem, QueryResult } from 'vectra';
-import { SessionManager } from './SessionManager';
-import { LoggerService } from './LoggerService';
+import { LocalIndex, QueryResult } from 'vectra';
+import type { IndexItem } from 'vectra';
+import { SessionManager } from './SessionManager.js';
+import { LoggerService } from './LoggerService.js';
+
+export type { IndexItem };
 
 export class VectorStoreService {
     private static instance: VectorStoreService;
@@ -66,7 +69,6 @@ export class VectorStoreService {
     public async query(vector: number[], topK: number): Promise<QueryResult[]> {
         try {
             const index = await this.getIndex();
-            // The query parameter is not used in our case, so we pass an empty string.
             const results = await index.queryItems(vector, "", topK);
             this.logger.info(`Query returned ${results.length} results.`);
             return results;

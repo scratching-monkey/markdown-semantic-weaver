@@ -10,6 +10,8 @@ import { MarkdownASTParser } from '../../services/MarkdownASTParser.js';
 import { ContentSegmenter } from '../../services/ContentSegmenter.js';
 import { EmbeddingService } from '../../services/EmbeddingService.js';
 import { CommandHandlerService } from '../../services/CommandHandlerService.js';
+import { AstService } from '../../services/AstService.js';
+import { VectorQueryService } from '../../services/VectorQueryService.js';
 import { DestinationDocumentsProvider } from "../../views/DestinationDocumentsProvider.js";
 
 suite("UI Reactivity Integration Tests", () => {
@@ -32,7 +34,9 @@ suite("UI Reactivity Integration Tests", () => {
     const segmenter = new ContentSegmenter();
     const embeddingService = EmbeddingService.getInstance(context);
     const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStore, logger);
-    const dataAccessService = DataAccessService.getInstance(sessionManager, vectorStore);
+    const astService = AstService.getInstance();
+    const vectorQueryService = VectorQueryService.getInstance(vectorStore);
+    const dataAccessService = DataAccessService.getInstance(sessionManager, vectorQueryService, astService);
     const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser);
     commandHandlerService.registerCommands(context);
 
@@ -63,7 +67,7 @@ suite("UI Reactivity Integration Tests", () => {
 
     // Add a document
     await vscode.commands.executeCommand("markdown-semantic-weaver.addNewDestinationDocument");
-    
+
     // Verify refresh was triggered and children updated
     assert.strictEqual(refreshCount, 1, "Refresh should be called once after adding a document");
     children = await destinationDocumentsProvider.getChildren();

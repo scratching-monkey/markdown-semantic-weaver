@@ -15,6 +15,9 @@ import { DestinationDocumentOutlinerProvider } from './views/DestinationDocument
 import { SectionsProvider } from './views/SectionsProvider.js';
 import { TermsProvider } from './views/TermsProvider.js';
 
+import { AstService } from './services/AstService.js';
+import { VectorQueryService } from './services/VectorQueryService.js';
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -23,7 +26,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const sessionManager = SessionManager.getInstance();
 	const vectorStoreService = VectorStoreService.getInstance(sessionManager, logger);
-	const dataAccessService = DataAccessService.getInstance(sessionManager, vectorStoreService);
+	const astService = AstService.getInstance();
+	const vectorQueryService = VectorQueryService.getInstance(vectorStoreService);
+	const dataAccessService = DataAccessService.getInstance(sessionManager, vectorQueryService, astService);
 	const embeddingService = EmbeddingService.getInstance(context);
 	const parser = new MarkdownASTParser();
 	const segmenter = new ContentSegmenter();

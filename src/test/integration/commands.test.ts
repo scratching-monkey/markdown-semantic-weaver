@@ -10,6 +10,8 @@ import { MarkdownASTParser } from '../../services/MarkdownASTParser.js';
 import { ContentSegmenter } from '../../services/ContentSegmenter.js';
 import { EmbeddingService } from '../../services/EmbeddingService.js';
 import { CommandHandlerService } from '../../services/CommandHandlerService.js';
+import { AstService } from '../../services/AstService.js';
+import { VectorQueryService } from '../../services/VectorQueryService.js';
 
 suite("Commands Integration Tests", () => {
   let sessionManager: SessionManager;
@@ -31,7 +33,9 @@ suite("Commands Integration Tests", () => {
     const segmenter = new ContentSegmenter();
     const embeddingService = EmbeddingService.getInstance(context);
     const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStore, logger);
-    const dataAccessService = DataAccessService.getInstance(sessionManager, vectorStore);
+    const astService = AstService.getInstance();
+    const vectorQueryService = VectorQueryService.getInstance(vectorStore);
+    const dataAccessService = DataAccessService.getInstance(sessionManager, vectorQueryService, astService);
 
     // Manually activate services and register commands
     commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser);
