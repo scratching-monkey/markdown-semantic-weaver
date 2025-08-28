@@ -20,7 +20,7 @@ export class DestinationDocumentOutlinerProvider implements vscode.TreeDataProvi
 
     getTreeItem(element: ContentBlock): vscode.TreeItem {
         const treeItem = new vscode.TreeItem(element.rawContent);
-        treeItem.id = element.id;
+        treeItem.id = element.path.join('.');
         treeItem.collapsibleState = element.children && element.children.length > 0
             ? vscode.TreeItemCollapsibleState.Collapsed
             : vscode.TreeItemCollapsibleState.None;

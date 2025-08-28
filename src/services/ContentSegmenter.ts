@@ -9,10 +9,12 @@ function createContentBlock(
     rawContent: string,
     source: string,
     level: number,
-    heading: string
+    heading: string,
+    path: number[]
 ): ContentBlock {
     return {
         id: uuidv4(),
+        path,
         blockType: 'section',
         rawContent,
         metadata: {
@@ -46,7 +48,7 @@ export class ContentSegmenter {
                  rawContent = rawContent ? `${heading}\n\n${rawContent}` : heading;
             }
 
-            return createContentBlock(rawContent, source, level, headingText);
+            return createContentBlock(rawContent, source, level, headingText, (headingNode?.data?.path as number[] | undefined) || []);
         };
 
         // Handle content before the first heading
@@ -83,7 +85,7 @@ export class ContentSegmenter {
         // Add a root block for the whole document
         if (blocks.length > 0) {
             const fullContent = processor.stringify(ast as any).trim();
-            blocks.unshift(createContentBlock(fullContent, source, 0, path.basename(source)));
+            blocks.unshift(createContentBlock(fullContent, source, 0, path.basename(source), []));
         }
 
         return blocks;

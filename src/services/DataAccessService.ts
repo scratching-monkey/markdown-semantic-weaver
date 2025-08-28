@@ -11,6 +11,7 @@ import { ContentBlock } from '../models/ContentBlock.js';
 import { visit, SKIP } from 'unist-util-visit';
 import { Node } from 'unist';
 import { toMarkdown } from 'mdast-util-to-markdown';
+import type { Root } from 'mdast';
 
 export class DataAccessService {
     private static instance: DataAccessService;
@@ -76,6 +77,7 @@ export class DataAccessService {
                 if (content) {
                     contentBlocks.push({
                         id: uuidv4(),
+                        path: (node.data as any)?.path,
                         blockType: node.type as any,
                         rawContent: content,
                         metadata: {
@@ -102,6 +104,7 @@ export class DataAccessService {
                 if (content) {
                     children.push({
                         id: uuidv4(),
+                        path: (child.data as any)?.path,
                         blockType: child.type as any,
                         rawContent: content,
                         metadata: {
@@ -197,6 +200,32 @@ export class DataAccessService {
             .flat();
 
         return [...ungrouped, ...uniqueTermsFromGroups];
+    }
+
+    public computeAstWithBlockDeleted(ast: Root, path: number[]): Root {
+        // It's critical to not mutate the original AST.
+        const newAst = JSON.parse(JSON.stringify(ast));
+
+        if (path.length === 0) {
+            // Cannot delete the root.
+            return newAst;
+        }
+
+        let parent: any = newAst;
+        for (let i = 0; i < path.length - 1; i++) {
+            parent = parent.children?.[path[i]];
+            if (!parent) {
+                // Path is invalid.
+                return newAst;
+            }
+        }
+
+        const indexToDelete = path[path.length - 1];
+        if (parent.children && parent.children[indexToDelete]) {
+            parent.children.splice(indexToDelete, 1);
+        }
+
+        return newAst;
     }
 
     private mapIndexItemToSourceSection(item: IndexItem): SourceSection {

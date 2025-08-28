@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Node } from 'unist';
+
 
 /**
  * Represents the type of a content block.
@@ -14,6 +14,12 @@ export interface ContentBlock {
      * A unique identifier for the block (UUID v4).
      */
     id: string;
+
+    /**
+     * The path to the corresponding node in the AST from the root.
+     * e.g., [0, 2, 1] means root.children[0].children[2].children[1]
+     */
+    path: number[];
 
     /**
      * The type of the content block.

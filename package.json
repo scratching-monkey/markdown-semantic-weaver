@@ -38,6 +38,11 @@
         "command": "markdown-semantic-weaver.deleteDestinationDocument",
         "title": "Remove Destination Document",
         "icon": "$(trash)"
+      },
+      {
+        "command": "markdown-semantic-weaver.deleteContentBlock",
+        "title": "Delete Content Block",
+        "icon": "$(trash)"
       }
     ],
     "menus": {
@@ -60,6 +65,11 @@
           "command": "markdown-semantic-weaver.deleteDestinationDocument",
           "when": "view == markdown-semantic-weaver.destinationDocuments && viewItem == 'destinationDocument'",
           "group": "inline"
+        },
+        {
+            "command": "markdown-semantic-weaver.deleteContentBlock",
+            "when": "view == markdown-semantic-weaver.documentOutliner && viewItem == 'contentBlock'",
+            "group": "inline"
         }
       ]
     },

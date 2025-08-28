@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { SessionManager } from './SessionManager.js';
 import { DataAccessService } from './DataAccessService.js';
 import { LoggerService } from './LoggerService.js';
+import { ContentBlock } from '../models/ContentBlock.js';
 import { EmbeddingService } from './EmbeddingService.js';
 import { SourceProcessingService } from './SourceProcessingService.js';
 
@@ -45,8 +46,20 @@ export class CommandHandlerService {
             testCommand,
             testEmbedding,
             vscode.commands.registerCommand('markdown-semantic-weaver.addNewDestination', () => this.handleAddNewDestinationDocument()),
-            vscode.commands.registerCommand('markdown-semantic-weaver.deleteDestinationDocument', (item) => this.handleDeleteDestinationDocument(item))
+            vscode.commands.registerCommand('markdown-semantic-weaver.deleteDestinationDocument', (item) => this.handleDeleteDestinationDocument(item)),
+            vscode.commands.registerCommand('markdown-semantic-weaver.deleteContentBlock', (item) => this.handleDeleteContentBlock(item))
         );
+    }
+
+    private async handleDeleteContentBlock(item: ContentBlock): Promise<void> {
+        if (item && item.path && item.metadata && item.metadata.source) {
+            const documentUri = vscode.Uri.parse(item.metadata.source);
+            const document = this.sessionManager.getState().destinationDocuments.get(documentUri.toString());
+            if (document) {
+                const newAst = this.dataAccessService.computeAstWithBlockDeleted(document.ast, item.path);
+                await this.sessionManager.updateDestinationDocumentAst(documentUri, newAst);
+            }
+        }
     }
 
     private handleAddNewDestinationDocument(): void {

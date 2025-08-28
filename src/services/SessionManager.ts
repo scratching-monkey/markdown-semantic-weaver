@@ -1,6 +1,21 @@
 import * as vscode from 'vscode';
 import { v4 as uuidv4 } from 'uuid';
 import type { Root } from 'mdast';
+import { Node } from 'unist';
+
+function addPathsToAst(node: Node, path: number[] = []) {
+    if (!node.data) {
+        node.data = {};
+    }
+    (node.data as any).path = path;
+
+    if ('children' in node && Array.isArray(node.children)) {
+        node.children.forEach((child, index) => {
+            addPathsToAst(child, [...path, index]);
+        });
+    }
+}
+
 
 export interface DestinationDocumentModel {
     uri: vscode.Uri;
@@ -152,10 +167,12 @@ export class SessionManager {
         if (!this.isSessionActive()) {
             throw new Error("Session is not active.");
         }
+        const ast: Root = { type: 'root', children: [] };
+        addPathsToAst(ast);
         const newDoc: DestinationDocumentModel = {
             uri: vscode.Uri.parse(`untitled:NewDocument-${this._state.destinationDocuments.size + 1}.md`),
             isNew: true,
-            ast: { type: 'root', children: [] }
+            ast: ast
         };
         const newMap = new Map(this._state.destinationDocuments);
         newMap.set(newDoc.uri.toString(), newDoc);
@@ -196,6 +213,7 @@ export class SessionManager {
         if (!this.isSessionActive()) {
             throw new Error("Session is not active.");
         }
+        addPathsToAst(newAst);
         const newMap = new Map(this._state.destinationDocuments);
         const doc = newMap.get(uri.toString());
         if (doc) {
