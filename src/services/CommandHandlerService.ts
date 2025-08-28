@@ -8,6 +8,11 @@ import { SourceProcessingService } from './SourceProcessingService.js';
 import { MarkdownASTParser } from './MarkdownASTParser.js';
 import { SourceSection } from '../models/SourceSection.js';
 
+// Global flag to ensure commands are registered only once
+if (typeof (global as any).commandsRegistered === 'undefined') {
+    (global as any).commandsRegistered = false;
+}
+
 export class CommandHandlerService {
     private logger = LoggerService.getInstance();
 
@@ -20,9 +25,14 @@ export class CommandHandlerService {
     ) {}
 
     public registerCommands(context: vscode.ExtensionContext) {
+        if ((global as any).commandsRegistered) {
+            return;
+        }
+
         const addSourceCommand = vscode.commands.registerCommand('markdown-semantic-weaver.addSource', async (uri?: vscode.Uri, uris?: vscode.Uri[]) => {
             await this.handleAddSource(uri, uris);
-        });        const testCommand = vscode.commands.registerCommand('markdown-semantic-weaver.testCommand', () => {
+        });
+        const testCommand = vscode.commands.registerCommand('markdown-semantic-weaver.testCommand', () => {
             this.logger.info("Test command executed.");
             if (this.sessionManager.isSessionActive()) {
                 this.logger.info("Session is active.");
@@ -48,13 +58,15 @@ export class CommandHandlerService {
             addSourceCommand,
             testCommand,
             testEmbedding,
-            vscode.commands.registerCommand('markdown-semantic-weaver.addNewDestination', () => this.handleAddNewDestinationDocument()),
+            vscode.commands.registerCommand('markdown-semantic-weaver.addNewDestinationDocument', () => this.handleAddNewDestinationDocument()),
             vscode.commands.registerCommand('markdown-semantic-weaver.deleteDestinationDocument', (item) => this.handleDeleteDestinationDocument(item)),
             vscode.commands.registerCommand('markdown-semantic-weaver.deleteContentBlock', (item) => this.handleDeleteContentBlock(item)),
             vscode.commands.registerCommand('markdown-semantic-weaver.moveContentBlock', (source, target) => this.handleMoveContentBlock(source, target)),
             vscode.commands.registerCommand('markdown-semantic-weaver.addContentBlock', (item) => this.handleAddContentBlock(item)),
             vscode.commands.registerCommand('markdown-semantic-weaver.insertSection', (item) => this.handleInsertSection(item))
         );
+
+        (global as any).commandsRegistered = true;
     }
 
     private async handleInsertSection(item: SourceSection) {

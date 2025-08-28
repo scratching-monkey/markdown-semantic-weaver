@@ -21,11 +21,6 @@ suite('Extension Test Suite', () => {
         sandbox.restore();
     });
 
-    test('Sample integration test', () => {
-        assert.strictEqual(-1, [1, 2, 3].indexOf(5));
-        assert.strictEqual(-1, [1, 2, 3].indexOf(0));
-    });
-
     test('should download model if not exists', async () => {
         const context = {
             globalStorageUri: { fsPath: '/tmp/vscode-test' }
