@@ -1,0 +1,26 @@
+# Node.js dependencies
+/node_modules/
+
+# VS Code extension specific files
+/.vscode-test/
+/.vscode-test-web/
+/out/
+/dist/
+*.vsix
+*.log
+.vscode-insiders/
+
+# Environment variables and sensitive data
+.env
+*.env
+
+# Operating System specific files
+.DS_Store
+Thumbs.db
+
+# Build artifacts and temporary files
+/tmp/
+/build/
+/coverage/
+
+/docs/vsc-extension-quickstart.md
