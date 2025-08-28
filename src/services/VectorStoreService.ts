@@ -1,4 +1,3 @@
-
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { LocalIndex, IndexItem, QueryResult } from 'vectra';
@@ -75,6 +74,48 @@ export class VectorStoreService {
             const errorMessage = error instanceof Error ? error.message : String(error);
             this.logger.error(`Error querying index: ${errorMessage}`);
             return [];
+        }
+    }
+
+    public async getItem(id: string): Promise<IndexItem | undefined> {
+        try {
+            const index = await this.getIndex();
+            const item = await index.getItem(id);
+            return item;
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.logger.error(`Error getting item ${id}: ${errorMessage}`);
+            return undefined;
+        }
+    }
+
+    public async updateItemMetadata(id: string, metadata: Partial<IndexItem['metadata']>): Promise<void> {
+        try {
+            const index = await this.getIndex();
+            const item = await index.getItem(id);
+
+            if (!item) {
+                this.logger.warn(`Attempted to update non-existent item with id: ${id}`);
+                return;
+            }
+
+            // Vectra doesn't support in-place metadata updates, so we delete and re-insert.
+            await index.deleteItem(id);
+
+            const updatedItem = {
+                ...item,
+                metadata: {
+                    ...item.metadata,
+                    ...metadata,
+                }
+            };
+
+            await index.insertItem(updatedItem as IndexItem);
+            this.logger.info(`Successfully updated metadata for item ${id}`);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.logger.error(`Error updating metadata for item ${id}: ${errorMessage}`);
+            throw error;
         }
     }
 }
