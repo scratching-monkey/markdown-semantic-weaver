@@ -6,6 +6,7 @@ import { VectorStoreService } from './VectorStoreService';
 import { LoggerService } from './LoggerService';
 import { IndexItem } from 'vectra';
 import { v4 as uuidv4 } from 'uuid';
+import { TermExtractor } from './TermExtractor';
 
 export class SourceProcessingService {
     private static instance: SourceProcessingService;
@@ -45,17 +46,25 @@ export class SourceProcessingService {
             const ast = this.parser.parse(text);
             const segments = this.segmenter.segment(ast, uri.toString());
 
-            if (segments.length === 0) {
-                this.logger.info('No segments found in file.');
+            const termExtractor = new TermExtractor(uri.toString());
+            const extractedTerms = termExtractor.extract(segments);
+
+            if (segments.length === 0 && extractedTerms.length === 0) {
+                this.logger.info('No segments or terms found in file.');
                 return;
             }
 
-            const contents = segments.map(s => s.rawContent);
-            const embeddings = await this.embeddingService.embed(contents);
+            const segmentContents = segments.map(s => s.rawContent);
+            const termContents = extractedTerms.map(t => t.definition || t.term);
 
-            const items: Omit<IndexItem, 'norm'>[] = segments.map((segment, i) => ({
+            const [segmentEmbeddings, termEmbeddings] = await Promise.all([
+                this.embeddingService.embed(segmentContents),
+                this.embeddingService.embed(termContents)
+            ]);
+
+            const segmentItems: Omit<IndexItem, 'norm'>[] = segments.map((segment, i) => ({
                 id: segment.id,
-                vector: embeddings[i],
+                vector: segmentEmbeddings[i],
                 metadata: {
                     sourceFile: uri.toString(),
                     contentType: 'section',
@@ -63,6 +72,20 @@ export class SourceProcessingService {
                     resolved: false,
                 }
             }));
+
+            const termItems: Omit<IndexItem, 'norm'>[] = extractedTerms.map((term, i) => ({
+                id: term.id,
+                vector: termEmbeddings[i],
+                metadata: {
+                    sourceFile: uri.toString(),
+                    contentType: 'term',
+                    term: term.term,
+                    text: term.definition,
+                    resolved: false,
+                }
+            }));
+
+            const items = [...segmentItems, ...termItems];
 
             await this.vectorStore.addItems(items as IndexItem[]);
             this.logger.info(`Added ${items.length} items to vector store.`);

@@ -1,15 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
-
-export class GlossaryTerm {
-    public readonly id: string;
-    public readonly term: string;
-    public readonly definition: string;
-    public readonly sourceFile: string;
-
-    constructor(term: string, definition: string, sourceFile: string) {
-        this.id = uuidv4();
-        this.term = term;
-        this.definition = definition;
-        this.sourceFile = sourceFile;
-    }
-}
+export interface GlossaryTerm {
+    id: string; // UUID for unique identification
+    sourceFileUri: string; // The URI of the source file
+    term: string; // The extracted keyphrase or term
+    definition: string; // The surrounding sentence or paragraph as a definition
+    embedding: number[]; // The vector embedding of the definition for similarity search
+    metadata: {
+      groupId?: string; // The ID of the TermGroup this term belongs to, if any
+      isResolved: boolean; // Flag indicating if the user has addressed this term
+    };
+  }

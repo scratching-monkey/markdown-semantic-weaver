@@ -118,4 +118,16 @@ export class VectorStoreService {
             throw error;
         }
     }
+
+    public async getAllItems(): Promise<IndexItem[]> {
+        try {
+            const index = await this.getIndex();
+            const items = await index.listItems();
+            return items as IndexItem[];
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.logger.error(`Error getting all items: ${errorMessage}`);
+            return [];
+        }
+    }
 }

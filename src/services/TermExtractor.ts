@@ -1,6 +1,7 @@
 import { ContentBlock } from "../models/ContentBlock.js";
 import { GlossaryTerm } from "../models/GlossaryTerm.js";
 import * as natural from 'natural';
+import { v4 as uuidv4 } from 'uuid';
 
 export class TermExtractor {
     private readonly sourceFile: string;
@@ -9,8 +10,8 @@ export class TermExtractor {
         this.sourceFile = sourceFile;
     }
 
-    public extract(blocks: ContentBlock[]): GlossaryTerm[] {
-                const text = blocks.map(b => b.rawContent).join('\n');
+    public extract(blocks: ContentBlock[]): Omit<GlossaryTerm, 'embedding' | 'metadata'>[] {
+        const text = blocks.map(b => b.rawContent).join('\n');
         const linguisticTerms = this.linguisticPass(text);
         const statisticalTerms = this.statisticalPass(text);
 
@@ -32,7 +33,12 @@ export class TermExtractor {
 
         const sortedTerms = Array.from(combined.entries()).sort((a, b) => b[1].score - a[1].score);
 
-        return sortedTerms.slice(0, 20).map(([term, data]) => new GlossaryTerm(term, data.definition, this.sourceFile));
+        return sortedTerms.slice(0, 20).map(([term, data]) => ({
+            id: uuidv4(),
+            term: term,
+            definition: data.definition,
+            sourceFileUri: this.sourceFile
+        }));
     }
 
     private linguisticPass(text: string): { term: string, definition: string }[] {
