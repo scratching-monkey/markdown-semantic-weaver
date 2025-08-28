@@ -24,3 +24,6 @@ Thumbs.db
 /coverage/
 
 /docs/vsc-extension-quickstart.md
+
+# Test Output
+/test-output/

@@ -16,11 +16,9 @@ export class CommandHandlerService {
     ) {}
 
     public registerCommands(context: vscode.ExtensionContext) {
-        const addSourceCommand = vscode.commands.registerCommand('markdown-semantic-weaver.addSource', (uri?: vscode.Uri, uris?: vscode.Uri[]) => {
-            this.handleAddSource(uri, uris);
-        });
-
-        const testCommand = vscode.commands.registerCommand('markdown-semantic-weaver.testCommand', () => {
+        const addSourceCommand = vscode.commands.registerCommand('markdown-semantic-weaver.addSource', async (uri?: vscode.Uri, uris?: vscode.Uri[]) => {
+            await this.handleAddSource(uri, uris);
+        });        const testCommand = vscode.commands.registerCommand('markdown-semantic-weaver.testCommand', () => {
             this.logger.info("Test command executed.");
             if (this.sessionManager.isSessionActive()) {
                 this.logger.info("Session is active.");
@@ -45,30 +43,35 @@ export class CommandHandlerService {
         context.subscriptions.push(addSourceCommand, testCommand, testEmbedding);
     }
 
-    private async handleAddSource(uri?: vscode.Uri, uris?: vscode.Uri[]): Promise<void> {
+    private handleAddSource(uri?: vscode.Uri, uris?: vscode.Uri[]): Promise<void> {
         const filesToProcess = uris || (uri ? [uri] : []);
         if (filesToProcess.length === 0) {
-            return;
+            return Promise.resolve();
         }
 
-        await this.sessionManager.startSessionIfNeeded();
-        this.sessionManager.addSourceFiles(filesToProcess);
-
-        vscode.window.withProgress({
-            location: vscode.ProgressLocation.Notification,
-            title: "Processing source files",
-            cancellable: false
-        }, async (progress) => {
-            for (const [index, fileUri] of filesToProcess.entries()) {
-                progress.report({ message: `Processing ${fileUri.fsPath.split('/').pop()}`, increment: (1 / filesToProcess.length) * 100 });
+        return new Promise((resolve, reject) => {
+            vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: "Processing source files",
+                cancellable: false
+            }, async (progress) => {
                 try {
-                    await this.sourceProcessingService.processFile(fileUri);
+                    await this.sessionManager.startSessionIfNeeded();
+                    this.sessionManager.addSourceFiles(filesToProcess);
+
+                    for (const fileUri of filesToProcess) {
+                        const fileName = fileUri.fsPath.split('/').pop();
+                        progress.report({ message: `Processing ${fileName}` });
+                        await this.sourceProcessingService.processFile(fileUri);
+                    }
+                    resolve();
                 } catch (error) {
                     const errorMessage = error instanceof Error ? error.message : String(error);
-                    this.logger.error(`Error processing file ${fileUri.fsPath}: ${errorMessage}`);
-                    vscode.window.showErrorMessage(`Failed to process file: ${fileUri.fsPath}`);
+                    this.logger.error(`Error during source processing: ${errorMessage}`);
+                    vscode.window.showErrorMessage(`Failed to process sources: ${errorMessage}`);
+                    reject(error);
                 }
-            }
+            });
         });
     }
 }

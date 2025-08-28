@@ -52,7 +52,7 @@ export class DataAccessService {
     public async getUniqueSections(): Promise<SourceSection[]> {
         const allItems = await this.vectorStore.getAllItems();
         return allItems
-            .filter(item => item.metadata.contentType === 'section' && !item.metadata.similarityGroupId && !item.metadata.isResolved)
+            .filter(item => item.metadata.contentType === 'section' && !item.metadata.similarityGroupId)
             .map(this.mapIndexItemToSourceSection);
     }
 
@@ -91,6 +91,13 @@ export class DataAccessService {
         return allItems
             .filter(item => item.metadata.contentType === 'term' && !item.metadata.similarityGroupId && !item.metadata.isResolved)
             .map(this.mapIndexItemToGlossaryTerm);
+    }
+
+    public async getAllSections(): Promise<SourceSection[]> {
+        const allItems = await this.vectorStore.getAllItems();
+        return allItems
+            .filter(item => item.metadata.contentType === 'section')
+            .map(this.mapIndexItemToSourceSection);
     }
 
     private mapIndexItemToSourceSection(item: IndexItem): SourceSection {

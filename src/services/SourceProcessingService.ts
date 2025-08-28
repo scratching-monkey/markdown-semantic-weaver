@@ -66,9 +66,8 @@ export class SourceProcessingService {
                 id: segment.id,
                 vector: segmentEmbeddings[i],
                 metadata: {
-                    sourceFile: uri.toString(),
+                    ...segment.metadata,
                     contentType: 'section',
-                    text: segment.rawContent,
                     resolved: false,
                 }
             }));
@@ -77,10 +76,8 @@ export class SourceProcessingService {
                 id: term.id,
                 vector: termEmbeddings[i],
                 metadata: {
-                    sourceFile: uri.toString(),
+                    ...term,
                     contentType: 'term',
-                    term: term.term,
-                    text: term.definition,
                     resolved: false,
                 }
             }));

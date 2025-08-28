@@ -4,7 +4,7 @@ import { Node } from 'unist';
 /**
  * Represents the type of a content block.
  */
-export type ContentBlockType = 'paragraph' | 'list' | 'code' | 'heading' | 'blockquote' | 'thematicBreak' | 'table' | 'html';
+export type ContentBlockType = 'section' | 'paragraph' | 'list' | 'code' | 'heading' | 'blockquote' | 'thematicBreak' | 'table' | 'html';
 
 /**
  * Represents an atomic, semantically distinct unit of content derived from a source document.
@@ -32,48 +32,16 @@ export interface ContentBlock {
         /**
          * The workspace-relative path of the source Markdown file.
          */
-        sourceFile: string;
+        source: string;
         /**
-         * The starting line number of the block in the source file.
+         * The heading level of the section. 0 for the root document block.
          */
-        startLine: number;
+        level: number;
         /**
-         * The ending line number of the block in the source file.
+         * The heading text of the section.
          */
-        endLine: number;
-        /**
-         * The heading of the section this block belongs to.
-         */
-        parentHeading?: string;
+        heading: string;
     };
 }
 
-/**
- * Creates a new ContentBlock.
- * @param blockType The type of the content block.
- * @param rawContent The raw Markdown content.
- * @param sourceFile The path to the source file.
- * @param node The unist node corresponding to this block, used to get position.
- * @returns A new ContentBlock object.
- */
-export function createContentBlock(
-    blockType: ContentBlockType,
-    rawContent: string,
-    sourceFile: string,
-    node: Node
-): ContentBlock {
-    if (!node.position) {
-        throw new Error('Node must have position information to create a ContentBlock.');
-    }
 
-    return {
-        id: uuidv4(),
-        blockType,
-        rawContent,
-        metadata: {
-            sourceFile,
-            startLine: node.position.start.line,
-            endLine: node.position.end.line,
-        },
-    };
-}
