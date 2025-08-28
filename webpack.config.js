@@ -4,15 +4,11 @@
 import { resolve as _resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import nodeExternals from 'webpack-node-externals';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-
-//@ts-check
-/** @typedef {import('webpack').Configuration} WebpackConfig **/
-
-/** @type WebpackConfig */
+// ... existing code
 const extensionConfig = {
   target: 'node', // VS Code extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
 	mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
@@ -24,11 +20,14 @@ const extensionConfig = {
     filename: 'extension.js',
     libraryTarget: 'commonjs2'
   },
-  externals: {
-    vscode: 'commonjs vscode' // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
-    // modules added here also need to be added in the .vscodeignore file
-  },
+  externals: [
+    {
+      vscode: 'commonjs vscode' // the vscode-module is created on-the-fly and must be excluded.
+    },
+    nodeExternals()
+  ], // ignore all modules in node_modules folder
   resolve: {
+// ... existing code
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
     extensions: ['.ts', '.js'],
     extensionAlias: {
@@ -45,6 +44,10 @@ const extensionConfig = {
             loader: 'ts-loader'
           }
         ]
+      },
+      {
+        test: /\.node$/,
+        loader: 'node-loader'
       }
     ]
   },

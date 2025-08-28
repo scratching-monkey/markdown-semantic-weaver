@@ -18,6 +18,10 @@ export class ModelAssetService {
         this.logger = LoggerService.getInstance();
     }
 
+    public getModelPath(): string {
+        return this.modelPath;
+    }
+
     public async ensureModelIsAvailable(): Promise<void> {
         if (process.env.VSCODE_TEST) {
             this.logger.info('Skipping model download in test environment.');

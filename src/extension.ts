@@ -1,11 +1,11 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { ModelAssetService } from './services/ModelAssetService.js';
 import { LoggerService } from './services/LoggerService.js';
 import { SessionManager } from './services/SessionManager.js';
 import { DataAccessService } from './services/DataAccessService.js';
 import { CommandHandlerService } from './services/CommandHandlerService.js';
+import { EmbeddingService } from './services/EmbeddingService.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -15,11 +15,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const sessionManager = SessionManager.getInstance();
 	const dataAccessService = DataAccessService.getInstance(sessionManager);
-	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService);
+	const embeddingService = EmbeddingService.getInstance(context);
+	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, embeddingService);
 	commandHandlerService.registerCommands(context);
 
-	const modelAssetService = new ModelAssetService(context);
-	modelAssetService.ensureModelIsAvailable();
+	// Initialize the EmbeddingService
+	EmbeddingService.getInstance(context);
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
