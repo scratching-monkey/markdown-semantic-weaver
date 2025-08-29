@@ -1,32 +1,29 @@
 import * as assert from 'assert';
 import * as sinon from 'sinon';
-import * as vscode from 'vscode';
 import * as path from 'path';
-import * as fs from 'fs';
 import { ModelAssetService } from '../../services/ModelAssetService.js';
-import { LoggerService } from '../../services/LoggerService.js';
+import {
+    createMockExtensionContext,
+    createMockLogger,
+    createMockFileSystem,
+    createMockVSCode,
+    createMockResponse,
+    createMockHttps,
+    createMockWriteStream,
+    setupHttpsModuleMock
+} from './modelAssetService/index.js';
+import * as vscode from 'vscode';
 
 suite('ModelAssetService Test Suite', () => {
     let sandbox: sinon.SinonSandbox;
     let mockContext: vscode.ExtensionContext;
-    let mockLogger: sinon.SinonStubbedInstance<LoggerService>;
+    let mockLogger: ReturnType<typeof createMockLogger>;
     let modelAssetService: ModelAssetService;
 
     setup(() => {
         sandbox = sinon.createSandbox();
-
-        // Mock extension context
-        mockContext = {
-            globalStorageUri: vscode.Uri.file('/tmp/vscode-test-storage')
-        } as vscode.ExtensionContext;
-
-        // Mock logger with proper sinon stubs
-        mockLogger = {
-            info: sandbox.stub(),
-            error: sandbox.stub()
-        } as sinon.SinonStubbedInstance<LoggerService>;
-
-        // Create service instance
+        mockContext = createMockExtensionContext();
+        mockLogger = createMockLogger(sandbox);
         modelAssetService = new ModelAssetService(mockContext, mockLogger);
     });
 
@@ -43,7 +40,7 @@ suite('ModelAssetService Test Suite', () => {
 
     test('ensureModelIsAvailable should skip download in test environment', async () => {
         // Set test environment
-        const originalEnv = process.env.VSCODE_TEST;
+        const cleanup = () => process.env.VSCODE_TEST = undefined;
         process.env.VSCODE_TEST = 'true';
 
         try {
@@ -57,18 +54,19 @@ suite('ModelAssetService Test Suite', () => {
             assert.ok(!mockLogger.info.calledWith('Checking for model...'),
                 'Should not check for model in test environment');
         } finally {
-            process.env.VSCODE_TEST = originalEnv;
+            cleanup();
         }
     });
 
     test('ensureModelIsAvailable should return early when model exists', async () => {
         // Mock fs.existsSync to return true
-        const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
+        const { existsSync } = createMockFileSystem(sandbox);
+        existsSync.returns(true);
 
         await modelAssetService.ensureModelIsAvailable();
 
         // Verify file existence was checked
-        assert.ok(existsSyncStub.calledOnce, 'Should check if model file exists');
+        assert.ok(existsSync.calledOnce, 'Should check if model file exists');
         assert.ok(mockLogger.info.calledWith('Model already exists.'), 'Should log that model exists');
 
         // Verify download was not attempted
@@ -78,7 +76,8 @@ suite('ModelAssetService Test Suite', () => {
 
     test('ensureModelIsAvailable should attempt download when model does not exist', async () => {
         // Mock fs.existsSync to return false
-        const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(false);
+        const { existsSync } = createMockFileSystem(sandbox);
+        existsSync.returns(false);
 
         // Mock downloadModel to resolve
         const downloadStub = sandbox.stub((modelAssetService as unknown as { downloadModel: sinon.SinonStub }).downloadModel).resolves();
@@ -86,7 +85,7 @@ suite('ModelAssetService Test Suite', () => {
         await modelAssetService.ensureModelIsAvailable();
 
         // Verify file existence was checked
-        assert.ok(existsSyncStub.calledOnce, 'Should check if model file exists');
+        assert.ok(existsSync.calledOnce, 'Should check if model file exists');
 
         // Verify download was attempted
         assert.ok(downloadStub.calledOnce, 'Should call downloadModel when model does not exist');
@@ -96,129 +95,75 @@ suite('ModelAssetService Test Suite', () => {
 
     test('downloadModel should create directory structure', async () => {
         // Mock file system operations
-        const mkdirSyncStub = sandbox.stub(fs, 'mkdirSync');
-        sandbox.stub(fs, 'createWriteStream').returns({
-            on: sandbox.stub().returnsThis(),
-            pipe: sandbox.stub().returnsThis(),
-            close: sandbox.stub()
-        } as unknown as fs.WriteStream);
+        const fsMocks = createMockFileSystem(sandbox);
+        const vscodeMocks = createMockVSCode(sandbox);
 
-        // Mock vscode progress API
-        sandbox.stub(vscode.window, 'withProgress').callsFake(
-            async (_options, task) => {
-                const progress = { report: sandbox.stub() };
-                const token = { isCancellationRequested: false, onCancellationRequested: sandbox.stub() } as vscode.CancellationToken;
-                return await task(progress, token);
-            }
-        );
+        fsMocks.createWriteStream.returns(createMockWriteStream(sandbox));
+        fsMocks.mkdirSync.returns(undefined);
 
-        // Mock https.get
-        const mockResponse = {
-            headers: { 'content-length': '1000' },
-            on: sandbox.stub().returnsThis(),
-            pipe: sandbox.stub().returnsThis()
-        };
+        // Mock successful download response
+        const mockResponse = createMockResponse(sandbox);
+        const httpsModule = createMockHttps(sandbox, mockResponse);
 
-        // Mock the https module
-        const httpsModule = { get: sandbox.stub() };
-        httpsModule.get.callsFake((_url: string, callback: (response: unknown) => void) => {
-            callback(mockResponse);
-            return { on: sandbox.stub() };
-        });
+        // Setup HTTPS module mock
+        const cleanup = setupHttpsModuleMock(httpsModule);
 
-        // Replace the module in require cache
-        const originalModule = require.cache[require.resolve('follow-redirects')];
-        require.cache[require.resolve('follow-redirects')] = {
-            exports: httpsModule
-        } as NodeModule;
+        try {
+            await ((modelAssetService as unknown as { downloadModel: () => Promise<void> }).downloadModel());
 
-        // Mock showInformationMessage
-        sandbox.stub(vscode.window, 'showInformationMessage');
+            // Verify directory creation
+            assert.ok(fsMocks.mkdirSync.calledWith(path.dirname(modelAssetService.getModelPath()), { recursive: true }),
+                'Should create model directory');
 
-        // Simulate successful download
-        mockResponse.on.withArgs('data').callsFake((_event: string, callback: (data: Buffer) => void) => {
-            callback(Buffer.from('test data'));
-        });
-        mockResponse.on.withArgs('finish').callsFake((_event: string, callback: () => void) => {
-            callback();
-        });
+            // Verify progress reporting was used
+            assert.ok(vscodeMocks.withProgress.calledOnce, 'Should use progress reporting');
 
-        await ((modelAssetService as unknown as { downloadModel: () => Promise<void> }).downloadModel());
-
-        // Verify directory creation
-        assert.ok(mkdirSyncStub.calledWith(path.dirname(modelAssetService.getModelPath()), { recursive: true }),
-            'Should create model directory');
-
-        // Restore original module
-        if (originalModule) {
-            require.cache[require.resolve('follow-redirects')] = originalModule;
+        } finally {
+            cleanup();
         }
     });
 
     test('downloadModel should handle network errors gracefully', async () => {
         // Mock file system operations
-        sandbox.stub(fs, 'mkdirSync');
-        sandbox.stub(fs, 'createWriteStream').returns({
-            on: sandbox.stub().returnsThis(),
-            pipe: sandbox.stub().returnsThis(),
-            close: sandbox.stub()
-        } as unknown as fs.WriteStream);
-        const unlinkStub = sandbox.stub(fs, 'unlink');
+        const fsMocks = createMockFileSystem(sandbox);
+        const vscodeMocks = createMockVSCode(sandbox);
 
-        // Mock vscode progress API
-        sandbox.stub(vscode.window, 'withProgress').callsFake(
-            async (_options, task) => {
-                const progress = { report: sandbox.stub() };
-                const token = { isCancellationRequested: false, onCancellationRequested: sandbox.stub() } as vscode.CancellationToken;
-                return await task(progress, token);
-            }
-        );
+        fsMocks.createWriteStream.returns(createMockWriteStream(sandbox));
+        fsMocks.mkdirSync.returns(undefined);
+        fsMocks.unlink.returns(undefined);
 
-        // Mock https.get to simulate error
-        const httpsModule = { get: sandbox.stub() };
-        httpsModule.get.callsFake(() => {
-            return {
-                on: sandbox.stub().callsFake((event: string, errorCallback: (error: Error) => void) => {
-                    if (event === 'error') {
-                        errorCallback(new Error('Network error'));
-                    }
-                })
-            };
+        // Mock error response
+        const mockResponse = createMockResponse(sandbox, {
+            simulateError: true,
+            errorMessage: 'Network error'
         });
+        const httpsModule = createMockHttps(sandbox, mockResponse);
 
-        // Replace the module in require cache
-        const originalModule = require.cache[require.resolve('follow-redirects')];
-        require.cache[require.resolve('follow-redirects')] = {
-            exports: httpsModule
-        } as NodeModule;
+        // Setup HTTPS module mock
+        const cleanup = setupHttpsModuleMock(httpsModule);
 
-        // Mock error message
-        const showErrorStub = sandbox.stub(vscode.window, 'showErrorMessage');
-
-        // Test error handling
         try {
-            await ((modelAssetService as unknown as { downloadModel: () => Promise<void> }).downloadModel());
-            assert.fail('Should have thrown an error');
-        } catch (error) {
-            assert.ok(error instanceof Error, 'Should throw an error');
-            assert.strictEqual(error.message, 'Network error', 'Should throw network error');
-        }
+            // Test error handling
+            await assert.rejects(
+                () => (modelAssetService as unknown as { downloadModel: () => Promise<void> }).downloadModel(),
+                /Network error/,
+                'Should throw network error'
+            );
 
-        // Verify error handling
-        assert.ok(unlinkStub.calledWith(modelAssetService.getModelPath()),
-            'Should clean up partial download file');
+            // Verify error handling
+            assert.ok(fsMocks.unlink.calledWith(modelAssetService.getModelPath()),
+                'Should clean up partial download file');
 
-        // Verify error message
-        assert.ok(showErrorStub.calledWith('Failed to download model: Network error'),
-            'Should show error message');
+            // Verify error message
+            assert.ok(vscodeMocks.showErrorMessage.calledWith('Failed to download model: Network error'),
+                'Should show error message');
 
-        // Verify logging
-        assert.ok(mockLogger.error.calledWith('Failed to download model: Network error'),
-            'Should log error');
+            // Verify logging
+            assert.ok(mockLogger.error.calledWith('Failed to download model: Network error'),
+                'Should log error');
 
-        // Restore original module
-        if (originalModule) {
-            require.cache[require.resolve('follow-redirects')] = originalModule;
+        } finally {
+            cleanup();
         }
     });
 });
