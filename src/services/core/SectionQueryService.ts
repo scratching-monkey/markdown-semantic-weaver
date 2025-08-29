@@ -1,8 +1,8 @@
 import { singleton, inject } from "tsyringe";
 import { VectorStoreService } from './VectorStoreService.js';
 import type { IndexItem } from 'vectra';
-import { SimilarityGroup } from '../models/SimilarityGroup.js';
-import { SourceSection } from '../models/SourceSection.js';
+import { SimilarityGroup } from '../../models/SimilarityGroup.js';
+import { SourceSection } from '../../models/SourceSection.js';
 
 @singleton()
 export class SectionQueryService {

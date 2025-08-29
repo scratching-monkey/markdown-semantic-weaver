@@ -1,8 +1,8 @@
 import { singleton, inject } from "tsyringe";
 import { VectorStoreService } from './VectorStoreService.js';
 import type { IndexItem } from 'vectra';
-import { TermGroup } from '../models/TermGroup.js';
-import { GlossaryTerm } from '../models/GlossaryTerm.js';
+import { TermGroup } from '../../models/TermGroup.js';
+import { GlossaryTerm } from '../../models/GlossaryTerm.js';
 
 @singleton()
 export class TermQueryService {

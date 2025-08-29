@@ -1,8 +1,8 @@
 import { injectable } from 'tsyringe';
 import * as vscode from 'vscode';
 import { GlossaryWebviewMessage, AcceptTermData, EditTermData, RejectTermData, GlossaryTerm } from './GlossaryWebviewConfig.js';
-import { DataAccessService } from '../DataAccessService.js';
-import { LoggerService } from '../LoggerService.js';
+import { DataAccessService } from '../core/DataAccessService.js';
+import { LoggerService } from '../utilities/LoggerService.js';
 
 @injectable()
 export class GlossaryMessageHandler {

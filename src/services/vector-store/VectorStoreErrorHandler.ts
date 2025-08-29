@@ -1,4 +1,4 @@
-import { LoggerService } from '../LoggerService.js';
+import { LoggerService } from '../utilities/LoggerService.js';
 
 /**
  * Centralized error handling for VectorStoreService operations

@@ -1,7 +1,7 @@
 import { singleton, inject } from "tsyringe";
-import { LoggerService } from './LoggerService.js';
+import { LoggerService } from '../utilities/LoggerService.js';
 import { VectorStoreService, IndexItem } from './VectorStoreService.js';
-import { SourceSection } from '../models/SourceSection.js';
+import { SourceSection } from '../../models/SourceSection.js';
 
 @singleton()
 export class SectionResolutionService {

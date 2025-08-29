@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { GlossaryWebviewConfig, GlossaryWebviewMessage } from './GlossaryWebviewConfig.js';
 import { GlossaryMessageHandler } from './GlossaryMessageHandler.js';
-import { LoggerService } from '../LoggerService.js';
+import { LoggerService } from '../utilities/LoggerService.js';
 
 @injectable()
 export class GlossaryPanelManager {

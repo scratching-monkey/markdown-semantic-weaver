@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
-import { LoggerService } from './LoggerService.js';
-import { DataAccessService } from './DataAccessService.js';
+import { LoggerService } from '../utilities/LoggerService.js';
+import { DataAccessService } from '../core/DataAccessService.js';
 
 @singleton()
 export class ComparisonVirtualProvider implements vscode.TextDocumentContentProvider {

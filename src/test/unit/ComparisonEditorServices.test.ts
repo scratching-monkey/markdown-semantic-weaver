@@ -2,12 +2,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any later
 import * as assert from 'assert';
 import * as sinon from 'sinon';
-import { ComparisonVirtualProvider } from '../../../src/services/ui/ComparisonVirtualProvider.js';
-import { ComparisonCodeLensProvider } from '../../../src/services/ui/ComparisonCodeLensProvider.js';
-import { ComparisonCodeActionProvider } from '../../../src/services/ui/ComparisonCodeActionProvider.js';
-import { ComparisonDocumentParser } from '../../../src/services/ui/ComparisonDocumentParser.js';
-import { LoggerService } from '../../../src/services/utilities/LoggerService.js';
-import { DataAccessService } from '../../../src/services/core/DataAccessService.js';
+import { ComparisonVirtualProvider } from '../../services/ui/ComparisonVirtualProvider.js';
+import { ComparisonCodeLensProvider } from '../../services/ui/ComparisonCodeLensProvider.js';
+import { ComparisonCodeActionProvider } from '../../services/ui/ComparisonCodeActionProvider.js';
+import { ComparisonDocumentParser } from '../../services/ui/ComparisonDocumentParser.js';
+import { LoggerService } from '../../services/utilities/LoggerService.js';
+import { DataAccessService } from '../../services/core/DataAccessService.js';
 
 suite('Comparison Editor Services Test Suite', () => {
     let comparisonVirtualProvider: ComparisonVirtualProvider;

@@ -2,7 +2,7 @@
 import { singleton } from "tsyringe";
 import { v4 as uuidv4 } from 'uuid';
 import { Node } from 'unist';
-import { ContentBlock } from '../models/ContentBlock.js';
+import { ContentBlock } from '../../models/ContentBlock.js';
 import * as path from 'path';
 import { remark } from 'remark';
 import { toString } from 'mdast-util-to-string';

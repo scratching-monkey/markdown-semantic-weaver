@@ -1,7 +1,7 @@
 import { injectable, injectAll } from "tsyringe";
 import * as vscode from 'vscode';
-import { ICommandHandler, commandHandlerToken } from "../command-handlers/ICommandHandler.js";
-import { LoggerService } from "./LoggerService.js";
+import { ICommandHandler, commandHandlerToken } from "../../command-handlers/ICommandHandler.js";
+import { LoggerService } from "../utilities/LoggerService.js";
 
 @injectable()
 export class CommandRegistry {

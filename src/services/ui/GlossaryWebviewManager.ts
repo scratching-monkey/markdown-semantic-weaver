@@ -2,14 +2,14 @@ import { injectable } from "tsyringe";
 import * as vscode from "vscode";
 import {
     GlossaryTerm
-} from './glossary-webview/index.js';
-import { TermStatisticsCalculator } from './glossary-webview/TermStatisticsCalculator.js';
-import { GlossaryHtmlRenderer } from './glossary-webview/GlossaryHtmlRenderer.js';
-import { GlossaryMessageHandler } from './glossary-webview/GlossaryMessageHandler.js';
-import { GlossaryPanelManager } from './glossary-webview/GlossaryPanelManager.js';
-import { LoggerService } from "./LoggerService.js";
-import { DataAccessService } from "./DataAccessService.js";
-import { TemplateEngine } from "./TemplateEngine.js";
+} from '../../models/GlossaryTerm.js';
+import { TermStatisticsCalculator } from '../glossary-webview/TermStatisticsCalculator.js';
+import { GlossaryHtmlRenderer } from '../glossary-webview/GlossaryHtmlRenderer.js';
+import { GlossaryMessageHandler } from '../glossary-webview/GlossaryMessageHandler.js';
+import { GlossaryPanelManager } from '../glossary-webview/GlossaryPanelManager.js';
+import { LoggerService } from "../utilities/LoggerService.js";
+import { DataAccessService } from "../core/DataAccessService.js";
+import { TemplateEngine } from "../utilities/TemplateEngine.js";
 
 @injectable()
 export class GlossaryWebviewManager {

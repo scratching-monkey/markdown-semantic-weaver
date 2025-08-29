@@ -1,10 +1,10 @@
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
-import { LoggerService } from './LoggerService.js';
-import { TemporaryDocumentManager, DocumentMetadata } from './TemporaryDocumentManager.js';
+import { LoggerService } from '../utilities/LoggerService.js';
+import { TemporaryDocumentManager, DocumentMetadata } from '../utilities/TemporaryDocumentManager.js';
 import { EditorCoordinator } from './EditorCoordinator.js';
-import { ContentBlock } from '../models/ContentBlock.js';
-import { GlossaryTerm } from '../models/GlossaryTerm.js';
+import { ContentBlock } from '../../models/ContentBlock.js';
+import { GlossaryTerm } from '../../models/GlossaryTerm.js';
 
 @singleton()
 export class BlockEditorCoordinator {

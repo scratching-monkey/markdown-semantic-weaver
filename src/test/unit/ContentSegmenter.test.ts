@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import { ContentSegmenter } from '../../../src/services/processing/ContentSegmenter.js';
-import { MarkdownASTParser } from '../../../src/services/processing/MarkdownASTParser.js';
+import { ContentSegmenter } from '../../services/processing/ContentSegmenter.js';
+import { MarkdownASTParser } from '../../services/processing/MarkdownASTParser.js';
 
 suite('ContentSegmenter Test Suite', () => {
     const parser = new MarkdownASTParser();

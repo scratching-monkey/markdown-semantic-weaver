@@ -1,17 +1,17 @@
 import { injectable } from "tsyringe";
-import { ContentBlock } from "../models/ContentBlock.js";
-import { GlossaryTerm } from "../models/GlossaryTerm.js";
+import { ContentBlock } from "../../models/ContentBlock.js";
+import { GlossaryTerm } from "../../models/GlossaryTerm.js";
 import { v4 as uuidv4 } from 'uuid';
 import { MarkdownASTParser } from './MarkdownASTParser.js';
-import { Heading, Paragraph, List, Table } from 'mdast';
+import { RootContent, Heading, Paragraph, List, Table } from 'mdast';
 import {
-    ExtractedTerm,
+    type ExtractedTerm,
     TermExtractionConfig,
     AstTraverser,
     TextExtractor,
     PatternMatcher,
     TermCombiner
-} from './term-extraction/index.js';
+} from '../term-extraction/index.js';
 
 @injectable()
 export class TermExtractor {
@@ -27,7 +27,7 @@ export class TermExtractor {
         // Combine results with scoring
         const combinedTerms = TermCombiner.combineAndScoreTerms(structuralTerms, nlpTerms);
 
-        return combinedTerms.map(term => ({
+        return combinedTerms.map((term: ExtractedTerm) => ({
             id: uuidv4(),
             term: term.term,
             definition: term.definition,
@@ -42,15 +42,15 @@ export class TermExtractor {
 
         let currentScope = '';
 
-        AstTraverser.traverse(ast, (node) => {
+        AstTraverser.traverse(ast, (node: RootContent) => {
             // Update scope when we encounter headings
             if (node.type === 'heading') {
                 currentScope = TextExtractor.extractHeadingText(node as Heading);
             }
-
             // Pattern 1: Bold term followed by colon (**Term:** Definition)
             if (node.type === 'paragraph') {
-                const boldTerms = PatternMatcher.extractBoldTermsFromParagraph(node as Paragraph);
+                const paragraphNode = node as Paragraph;
+                const boldTerms = PatternMatcher.extractBoldTermsFromParagraph(paragraphNode);
                 for (const { term, definition } of boldTerms) {
                     terms.push({
                         term,
@@ -64,7 +64,8 @@ export class TermExtractor {
 
             // Pattern 2: Bulleted list of bolded terms (- **Term:** Definition)
             if (node.type === 'list') {
-                const listTerms = PatternMatcher.extractTermsFromList(node as List);
+                const listNode = node as List;
+                const listTerms = PatternMatcher.extractTermsFromList(listNode);
                 for (const { term, definition } of listTerms) {
                     terms.push({
                         term,
@@ -78,7 +79,8 @@ export class TermExtractor {
 
             // Pattern 4: Definition tables
             if (node.type === 'table') {
-                const tableTerms = PatternMatcher.extractTermsFromTable(node as Table);
+                const tableNode = node as Table;
+                const tableTerms = PatternMatcher.extractTermsFromTable(tableNode);
                 for (const { term, definition } of tableTerms) {
                     terms.push({
                         term,

@@ -18,6 +18,6 @@ export * from './processing/index.js';
 export * from './utilities/index.js';
 
 // Re-export existing specialized modules
-export * from './vector-store/index.js';
 export * from './glossary-webview/index.js';
 export * from './term-extraction/index.js';
+export * from './vector-store/index.js';

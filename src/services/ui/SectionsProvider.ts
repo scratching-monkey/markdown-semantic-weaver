@@ -1,8 +1,8 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { DataAccessService } from '../core/DataAccessService.js';
-import { SimilarityGroup } from '../models/SimilarityGroup.js';
-import { SourceSection } from '../models/SourceSection.js';
+import { SimilarityGroup } from '../../models/SimilarityGroup.js';
+import { SourceSection } from '../../models/SourceSection.js';
 
 @injectable()
 export class SectionsProvider implements vscode.TreeDataProvider<SimilarityGroup | SourceSection> {

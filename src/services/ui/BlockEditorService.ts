@@ -1,8 +1,8 @@
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
-import { LoggerService } from './LoggerService.js';
-import { SessionManager } from './SessionManager.js';
-import { DataAccessService } from './DataAccessService.js';
+import { LoggerService } from '../utilities/LoggerService.js';
+import { SessionManager } from '../core/SessionManager.js';
+import { DataAccessService } from '../core/DataAccessService.js';
 
 interface BlockEditorSession {
     documentUri: vscode.Uri;

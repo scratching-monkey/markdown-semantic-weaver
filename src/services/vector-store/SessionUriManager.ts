@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as vscode from 'vscode';
-import { SessionManager } from '../SessionManager.js';
+import { SessionManager } from '../core/SessionManager.js';
 import { VECTOR_STORE_CONSTANTS } from './VectorStoreTypes.js';
 
 /**

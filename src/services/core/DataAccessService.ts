@@ -3,13 +3,13 @@ import * as vscode from 'vscode';
 import { SectionQueryService } from './SectionQueryService.js';
 import { TermQueryService } from './TermQueryService.js';
 import { AstService } from './AstService.js';
-import { DocumentContentService } from './DocumentContentService.js';
+import { DocumentContentService } from '../utilities/DocumentContentService.js';
 import { SectionResolutionService } from './SectionResolutionService.js';
-import { SimilarityGroup } from '../models/SimilarityGroup.js';
-import { SourceSection } from '../models/SourceSection.js';
-import { TermGroup } from '../models/TermGroup.js';
-import { GlossaryTerm } from '../models/GlossaryTerm.js';
-import { ContentBlock } from '../models/ContentBlock.js';
+import { SimilarityGroup } from '../../models/SimilarityGroup.js';
+import { SourceSection } from '../../models/SourceSection.js';
+import { TermGroup } from '../../models/TermGroup.js';
+import { GlossaryTerm } from '../../models/GlossaryTerm.js';
+import { ContentBlock } from '../../models/ContentBlock.js';
 import type { Root, Node } from 'mdast';
 
 @singleton()

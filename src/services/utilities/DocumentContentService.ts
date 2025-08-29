@@ -2,7 +2,7 @@
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { SessionManager } from '../core/SessionManager.js';
-import { ContentBlock } from '../models/ContentBlock.js';
+import { ContentBlock } from '../../models/ContentBlock.js';
 import { toMarkdown } from 'mdast-util-to-markdown';
 import { v4 as uuidv4 } from 'uuid';
 import type { Node } from 'mdast';

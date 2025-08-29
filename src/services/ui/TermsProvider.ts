@@ -1,8 +1,8 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { DataAccessService } from '../core/DataAccessService.js';
-import { TermGroup } from '../models/TermGroup.js';
-import { GlossaryTerm } from '../models/GlossaryTerm.js';
+import { TermGroup } from '../../models/TermGroup.js';
+import { GlossaryTerm } from '../../models/GlossaryTerm.js';
 
 @injectable()
 export class TermsProvider implements vscode.TreeDataProvider<TermGroup | GlossaryTerm> {

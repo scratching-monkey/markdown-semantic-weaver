@@ -3,14 +3,14 @@ import * as vscode from 'vscode';
 import { LocalIndex, QueryResult } from 'vectra';
 import type { IndexItem } from 'vectra';
 import { SessionManager } from './SessionManager.js';
-import { LoggerService } from './LoggerService.js';
+import { LoggerService } from '../utilities/LoggerService.js';
 import {
     VectorStoreErrorHandler,
     SessionUriManager,
     VECTOR_STORE_CONSTANTS,
     type VectorStoreMetadata,
     type TypedIndexItem
-} from './vector-store/index.js';
+} from '../vector-store/index.js';
 
 export type { IndexItem, VectorStoreMetadata, TypedIndexItem };
 
@@ -61,6 +61,7 @@ export class VectorStoreService {
             return this.index;
         } catch (error) {
             this.errorHandler.handleError('getIndex', error);
+            throw error; // Re-throw the error to ensure the promise is rejected
         }
     }
 

@@ -1,6 +1,6 @@
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
-import { LoggerService } from './LoggerService.js';
+import { LoggerService } from '../utilities/LoggerService.js';
 import { ComparisonVirtualProvider } from './ComparisonVirtualProvider.js';
 import { ComparisonDocumentParser } from './ComparisonDocumentParser.js';
 

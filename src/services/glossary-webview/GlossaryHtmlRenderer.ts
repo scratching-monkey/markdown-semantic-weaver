@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
 import { GlossaryTerm, TermStatistics, GlossaryWebviewConfig } from './GlossaryWebviewConfig.js';
-import { TemplateEngine } from '../TemplateEngine.js';
+import { TemplateEngine } from '../utilities/TemplateEngine.js';
 
 @injectable()
 export class GlossaryHtmlRenderer {

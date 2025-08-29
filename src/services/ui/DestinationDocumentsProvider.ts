@@ -2,7 +2,7 @@ import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { DestinationDocumentManager } from '../core/DestinationDocumentManager.js';
-import { DestinationDocument } from '../models/DestinationDocument.js';
+import { DestinationDocument } from '../../models/DestinationDocument.js';
 
 @injectable()
 export class DestinationDocumentsProvider implements vscode.TreeDataProvider<DestinationDocument> {

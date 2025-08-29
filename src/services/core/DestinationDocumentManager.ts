@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import type { Root } from 'mdast';
 import { AstService } from './AstService.js';
 
-import { DestinationDocumentModel } from '../models/DestinationDocumentModel.js';
+import { DestinationDocumentModel } from '../../models/DestinationDocumentModel.js';
 
 export { DestinationDocumentModel };
 
