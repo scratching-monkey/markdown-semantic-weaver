@@ -18,16 +18,6 @@
         "title": "Add as Source"
       },
       {
-        "command": "markdown-semantic-weaver.addDestination",
-        "title": "Add as Destination",
-        "icon": "$(add)"
-      },
-      {
-        "command": "markdown-semantic-weaver.addContentBlock",
-        "title": "Add Content Block",
-        "icon": "$(add)"
-      },
-      {
         "command": "markdown-semantic-weaver.helloWorld",
         "title": "Hello World"
       },
@@ -50,6 +40,11 @@
         "icon": "$(trash)"
       },
       {
+       {
+         "command": "markdown-semantic-weaver.addDestination",
+         "title": "Add as Destination",
+         "icon": "$(add)"
+       },
         "command": "markdown-semantic-weaver.deleteContentBlock",
         "title": "Delete Content Block",
         "icon": "$(trash)"
@@ -68,15 +63,15 @@
     "menus": {
       "explorer/context": [
         {
-          "when": "resourceLangId == markdown",
+         {
+           "when": "resourceLangId == markdown && !listMultiSelection",
+           "command": "markdown-semantic-weaver.addDestination",
+           "group": "navigation"
+         }
           "command": "markdown-semantic-weaver.addSource",
           "group": "navigation"
-        },
-        {
-          "when": "resourceLangId == markdown && !listMultiSelection",
-          "command": "markdown-semantic-weaver.addDestination",
-          "group": "navigation"
         }
+         {\n           "when": "resourceLangId == markdown && !listMultiSelection",\n           "command": "markdown-semantic-weaver.addDestination",\n           "group": "navigation"\n         },
       ],
       "view/title": [
         {
@@ -93,11 +88,6 @@
         },
         {
           "command": "markdown-semantic-weaver.deleteContentBlock",
-          "when": "view == 'markdown-semantic-weaver.documentOutliner' && viewItem == 'contentBlock'",
-          "group": "inline"
-        },
-        {
-          "command": "markdown-semantic-weaver.addContentBlock",
           "when": "view == 'markdown-semantic-weaver.documentOutliner' && viewItem == 'contentBlock'",
           "group": "inline"
         },

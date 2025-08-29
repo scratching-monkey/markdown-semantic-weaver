@@ -112,13 +112,13 @@ The following table provides a comprehensive summary and single source of truth 
 | User Action | Command ID | Title/Label | Icon | Contribution Point(s) | when Clause Context |
 | :---- | :---- | :---- | :---- | :---- | :---- |
 | Add Source File(s) | markdown-semantic-weaver.addSource | Add as Source | (none) | explorer/context | resourceLangId \== markdown |
-| Add Destination File | markdown-semantic-weaver.addDestination | Add as Destination | (none) | explorer/context | resourceLangId \== markdown &&\!listMultiSelection |
-| Add New Destination | markdown-semantic-weaver.addNewDestination | Add New Destination Document | $(add) | view/title | view \== markdown-semantic-weaver.destinationDocumentsView && markdown-semantic-weaver.sessionActive |
-| Preview Document | markdown-semantic-weaver.previewDocument | Preview Document | $(eye) | view/item/context | view \== markdown-semantic-weaver.destinationDocumentsView |
-| Publish Documents | markdown-semantic-weaver.publish | Publish All Documents | $(cloud-upload) | view/title, commandPalette | view \== markdown-semantic-weaver.destinationDocumentsView && markdown-semantic-weaver.sessionActive |
-| Edit Content Block | markdown-semantic-weaver.editContentBlock | Edit | $(edit) | view/item/context (inline) | view \== markdown-semantic-weaver.destinationDocumentOutliner |
-| Delete Content Block | markdown-semantic-weaver.deleteContentBlock | Delete | $(trash) | view/item/context (inline) | view \== markdown-semantic-weaver.destinationDocumentOutliner |
-| Remove Term | markdown-semantic-weaver.removeTerm | Remove Term | (none) | view/item/context | view \== markdown-semantic-weaver.termsView |
+| Add Destination File | markdown-semantic-weaver.addDestination | Add as Destination | $(add) | explorer/context | resourceLangId \== markdown && !listMultiSelection |
+| Add New Destination | markdown-semantic-weaver.addNewDestinationDocument | Add New Destination Document | $(add) | view/title | view == markdown-semantic-weaver.destinationDocuments |
+| Delete Destination Document | markdown-semantic-weaver.deleteDestinationDocument | Remove Destination Document | $(trash) | view/item/context | view == markdown-semantic-weaver.destinationDocuments && viewItem == 'destinationDocument' |
+| Delete Content Block | markdown-semantic-weaver.deleteContentBlock | Delete Content Block | $(trash) | view/item/context (inline) | view == markdown-semantic-weaver.documentOutliner && viewItem == 'contentBlock' |
+| Add Content Block | markdown-semantic-weaver.addContentBlock | Add Content Block | $(add) | view/item/context (inline) | view == markdown-semantic-weaver.documentOutliner && viewItem == 'contentBlock' |
+| Insert Section | markdown-semantic-weaver.insertSection | Insert Section | $(add) | view/item/context (inline) | view == markdown-semantic-weaver.sections && viewItem == 'section' |
+| Move Content Block | markdown-semantic-weaver.moveContentBlock | Move Content Block | $(arrow-up) | (programmatic only) | N/A |
 
 ## **3\. Handler Architecture and Implementation**
 
@@ -133,19 +133,15 @@ TypeScript
 
 // Example of CommandHandlerService structure
 import \* as vscode from 'vscode';
-import { SessionService } from './services/sessionService';
-import { DataAccessService } from './services/dataAccessService';
-import { EditorService } from './services/editorService';
-import { GenerationService } from './services/generationService';
-import { SourceProcessingPipeline } from './processing/sourceProcessingPipeline';
+import { SessionManager } from './services/SessionManager';
+import { DataAccessService } from './services/DataAccessService';
+import { SourceProcessingService } from './services/SourceProcessingService';
 
 export class CommandHandlerService {
     constructor(
-        private sessionService: SessionService,
+        private sessionManager: SessionManager,
         private dataAccessService: DataAccessService,
-        private editorService: EditorService,
-        private generationService: GenerationService,
-        private sourceProcessingPipeline: SourceProcessingPipeline
+        private sourceProcessingService: SourceProcessingService
     ) {}
 
     public registerCommands(context: vscode.ExtensionContext): void {
@@ -188,24 +184,15 @@ TypeScript
 
 // Example of initialization in extension.ts
 import \* as vscode from 'vscode';
-import { CommandHandlerService } from './commandHandlerService';
+import { registerCommandHandlers } from './command-handlers/index.js';
 //... import other services
 
 export function activate(context: vscode.ExtensionContext) {
-    // 1\. Instantiate all services
-    const sessionService \= new SessionService(context);
-    const dataAccessService \= new DataAccessService(sessionService);
-    //... and so on for all other services
+    // 1\. Instantiate all services (using dependency injection container)
+    // Services are automatically instantiated by the tsyringe container
 
-    // 2\. Instantiate the command handler service with its dependencies
-    const commandHandlerService \= new CommandHandlerService(
-        sessionService,
-        dataAccessService,
-        //... pass other instantiated services
-    );
-
-    // 3\. Register all commands
-    commandHandlerService.registerCommands(context);
+    // 2\. Register all commands
+    registerCommandHandlers();
 }
 
 ## **4\. Detailed Handler Workflows**
@@ -221,9 +208,9 @@ These handlers are the primary entry points for initiating or modifying a weavin
 This handler is responsible for adding one or more Markdown files to the pool of source documents for analysis.1
 
 1. **Input Validation:** The handler first determines the list of file URIs to process from the uris argument, as detailed in Section 3.2. If no files are provided, it will exit gracefully.
-2. **Session Initiation:** It will invoke await this.sessionService.startSessionIfNeeded(). This call is idempotent; it will either start a new session or do nothing if one is already active. This is the point where the markdown-semantic-weaver.sessionActive context is set to true.
+2. **Session Initiation:** It will invoke await this.sessionManager.startSessionIfNeeded(). This call is idempotent; it will either start a new session or do nothing if one is already active. This is the point where the markdown-semantic-weaver.sessionActive context is set to true.
 3. **User Feedback:** The handler will use vscode.window.withProgress to display a non-blocking notification in the bottom-right corner, informing the user that source files are being processed. The progress indicator will be indeterminate.
-4. **Delegation:** Inside a try...catch block, the handler will iterate through the validated list of URIs. For each URI, it will call await this.sourceProcessingPipeline.processFile(uri). The processFile method encapsulates the entire pipeline: parsing, sectioning, embedding, storage, and similarity analysis.2 The handler will update the `vscode.window.withProgress` notification for each file processed. The underlying event that triggers a refresh of UI components like the TreeViews will be emitted by the `sessionService` after each file's data has been successfully processed and committed to the session state.
+4. **Delegation:** Inside a try...catch block, the handler will iterate through the validated list of URIs. For each URI, it will call await this.sourceProcessingService.processFile(uri). The processFile method encapsulates the entire pipeline: parsing, sectioning, embedding, storage, and similarity analysis. The handler will update the `vscode.window.withProgress` notification for each file processed. The underlying event that triggers a refresh of UI components like the TreeViews will be emitted by the `sessionManager` after each file's data has been successfully processed and committed to the session state.
 5. **Finalization:** Upon successful completion of all files, the progress notification will be updated to a "complete" state before disappearing. If any error occurs during processing, the catch block will delegate the error to the centralized ErrorHandler for consistent user notification and logging.
 
 #### **handleAddDestination(uri: vscode.Uri)**
@@ -231,8 +218,8 @@ This handler is responsible for adding one or more Markdown files to the pool of
 This handler adds an existing Markdown file as a destination document for authoring.1
 
 1. **Input Validation:** The handler ensures the uri argument is valid.
-2. **Session Initiation:** It will invoke await this.sessionService.startSessionIfNeeded().
-3. **Delegation:** The handler will call await this.sessionService.addDestinationDocument(uri). The SessionService is responsible for parsing the file's content into the internal AST-based model and then emitting an event to trigger the refresh of the Destination Documents View and Destination Document Outliner.
+2. **Session Initiation:** It will invoke await this.sessionManager.startSessionIfNeeded().
+3. **Delegation:** The handler will read the file content, parse it into an AST using MarkdownASTParser, add path information using AstService, and create a new destination document in the DestinationDocumentManager. The manager will emit events to trigger the refresh of the Destination Documents View and Destination Document Outliner.
 
 ### **4.2. Destination Document Lifecycle Handlers**
 
@@ -242,9 +229,7 @@ These handlers manage the creation, preview, and final publication of destinatio
 
 This handler creates a new, empty destination document within the current session.1
 
-1. **User Input:** It will call vscode.window.showInputBox with a prompt for the user to enter a title for the new document.
-2. **Validation:** If the user cancels the input box or provides an empty string, the handler will exit.
-3. **Delegation:** If a valid title is provided, the handler will call await this.sessionService.createNewDestinationDocument(title). The SessionService will create the new document in the session state and emit an event to update the Destination Documents View.
+1. **Delegation:** The handler will call the DestinationDocumentManager.createNew() method, which creates a new empty document with a default AST structure. The manager will emit events to update the Destination Documents View. The handler also sets the newly created document as the active document.
 
 #### **handlePreviewDocument(destinationItem: DestinationDocumentTreeItem)**
 

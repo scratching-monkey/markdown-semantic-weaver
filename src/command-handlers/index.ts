@@ -1,5 +1,7 @@
 import { container } from "tsyringe";
 import { AddNewDestinationDocumentHandler } from "./AddNewDestinationDocumentHandler.js";
+import { AddContentBlockHandler } from "./AddContentBlockHandler.js";
+import { AddDestinationHandler } from "./AddDestinationHandler.js";
 import { AddSourceHandler } from "./AddSourceHandler.js";
 import { DeleteContentBlockHandler } from "./DeleteContentBlockHandler.js";
 import { DeleteDestinationDocumentHandler } from "./DeleteDestinationDocumentHandler.js";
@@ -9,6 +11,8 @@ import { MoveContentBlockHandler } from "./MoveContentBlockHandler.js";
 
 export function registerCommandHandlers(): void {
     container.register(commandHandlerToken, { useClass: AddSourceHandler });
+	container.register(commandHandlerToken, { useClass: AddDestinationHandler });
+	container.register(commandHandlerToken, { useClass: AddContentBlockHandler });
 	container.register(commandHandlerToken, { useClass: AddNewDestinationDocumentHandler });
 	container.register(commandHandlerToken, { useClass: DeleteContentBlockHandler });
 	container.register(commandHandlerToken, { useClass: DeleteDestinationDocumentHandler });

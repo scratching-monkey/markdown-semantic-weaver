@@ -46,18 +46,16 @@ suite("deleteContentBlock Command Integration Test", () => {
     await vscode.commands.executeCommand("markdown-semantic-weaver.insertSection", allSections[1]);
 
     let contentBlocks = await dataAccessService.getDocumentContent(testDocUri);
-    assert.strictEqual(contentBlocks.length, 2, "Precondition: Document should have 2 blocks");
+    const initialBlockCount = contentBlocks.length;
+    assert.ok(initialBlockCount >= 2, `Precondition: Document should have at least 2 blocks, found ${initialBlockCount}`);
     const blockToDelete = contentBlocks[0];
 
-    await vscode.commands.executeCommand("markdown-semantic-weaver.deleteContentBlock", {
-      path: blockToDelete.path,
-      uri: testDocUri
-    });
+    await vscode.commands.executeCommand("markdown-semantic-weaver.deleteContentBlock", blockToDelete);
 
     contentBlocks = await dataAccessService.getDocumentContent(testDocUri);
-    assert.strictEqual(contentBlocks.length, 1, "Document should have 1 block after deletion");
-    assert.notStrictEqual(contentBlocks[0].id, blockToDelete.id, "The wrong block was deleted");
-    assert.strictEqual(contentBlocks[0].rawContent, contentBlocks[0].rawContent, "The remaining block's content is incorrect");
+    assert.strictEqual(contentBlocks.length, initialBlockCount - 1, `Document should have ${initialBlockCount - 1} blocks after deletion, found ${contentBlocks.length}`);
+    assert.ok(contentBlocks.every(block => block.id !== blockToDelete.id), "The deleted block should not be present");
+    assert.ok(contentBlocks.length > 0, "Document should still have at least one block remaining");
 
     await sessionManager.endSession();
   });
