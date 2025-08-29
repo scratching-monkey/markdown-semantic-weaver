@@ -14,8 +14,10 @@ export class MoveContentBlockHandler implements ICommandHandler {
         @inject(DestinationDocumentManager) private documentManager: DestinationDocumentManager
     ) {}
 
-    public async execute(sourceItem: ContentBlock, targetItem: ContentBlock) {
-        if (!sourceItem || !sourceItem.path || !sourceItem.metadata.source || !targetItem || !targetItem.path || !targetItem.metadata.source) {
+    public async execute(params: { source: ContentBlock, target: ContentBlock }) {
+        const { source: sourceItem, target: targetItem } = params;
+
+        if (!sourceItem || !sourceItem.path || !targetItem || !targetItem.path) {
             return;
         }
 

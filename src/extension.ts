@@ -10,6 +10,7 @@ import { SectionsProvider } from './views/SectionsProvider.js';
 import { TermsProvider } from './views/TermsProvider.js';
 import { CommandRegistry } from './services/CommandRegistry.js';
 import { registerCommandHandlers } from './command-handlers/index.js';
+import { VectorStoreService } from './services/VectorStoreService.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -55,8 +56,13 @@ export function activate(context: vscode.ExtensionContext) {
 		})
 	);
 
+	// Initialize services
+	const sessionManager = container.resolve(SessionManager);
+	const vectorStoreService = container.resolve(VectorStoreService);
+	vectorStoreService.initialize(sessionManager);
+
 	// Initialize the EmbeddingService
-	container.resolve(EmbeddingService);
+	container.resolve(EmbeddingService).init();
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated

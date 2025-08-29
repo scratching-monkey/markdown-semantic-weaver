@@ -57,7 +57,9 @@ export class DestinationDocumentManager {
             ast: ast
         };
         this._documents.set(newDoc.uri.toString(), newDoc);
+        console.log(`DestinationDocumentManager: Created new document ${newDoc.uri.toString()}, total documents: ${this._documents.size}`);
         this._onDestinationDocumentsDidChange.fire();
+        console.log('DestinationDocumentManager: Fired onDestinationDocumentsDidChange event');
     }
 
     public remove(uri: vscode.Uri): void {

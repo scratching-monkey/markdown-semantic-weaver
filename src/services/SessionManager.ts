@@ -47,6 +47,12 @@ export class SessionManager {
             this._state = { ...this._state, sourceFileUris: this.sourceFileManager.getAll() };
         });
 
+        this.documentManager.onDestinationDocumentsDidChange(() => {
+            console.log('SessionManager: Received onDestinationDocumentsDidChange event');
+            this._state = { ...this._state, destinationDocuments: this.documentManager.getAll() };
+            console.log(`SessionManager: Updated state with ${this._state.destinationDocuments.size} destination documents`);
+        });
+
         this.documentManager.onDestinationDocumentDidChange(e => {
             if (this.isSessionActive()) {
                 const newDocs = new Map(this._state.destinationDocuments);

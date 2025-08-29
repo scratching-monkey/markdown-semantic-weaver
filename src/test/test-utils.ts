@@ -1,70 +1,93 @@
 import { container } from 'tsyringe';
 import * as vscode from 'vscode';
-import { registerCommandHandlers } from '../command-handlers/index.js';
-import { AstService } from '../services/AstService.js';
-import { CommandRegistry } from '../services/CommandRegistry.js';
-import { ContentSegmenter } from '../services/ContentSegmenter.js';
-import { DataAccessService } from '../services/DataAccessService.js';
-import { DestinationDocumentManager } from '../services/DestinationDocumentManager.js';
 import { EmbeddingService } from '../services/EmbeddingService.js';
+import { EnvironmentService } from '../services/EnvironmentService.js';
+import { registerCommandHandlers } from '../command-handlers/index.js';
+import { CommandRegistry } from '../services/CommandRegistry.js';
 import { LoggerService } from '../services/LoggerService.js';
-import { MarkdownASTParser } from '../services/MarkdownASTParser.js';
-import { ModelAssetService } from '../services/ModelAssetService.js';
-import { SessionManager } from '../services/SessionManager.js';
-import { SourceFileManager } from '../services/SourceFileManager.js';
-import { SourceProcessingService } from '../services/SourceProcessingService.js';
-import { TermExtractor } from '../services/TermExtractor.js';
-import { SectionQueryService } from '../services/SectionQueryService.js';
-import { TermQueryService } from '../services/TermQueryService.js';
 import { VectorStoreService } from '../services/VectorStoreService.js';
-import { DestinationDocumentOutlinerProvider } from '../views/DestinationDocumentOutlinerProvider.js';
-import { DestinationDocumentsProvider } from '../views/DestinationDocumentsProvider.js';
-import { SectionsProvider } from '../views/SectionsProvider.js';
-import { TermsProvider } from '../views/TermsProvider.js';
+import { SessionManager } from '../services/SessionManager.js';
 
-let isInitialized = false;
+// Global flag to ensure commands are only registered once across all test suites
+let commandsRegistered = false;
 
-export async function initializeTestEnvironment(context: vscode.ExtensionContext) {
-    if (isInitialized) {
-        return;
-    }
+// Mock implementation of vscode.window.withProgress that properly awaits async operations
+export const mockWithProgress = <R>(
+    options: vscode.ProgressOptions,
+    task: (progress: vscode.Progress<{ message?: string; increment?: number }>) => Thenable<R>
+): Thenable<R> => {
+    return new Promise<R>((resolve, reject) => {
+        // Log progress options in debug mode
+        if (process.env.DEBUG_TEST_PROGRESS) {
+            console.log(`Mock withProgress called with title: ${options.title || 'Untitled'}`);
+        }
 
+        // Create a mock progress object
+        const progress: vscode.Progress<{ message?: string; increment?: number }> = {
+            report: (value: { message?: string; increment?: number }) => {
+                // In test environment, we can optionally log progress updates
+                if (process.env.DEBUG_TEST_PROGRESS) {
+                    console.log(`Progress: ${value.message || ''} ${value.increment ? `(${value.increment}%)` : ''}`);
+                }
+            }
+        };
+
+        // Execute the task and properly await its completion
+        Promise.resolve(task(progress))
+            .then(resolve)
+            .catch(reject);
+    });
+};
+
+// Mock VS Code APIs for testing
+export const mockVSCodeAPIs = () => {
+    // Mock vscode.window.withProgress
+    const originalWithProgress = vscode.window.withProgress;
+    (vscode.window as any).withProgress = mockWithProgress;
+
+    // Return cleanup function
+    return () => {
+        (vscode.window as any).withProgress = originalWithProgress;
+    };
+};
+
+// Enhanced test environment initialization
+export async function initializeTestEnvironment(context: vscode.ExtensionContext): Promise<() => void> {
     container.register<vscode.ExtensionContext>("vscode.ExtensionContext", { useValue: context });
 
-    // Register services as singletons
-    container.registerSingleton(LoggerService);
-    container.registerSingleton(ModelAssetService);
-    container.registerSingleton(EmbeddingService);
-    container.registerSingleton(VectorStoreService);
-    container.registerSingleton(DataAccessService);
-    container.registerSingleton(SessionManager);
-    container.registerSingleton(MarkdownASTParser);
-    container.registerSingleton(AstService);
-    container.registerSingleton(ContentSegmenter);
-    container.registerSingleton(SourceProcessingService);
-    container.registerSingleton(SourceFileManager);
-    container.registerSingleton(DestinationDocumentManager);
-    container.registerSingleton(SectionQueryService);
-    container.registerSingleton(TermQueryService);
-    container.registerSingleton(TermExtractor);
-    container.registerSingleton(CommandRegistry);
+    const environmentService = container.resolve(EnvironmentService);
+    environmentService.setTestEnvironment();
 
-    // Register command handlers
-    registerCommandHandlers();
+    // Mock VS Code APIs
+    const cleanup = mockVSCodeAPIs();
 
-    // Register UI providers
-    container.registerSingleton(DestinationDocumentsProvider);
-    container.registerSingleton(DestinationDocumentOutlinerProvider);
-    container.registerSingleton(SectionsProvider);
-    container.registerSingleton(TermsProvider);
+    // Register command handlers only once across all test suites
+    if (!commandsRegistered) {
+        console.log('Test environment: Registering command handlers...');
+        registerCommandHandlers();
 
-    // Pre-warm the embedding model to prevent timeouts in tests
+        const logger = container.resolve(LoggerService);
+        logger.info('Test environment: Extension activating.');
+
+        const commandRegistry = container.resolve(CommandRegistry);
+        commandRegistry.registerCommands(context);
+        logger.info('Test environment: Commands registered.');
+
+        commandsRegistered = true;
+    } else {
+        console.log('Test environment: Commands already registered, skipping...');
+    }
+
+    // Initialize embedding service (this will now use the mocked withProgress)
     const embeddingService = container.resolve(EmbeddingService);
-    await embeddingService.embed(['test']);
+    await embeddingService.init();
+    console.log('Test environment: Embedding service initialized.');
 
-    // Register all commands with VS Code
-    const commandRegistry = container.resolve(CommandRegistry);
-    commandRegistry.registerCommands(context);
+    // Initialize VectorStoreService with SessionManager
+    const sessionManager = container.resolve(SessionManager);
+    const vectorStoreService = container.resolve(VectorStoreService);
+    vectorStoreService.initialize(sessionManager);
+    console.log('Test environment: VectorStoreService initialized.');
 
-    isInitialized = true;
+    return cleanup;
 }

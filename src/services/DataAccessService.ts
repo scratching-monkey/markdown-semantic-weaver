@@ -62,11 +62,12 @@ export class DataAccessService {
         let currentHeading: string | null = null;
         let headingLevel = 0;
 
-        visit(document.ast, (node: Node) => {
+        // Only process direct children of the root
+        for (const node of document.ast.children) {
             if (node.type === 'heading') {
                 currentHeading = toMarkdown({ type: 'root', children: [node as any] }).trim();
                 headingLevel = (node as any).depth;
-                return; // Continue to next node
+                continue; // Don't create a block for headings, just update context
             }
 
             if (node.type !== 'definition' && node.type !== 'yaml') {
@@ -84,11 +85,9 @@ export class DataAccessService {
                         },
                         children: this.extractChildren(node, documentUri.toString(), headingLevel, currentHeading || '')
                     });
-                    return SKIP; // Skip children of this node as they are handled by extractChildren
                 }
             }
-            return;
-        });
+        }
 
         return contentBlocks;
     }

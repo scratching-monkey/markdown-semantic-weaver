@@ -1,4 +1,4 @@
-# Markdown Semantic Weaver - Copilot Instructions
+# Markdown Semantic Weaver
 
 This document provides guidance for AI agents working on the Markdown Semantic Weaver VS Code extension. Understanding these concepts is crucial for making effective contributions.
 

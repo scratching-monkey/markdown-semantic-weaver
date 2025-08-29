@@ -1,4 +1,4 @@
-import { singleton, inject } from "tsyringe";
+import { singleton, inject, container } from "tsyringe";
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { LocalIndex, QueryResult } from 'vectra';
@@ -11,12 +11,18 @@ export type { IndexItem };
 @singleton()
 export class VectorStoreService {
     private index: LocalIndex | undefined;
+    private sessionManager: SessionManager | undefined;
 
     public constructor(
-        @inject(SessionManager) private sessionManager: SessionManager,
         @inject(LoggerService) private logger: LoggerService
     ) {
         this.logger.info('VectorStoreService initialized.');
+    }
+
+    public initialize(sessionManager: SessionManager): void {
+        this.sessionManager = sessionManager;
+        this.sessionManager.onSessionWillEnd(this.clear.bind(this));
+        this.logger.info('VectorStoreService is subscribed to sessionWillEnd event.');
     }
 
     private async getIndex(): Promise<LocalIndex> {
@@ -46,7 +52,7 @@ export class VectorStoreService {
     }
 
     public getSessionUri(): vscode.Uri | null {
-        if (!this.sessionManager.isSessionActive()) {
+        if (!this.sessionManager || !this.sessionManager.isSessionActive()) {
             return null;
         }
         const tempDir = require('os').tmpdir();
@@ -124,5 +130,25 @@ export class VectorStoreService {
             this.logger.error(`Error getting all items from index: ${errorMessage}`);
             return [];
         }
+    }
+
+    public async clear(): Promise<void> {
+        const sessionUri = this.getSessionUri();
+        if (sessionUri) {
+            try {
+                await vscode.workspace.fs.delete(sessionUri, { recursive: true });
+                this.logger.info(`Cleared vector store at ${sessionUri.fsPath}`);
+            } catch (error) {
+                // It's possible the directory doesn't exist, which is fine.
+                if (error instanceof vscode.FileSystemError && error.code === 'FileNotFound') {
+                    this.logger.info(`Vector store directory not found at ${sessionUri.fsPath}, nothing to clear.`);
+                } else {
+                    const errorMessage = error instanceof Error ? error.message : String(error);
+                    this.logger.error(`Error clearing vector store at ${sessionUri.fsPath}: ${errorMessage}`);
+                }
+            }
+        }
+        this.index = undefined;
+        this.logger.info('In-memory index instance cleared.');
     }
 }

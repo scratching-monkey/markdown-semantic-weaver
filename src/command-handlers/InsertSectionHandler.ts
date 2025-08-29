@@ -29,8 +29,14 @@ export class InsertSectionHandler implements ICommandHandler {
             return;
         }
 
-        const newBlock = this.markdownASTParser.parse(item.content).children[0];
-        const newAst = this.dataAccessService.computeAstWithNewBlock(document.ast, [document.ast.children.length], newBlock);
+        const parsedAst = this.markdownASTParser.parse(item.content);
+
+        // Insert all the parsed children directly into the document AST
+        let newAst = document.ast;
+        for (const child of parsedAst.children) {
+            newAst = this.dataAccessService.computeAstWithNewBlock(newAst, [newAst.children.length], child);
+        }
+
         await this.documentManager.updateAst(activeDocumentUri, newAst);
     }
 }

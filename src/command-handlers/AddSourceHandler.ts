@@ -4,6 +4,7 @@ import { ICommandHandler, commandHandlerToken } from "./ICommandHandler.js";
 import { LoggerService } from "../services/LoggerService.js";
 import { SessionManager } from "../services/SessionManager.js";
 import { SourceProcessingService } from "../services/SourceProcessingService.js";
+import { EnvironmentService } from "../services/EnvironmentService.js";
 
 @injectable()
 export class AddSourceHandler implements ICommandHandler {
@@ -12,7 +13,8 @@ export class AddSourceHandler implements ICommandHandler {
     constructor(
         @inject(LoggerService) private logger: LoggerService,
         @inject(SessionManager) private sessionManager: SessionManager,
-        @inject(SourceProcessingService) private sourceProcessingService: SourceProcessingService
+        @inject(SourceProcessingService) private sourceProcessingService: SourceProcessingService,
+        @inject(EnvironmentService) private environmentService: EnvironmentService
     ) {}
 
     public execute(uri?: vscode.Uri, uris?: vscode.Uri[]): Promise<void> {
@@ -22,29 +24,34 @@ export class AddSourceHandler implements ICommandHandler {
             return Promise.resolve();
         }
 
-        return new Promise((resolve, reject) => {
-            vscode.window.withProgress({
-                location: vscode.ProgressLocation.Notification,
-                title: "Processing source files",
-                cancellable: false
-            }, async (progress) => {
-                try {
-                    await this.sessionManager.startSessionIfNeeded();
-                    this.sessionManager.addSourceFiles(filesToProcess);
+        const process = async (progress?: vscode.Progress<{ message?: string; increment?: number }>) => {
+            await this.sessionManager.startSessionIfNeeded();
+            this.sessionManager.addSourceFiles(filesToProcess);
 
-                    for (const fileUri of filesToProcess) {
-                        const fileName = fileUri.fsPath.split('/').pop();
-                        progress.report({ message: `Processing ${fileName}` });
-                        await this.sourceProcessingService.processFile(fileUri);
+            for (const fileUri of filesToProcess) {
+                const fileName = fileUri.fsPath.split('/').pop();
+                progress?.report({ message: `Processing ${fileName}` });
+                await this.sourceProcessingService.processFile(fileUri);
+            }
+        };
+
+        if (this.environmentService.isTestEnvironment) {
+            return process();
+        } else {
+            return new Promise<void>((resolve, reject) => {
+                vscode.window.withProgress({
+                    location: vscode.ProgressLocation.Notification,
+                    title: "Processing source files",
+                    cancellable: false
+                }, async (progress) => {
+                    try {
+                        await process(progress);
+                        resolve();
+                    } catch (error) {
+                        reject(error);
                     }
-                    resolve();
-                } catch (error) {
-                    const errorMessage = error instanceof Error ? error.message : String(error);
-                    this.logger.error(`Error during source processing: ${errorMessage}`);
-                    vscode.window.showErrorMessage(`Failed to process sources: ${errorMessage}`);
-                    reject(error);
-                }
+                });
             });
-        });
+        }
     }
 }

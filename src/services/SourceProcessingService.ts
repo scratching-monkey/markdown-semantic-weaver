@@ -36,6 +36,8 @@ export class SourceProcessingService {
                 return;
             }
 
+            console.log(`SourceProcessingService: Processing ${segments.length} segments and ${extractedTerms.length} terms for ${uri.fsPath}`);
+
             const segmentContents = segments.map(s => s.rawContent);
             const termContents = extractedTerms.map(t => t.definition || t.term);
 
@@ -43,6 +45,8 @@ export class SourceProcessingService {
                 this.embeddingService.embed(segmentContents),
                 this.embeddingService.embed(termContents)
             ]);
+
+            console.log(`SourceProcessingService: Generated ${segmentEmbeddings.length} segment embeddings and ${termEmbeddings.length} term embeddings`);
 
             const segmentItems: Omit<IndexItem, 'norm'>[] = segments.map((segment, i) => ({
                 id: segment.id,

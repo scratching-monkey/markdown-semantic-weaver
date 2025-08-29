@@ -15,13 +15,13 @@ function createContentBlock(
 ): ContentBlock {
     return {
         id: uuidv4(),
-        path,
+        path: path,
         blockType: 'section',
-        rawContent,
+        rawContent: rawContent,
         metadata: {
-            source,
-            level,
-            heading,
+            source: source,
+            level: level,
+            heading: heading,
         },
     };
 }
@@ -45,11 +45,11 @@ export class ContentSegmenter {
             const level = headingNode ? headingNode.depth : 1;
 
             const contentAst = { type: 'root' as const, children: nodes };
-            let rawContent = processor.stringify(contentAst).trim();
+            let rawContent = processor.stringify(contentAst as any).trim();
 
             if (headingNode) {
-                 const heading = `${'#'.repeat(level)} ${headingText}`;
-                 rawContent = rawContent ? `${heading}\n\n${rawContent}` : heading;
+                  const heading = `${'#'.repeat(level)} ${headingText}`;
+                  rawContent = rawContent ? `${heading}\n\n${rawContent}` : heading;
             }
 
             return createContentBlock(rawContent, source, level, headingText, (headingNode?.data?.path as number[] | undefined) || []);
