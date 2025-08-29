@@ -11,6 +11,12 @@ import { TermsProvider } from './views/TermsProvider.js';
 import { CommandRegistry } from './services/CommandRegistry.js';
 import { registerCommandHandlers } from './command-handlers/index.js';
 import { VectorStoreService } from './services/VectorStoreService.js';
+// Import new SOLID services
+import { TemporaryDocumentManager } from './services/TemporaryDocumentManager.js';
+import { EditorCoordinator } from './services/EditorCoordinator.js';
+import { AutoSaveManager } from './services/AutoSaveManager.js';
+import { ContentPersistenceService } from './services/ContentPersistenceService.js';
+import { BlockEditorCoordinator } from './services/BlockEditorCoordinator.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -63,6 +69,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Initialize the EmbeddingService
 	container.resolve(EmbeddingService).init();
+
+	// Initialize the AutoSaveManager to set up event listeners
+	container.resolve(AutoSaveManager);
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
