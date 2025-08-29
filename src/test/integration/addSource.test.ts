@@ -1,18 +1,13 @@
+import 'reflect-metadata';
+import { container } from 'tsyringe';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { DataAccessService } from '../../services/DataAccessService.js';
 import { SessionManager } from '../../services/SessionManager.js';
 import { VectorStoreService } from '../../services/VectorStoreService.js';
-import { LoggerService } from '../../services/LoggerService.js';
-import { SourceProcessingService } from '../../services/SourceProcessingService.js';
-import { MarkdownASTParser } from '../../services/MarkdownASTParser.js';
-import { ContentSegmenter } from '../../services/ContentSegmenter.js';
-import { EmbeddingService } from '../../services/EmbeddingService.js';
 import { CommandHandlerService } from '../../services/CommandHandlerService.js';
-import { DestinationDocumentManager } from '../../services/DestinationDocumentManager.js';
-import { AstService } from '../../services/AstService.js';
-import { VectorQueryService } from '../../services/VectorQueryService.js';
+import { EmbeddingService } from '../../services/EmbeddingService.js';
 
 suite('Integration Test: addSource command', () => {
     let dataAccessService: DataAccessService;
@@ -27,21 +22,16 @@ suite('Integration Test: addSource command', () => {
             subscriptions: []
         } as any;
 
+        container.register<vscode.ExtensionContext>("vscode.ExtensionContext", { useValue: context });
+
         // Instantiate services
-        const logger = LoggerService.getInstance();
-        const sessionManager = SessionManager.getInstance();
-        vectorStore = VectorStoreService.getInstance(sessionManager, logger);
-        const parser = new MarkdownASTParser();
-        const segmenter = new ContentSegmenter();
-        const embeddingService = EmbeddingService.getInstance(context);
-        const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStore, logger);
-        const astService = AstService.getInstance();
-        const vectorQueryService = VectorQueryService.getInstance(vectorStore);
-        dataAccessService = DataAccessService.getInstance(sessionManager, vectorQueryService, astService);
-        const documentManager = DestinationDocumentManager.getInstance();
+        const sessionManager = container.resolve(SessionManager);
+        vectorStore = container.resolve(VectorStoreService);
+        dataAccessService = container.resolve(DataAccessService);
+        const embeddingService = container.resolve(EmbeddingService);
 
         // Manually activate services and register commands
-        commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser, documentManager);
+        commandHandlerService = container.resolve(CommandHandlerService);
         commandHandlerService.registerCommands(context);
 
         // Ensure model is ready before running tests

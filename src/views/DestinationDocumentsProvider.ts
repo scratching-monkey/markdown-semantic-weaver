@@ -1,13 +1,15 @@
+import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { DestinationDocumentManager } from '../services/DestinationDocumentManager.js';
 import { DestinationDocument } from '../models/DestinationDocument.js';
 
+@injectable()
 export class DestinationDocumentsProvider implements vscode.TreeDataProvider<DestinationDocument> {
     private _onDidChangeTreeData: vscode.EventEmitter<DestinationDocument | undefined | null | void> = new vscode.EventEmitter<DestinationDocument | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<DestinationDocument | undefined | null | void> = this._onDidChangeTreeData.event;
 
-    constructor(private documentManager: DestinationDocumentManager) {
+    constructor(@inject(DestinationDocumentManager) private documentManager: DestinationDocumentManager) {
         this.documentManager.onDestinationDocumentsDidChange(() => {
             this.refresh();
         });

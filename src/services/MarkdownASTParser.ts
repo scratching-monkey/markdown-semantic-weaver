@@ -1,9 +1,11 @@
+import { singleton } from "tsyringe";
 import { remark } from 'remark';
 import type { Root } from 'mdast';
 
 /**
  * A service that parses Markdown text into an Abstract Syntax Tree (AST).
  */
+@singleton()
 export class MarkdownASTParser {
     private processor: ReturnType<typeof remark>;
 

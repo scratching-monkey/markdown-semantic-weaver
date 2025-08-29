@@ -1,13 +1,15 @@
+import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { DataAccessService } from '../services/DataAccessService.js';
 import { SimilarityGroup } from '../models/SimilarityGroup.js';
 import { SourceSection } from '../models/SourceSection.js';
 
+@injectable()
 export class SectionsProvider implements vscode.TreeDataProvider<SimilarityGroup | SourceSection> {
     private _onDidChangeTreeData: vscode.EventEmitter<SimilarityGroup | SourceSection | undefined | null | void> = new vscode.EventEmitter<SimilarityGroup | SourceSection | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<SimilarityGroup | SourceSection | undefined | null | void> = this._onDidChangeTreeData.event;
 
-    constructor(private dataAccessService: DataAccessService) {}
+    constructor(@inject(DataAccessService) private dataAccessService: DataAccessService) {}
 
     refresh(): void {
         this._onDidChangeTreeData.fire();

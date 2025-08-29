@@ -1,19 +1,13 @@
+import 'reflect-metadata';
+import { container } from 'tsyringe';
 import * as vscode from "vscode";
 import * as assert from "assert";
 import * as path from 'path';
 import { SessionManager } from "../../services/SessionManager.js";
-import { DataAccessService } from '../../services/DataAccessService.js';
-import { VectorStoreService } from '../../services/VectorStoreService.js';
-import { LoggerService } from '../../services/LoggerService.js';
-import { SourceProcessingService } from '../../services/SourceProcessingService.js';
-import { MarkdownASTParser } from '../../services/MarkdownASTParser.js';
-import { ContentSegmenter } from '../../services/ContentSegmenter.js';
+import { DestinationDocumentManager } from "../../services/DestinationDocumentManager.js";
+import { DestinationDocumentsProvider } from "../../views/DestinationDocumentsProvider.js";
 import { EmbeddingService } from '../../services/EmbeddingService.js';
 import { CommandHandlerService } from '../../services/CommandHandlerService.js';
-import { DestinationDocumentManager } from "../../services/DestinationDocumentManager.js";
-import { AstService } from '../../services/AstService.js';
-import { VectorQueryService } from '../../services/VectorQueryService.js';
-import { DestinationDocumentsProvider } from "../../views/DestinationDocumentsProvider.js";
 
 suite("UI Reactivity Integration Tests", () => {
   let sessionManager: SessionManager;
@@ -28,23 +22,17 @@ suite("UI Reactivity Integration Tests", () => {
         subscriptions: []
     } as any;
 
+    container.register<vscode.ExtensionContext>("vscode.ExtensionContext", { useValue: context });
+
     // Instantiate services
-    const logger = LoggerService.getInstance();
-    sessionManager = SessionManager.getInstance();
-    const vectorStore = VectorStoreService.getInstance(sessionManager, logger);
-    const parser = new MarkdownASTParser();
-    const segmenter = new ContentSegmenter();
-    const embeddingService = EmbeddingService.getInstance(context);
-    const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStore, logger);
-    const astService = AstService.getInstance();
-    const vectorQueryService = VectorQueryService.getInstance(vectorStore);
-    const dataAccessService = DataAccessService.getInstance(sessionManager, vectorQueryService, astService);
-    documentManager = DestinationDocumentManager.getInstance();
-    const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser, documentManager);
+    sessionManager = container.resolve(SessionManager);
+    documentManager = container.resolve(DestinationDocumentManager);
+    const embeddingService = container.resolve(EmbeddingService);
+    const commandHandlerService = container.resolve(CommandHandlerService);
     commandHandlerService.registerCommands(context);
 
     // Instantiate UI provider
-    destinationDocumentsProvider = new DestinationDocumentsProvider(documentManager);
+    destinationDocumentsProvider = container.resolve(DestinationDocumentsProvider);
 
     // Ensure model is ready before running tests
     await embeddingService.embed(['test']);

@@ -1,3 +1,4 @@
+import { injectable, inject } from 'tsyringe';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -9,13 +10,15 @@ const MODEL_URL = 'https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/main/on
 const MODEL_DIR = 'models';
 const MODEL_NAME = 'model.onnx';
 
+@injectable()
 export class ModelAssetService {
     private modelPath: string;
-    private logger: LoggerService;
 
-    constructor(private context: vscode.ExtensionContext) {
+    constructor(
+        @inject("vscode.ExtensionContext") private context: vscode.ExtensionContext,
+        @inject(LoggerService) private logger: LoggerService
+    ) {
         this.modelPath = path.join(context.globalStorageUri.fsPath, MODEL_DIR, MODEL_NAME);
-        this.logger = LoggerService.getInstance();
     }
 
     public getModelPath(): string {

@@ -1,3 +1,4 @@
+import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { MarkdownASTParser } from './MarkdownASTParser';
 import { ContentSegmenter } from './ContentSegmenter';
@@ -7,36 +8,18 @@ import { LoggerService } from './LoggerService';
 import { IndexItem } from 'vectra';
 import { v4 as uuidv4 } from 'uuid';
 import { TermExtractor } from './TermExtractor';
+import { container } from 'tsyringe';
 
+@singleton()
 export class SourceProcessingService {
-    private static instance: SourceProcessingService;
-
-    private constructor(
-        private parser: MarkdownASTParser,
-        private segmenter: ContentSegmenter,
-        private embeddingService: EmbeddingService,
-        private vectorStore: VectorStoreService,
-        private logger: LoggerService
+    public constructor(
+        @inject(MarkdownASTParser) private parser: MarkdownASTParser,
+        @inject(ContentSegmenter) private segmenter: ContentSegmenter,
+        @inject(EmbeddingService) private embeddingService: EmbeddingService,
+        @inject(VectorStoreService) private vectorStore: VectorStoreService,
+        @inject(LoggerService) private logger: LoggerService,
+        @inject(TermExtractor) private termExtractor: TermExtractor
     ) {}
-
-    public static getInstance(
-        parser: MarkdownASTParser,
-        segmenter: ContentSegmenter,
-        embeddingService: EmbeddingService,
-        vectorStore: VectorStoreService,
-        logger: LoggerService
-    ): SourceProcessingService {
-        if (!SourceProcessingService.instance) {
-            SourceProcessingService.instance = new SourceProcessingService(
-                parser,
-                segmenter,
-                embeddingService,
-                vectorStore,
-                logger
-            );
-        }
-        return SourceProcessingService.instance;
-    }
 
     public async processFile(uri: vscode.Uri): Promise<void> {
         this.logger.info(`Processing file: ${uri.fsPath}`);
@@ -46,8 +29,7 @@ export class SourceProcessingService {
             const ast = this.parser.parse(text);
             const segments = this.segmenter.segment(ast, uri.toString());
 
-            const termExtractor = new TermExtractor(uri.toString());
-            const extractedTerms = termExtractor.extract(segments);
+            const extractedTerms = this.termExtractor.extract(segments, uri.toString());
 
             if (segments.length === 0 && extractedTerms.length === 0) {
                 this.logger.info('No segments or terms found in file.');

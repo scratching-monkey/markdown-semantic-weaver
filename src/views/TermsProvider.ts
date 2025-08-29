@@ -1,13 +1,15 @@
+import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { DataAccessService } from '../services/DataAccessService.js';
 import { TermGroup } from '../models/TermGroup.js';
 import { GlossaryTerm } from '../models/GlossaryTerm.js';
 
+@injectable()
 export class TermsProvider implements vscode.TreeDataProvider<TermGroup | GlossaryTerm> {
     private _onDidChangeTreeData: vscode.EventEmitter<TermGroup | GlossaryTerm | undefined | null | void> = new vscode.EventEmitter<TermGroup | GlossaryTerm | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<TermGroup | GlossaryTerm | undefined | null | void> = this._onDidChangeTreeData.event;
 
-    constructor(private dataAccessService: DataAccessService) {}
+    constructor(@inject(DataAccessService) private dataAccessService: DataAccessService) {}
 
     refresh(): void {
         this._onDidChangeTreeData.fire();

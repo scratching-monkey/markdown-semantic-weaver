@@ -1,3 +1,4 @@
+import { singleton } from "tsyringe";
 import { v4 as uuidv4 } from 'uuid';
 import { Node } from 'unist';
 import { ContentBlock } from '../models/ContentBlock.js';
@@ -25,7 +26,10 @@ function createContentBlock(
     };
 }
 
+@singleton()
 export class ContentSegmenter {
+    public constructor() {}
+
     public segment(ast: Node, source: string): ContentBlock[] {
         const blocks: ContentBlock[] = [];
         if (!('children' in ast) || !(ast.children instanceof Array)) {

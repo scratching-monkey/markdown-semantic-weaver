@@ -1,7 +1,10 @@
+import 'reflect-metadata';
+import { container } from 'tsyringe';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as sinon from 'sinon';
 import { ModelAssetService } from '../../services/ModelAssetService.js';
+import { LoggerService } from '../../services/LoggerService.js';
 
 suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests.');
@@ -26,7 +29,8 @@ suite('Extension Test Suite', () => {
             globalStorageUri: { fsPath: '/tmp/vscode-test' }
         } as vscode.ExtensionContext;
 
-        const modelAssetService = new ModelAssetService(context);
+        container.register("vscode.ExtensionContext", { useValue: context });
+        const modelAssetService = container.resolve(ModelAssetService);
         const downloadStub = sandbox.stub(modelAssetService as any, 'downloadModel').resolves();
         sandbox.stub(require('fs'), 'existsSync').returns(false);
 

@@ -1,15 +1,19 @@
-
+import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { DestinationDocumentManager } from '../services/DestinationDocumentManager.js';
 import { ContentBlock } from '../models/ContentBlock.js';
 import { DataAccessService } from '../services/DataAccessService.js';
 
+@injectable()
 export class DestinationDocumentOutlinerProvider implements vscode.TreeDataProvider<ContentBlock> {
 
     private _onDidChangeTreeData: vscode.EventEmitter<ContentBlock | undefined | null | void> = new vscode.EventEmitter<ContentBlock | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<ContentBlock | undefined | null | void> = this._onDidChangeTreeData.event;
 
-    constructor(private documentManager: DestinationDocumentManager, private dataAccessService: DataAccessService) {
+    constructor(
+        @inject(DestinationDocumentManager) private documentManager: DestinationDocumentManager,
+        @inject(DataAccessService) private dataAccessService: DataAccessService
+    ) {
         this.documentManager.onActiveDocumentChanged(() => this.refresh());
         this.documentManager.onDestinationDocumentDidChange(() => this.refresh());
     }

@@ -1,10 +1,14 @@
+import { singleton } from "tsyringe";
 import * as vscode from 'vscode';
 
+@singleton()
 export class SourceFileManager {
     private _sourceFiles: vscode.Uri[] = [];
 
     private readonly _onSourceFileDidChange = new vscode.EventEmitter<{ files: vscode.Uri[] }>();
     public readonly onSourceFileDidChange = this._onSourceFileDidChange.event;
+
+    public constructor() {}
 
     public add(files: vscode.Uri[]): void {
         let changed = false;

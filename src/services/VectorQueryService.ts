@@ -1,3 +1,4 @@
+import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { VectorStoreService } from './VectorStoreService.js';
 import type { IndexItem } from 'vectra';
@@ -6,17 +7,9 @@ import { SourceSection } from '../models/SourceSection.js';
 import { TermGroup } from '../models/TermGroup.js';
 import { GlossaryTerm } from '../models/GlossaryTerm.js';
 
+@singleton()
 export class VectorQueryService {
-    private static instance: VectorQueryService;
-
-    private constructor(private vectorStore: VectorStoreService) {}
-
-    public static getInstance(vectorStore: VectorStoreService): VectorQueryService {
-        if (!VectorQueryService.instance) {
-            VectorQueryService.instance = new VectorQueryService(vectorStore);
-        }
-        return VectorQueryService.instance;
-    }
+    public constructor(@inject(VectorStoreService) private vectorStore: VectorStoreService) {}
 
     public async getSimilarityGroups(): Promise<SimilarityGroup[]> {
         const allItems = await this.vectorStore.getAllItems();

@@ -1,24 +1,16 @@
+import { singleton, inject } from "tsyringe";
 import { FlagEmbedding, EmbeddingModel } from "fastembed";
 import * as vscode from 'vscode';
 import { LoggerService } from "./LoggerService";
 
+@singleton()
 export class EmbeddingService {
-    private static instance: EmbeddingService;
     private model: FlagEmbedding | null = null;
-    private logger: LoggerService;
-    private context: vscode.ExtensionContext;
 
-    private constructor(context: vscode.ExtensionContext) {
-        this.logger = LoggerService.getInstance();
-        this.context = context;
-    }
-
-    public static getInstance(context: vscode.ExtensionContext): EmbeddingService {
-        if (!EmbeddingService.instance) {
-            EmbeddingService.instance = new EmbeddingService(context);
-        }
-        return EmbeddingService.instance;
-    }
+    public constructor(
+        @inject("vscode.ExtensionContext") private context: vscode.ExtensionContext,
+        @inject(LoggerService) private logger: LoggerService
+    ) {}
 
     private async initializeModel(): Promise<void> {
         await vscode.window.withProgress({

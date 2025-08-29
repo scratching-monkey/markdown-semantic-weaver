@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { v4 as uuidv4 } from 'uuid';
 import type { Root } from 'mdast';
@@ -9,11 +11,9 @@ import { SourceFileManager } from './SourceFileManager.js';
 
 export { DestinationDocumentModel, WeavingSessionState };
 
+@singleton()
 export class SessionManager {
-    private static instance: SessionManager;
     private _state: WeavingSessionState;
-    private documentManager: DestinationDocumentManager;
-    private sourceFileManager: SourceFileManager;
 
     private readonly _onSessionDidStart = new vscode.EventEmitter<{ sessionId: string }>();
     public readonly onSessionDidStart = this._onSessionDidStart.event;
@@ -21,9 +21,10 @@ export class SessionManager {
     private readonly _onSessionWillEnd = new vscode.EventEmitter<{ sessionId: string }>();
     public readonly onSessionWillEnd = this._onSessionWillEnd.event;
 
-    private constructor() {
-        this.documentManager = DestinationDocumentManager.getInstance();
-        this.sourceFileManager = new SourceFileManager();
+    constructor(
+        @inject(DestinationDocumentManager) public documentManager: DestinationDocumentManager,
+        @inject(SourceFileManager) public sourceFileManager: SourceFileManager
+    ) {
         this._state = {
             sessionId: '',
             status: 'Inactive',
@@ -45,13 +46,17 @@ export class SessionManager {
         this.sourceFileManager.onSourceFileDidChange(() => {
             this._state = { ...this._state, sourceFileUris: this.sourceFileManager.getAll() };
         });
-    }
 
-    public static getInstance(): SessionManager {
-        if (!SessionManager.instance) {
-            SessionManager.instance = new SessionManager();
-        }
-        return SessionManager.instance;
+        this.documentManager.onDestinationDocumentDidChange(e => {
+            if (this.isSessionActive()) {
+                const newDocs = new Map(this._state.destinationDocuments);
+                const doc = newDocs.get(e.documentUri.toString());
+                if (doc) {
+                    newDocs.set(e.documentUri.toString(), { ...doc, ast: e.ast });
+                    this._state = { ...this._state, destinationDocuments: newDocs };
+                }
+            }
+        });
     }
 
     public isSessionActive(): boolean {

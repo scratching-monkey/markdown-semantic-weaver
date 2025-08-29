@@ -1,3 +1,4 @@
+import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { SessionManager } from './SessionManager.js';
 import { DestinationDocumentManager } from './DestinationDocumentManager.js';
@@ -14,16 +15,16 @@ if (typeof (global as any).commandsRegistered === 'undefined') {
     (global as any).commandsRegistered = false;
 }
 
+@injectable()
 export class CommandHandlerService {
-    private logger = LoggerService.getInstance();
-
-    constructor(
-        private sessionManager: SessionManager,
-        private dataAccessService: DataAccessService,
-        private sourceProcessingService: SourceProcessingService,
-        private embeddingService: EmbeddingService,
-        private markdownASTParser: MarkdownASTParser,
-        private documentManager: DestinationDocumentManager
+    public constructor(
+        @inject(LoggerService) private logger: LoggerService,
+        @inject(SessionManager) private sessionManager: SessionManager,
+        @inject(DataAccessService) private dataAccessService: DataAccessService,
+        @inject(SourceProcessingService) private sourceProcessingService: SourceProcessingService,
+        @inject(EmbeddingService) private embeddingService: EmbeddingService,
+        @inject(MarkdownASTParser) private markdownASTParser: MarkdownASTParser,
+        @inject(DestinationDocumentManager) private documentManager: DestinationDocumentManager
     ) {}
 
     public registerCommands(context: vscode.ExtensionContext) {

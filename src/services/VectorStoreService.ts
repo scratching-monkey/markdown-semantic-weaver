@@ -1,3 +1,4 @@
+import { singleton, inject } from "tsyringe";
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { LocalIndex, QueryResult } from 'vectra';
@@ -7,23 +8,15 @@ import { LoggerService } from './LoggerService.js';
 
 export type { IndexItem };
 
+@singleton()
 export class VectorStoreService {
-    private static instance: VectorStoreService;
-    private logger: LoggerService;
-    private sessionManager: SessionManager;
     private index: LocalIndex | undefined;
 
-    private constructor(sessionManager: SessionManager, logger: LoggerService) {
-        this.sessionManager = sessionManager;
-        this.logger = logger;
+    public constructor(
+        @inject(SessionManager) private sessionManager: SessionManager,
+        @inject(LoggerService) private logger: LoggerService
+    ) {
         this.logger.info('VectorStoreService initialized.');
-    }
-
-    public static getInstance(sessionManager: SessionManager, logger: LoggerService): VectorStoreService {
-        if (!VectorStoreService.instance) {
-            VectorStoreService.instance = new VectorStoreService(sessionManager, logger);
-        }
-        return VectorStoreService.instance;
     }
 
     private async getIndex(): Promise<LocalIndex> {

@@ -1,17 +1,10 @@
+import { singleton } from "tsyringe";
 import { Node } from 'unist';
 import type { Root } from 'mdast';
 
+@singleton()
 export class AstService {
-    private static instance: AstService;
-
-    private constructor() {}
-
-    public static getInstance(): AstService {
-        if (!AstService.instance) {
-            AstService.instance = new AstService();
-        }
-        return AstService.instance;
-    }
+    public constructor() {}
 
     public computeAstWithBlockDeleted(ast: Root, path: number[]): Root {
         // It's critical to not mutate the original AST.

@@ -1,3 +1,4 @@
+import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import type { Root } from 'mdast';
 import { AstService } from './AstService.js';
@@ -6,28 +7,21 @@ import { DestinationDocumentModel } from '../models/DestinationDocumentModel.js'
 
 export { DestinationDocumentModel };
 
+@singleton()
 export class DestinationDocumentManager {
-    private static instance: DestinationDocumentManager;
     private _documents: Map<string, DestinationDocumentModel> = new Map();
     private _activeDocumentUri: vscode.Uri | null = null;
 
     private readonly _onActiveDocumentChanged = new vscode.EventEmitter<vscode.Uri | null>();
     public readonly onActiveDocumentChanged = this._onActiveDocumentChanged.event;
 
-    private readonly _onDestinationDocumentDidChange = new vscode.EventEmitter<{ documentUri: vscode.Uri }>();
+    private readonly _onDestinationDocumentDidChange = new vscode.EventEmitter<{ documentUri: vscode.Uri, ast: Root }>();
     public readonly onDestinationDocumentDidChange = this._onDestinationDocumentDidChange.event;
 
     private readonly _onDestinationDocumentsDidChange = new vscode.EventEmitter<void>();
     public readonly onDestinationDocumentsDidChange = this._onDestinationDocumentsDidChange.event;
 
-    private constructor(private astService: AstService) {}
-
-    public static getInstance(): DestinationDocumentManager {
-        if (!DestinationDocumentManager.instance) {
-            DestinationDocumentManager.instance = new DestinationDocumentManager(AstService.getInstance());
-        }
-        return DestinationDocumentManager.instance;
-    }
+    public constructor(@inject(AstService) private astService: AstService) {}
 
     public getAll(): Readonly<Map<string, DestinationDocumentModel>> {
         return this._documents;
@@ -80,7 +74,7 @@ export class DestinationDocumentManager {
         const doc = this._documents.get(uri.toString());
         if (doc) {
             this._documents.set(uri.toString(), { ...doc, ast: newAst });
-            this._onDestinationDocumentDidChange.fire({ documentUri: uri });
+            this._onDestinationDocumentDidChange.fire({ documentUri: uri, ast: newAst });
         }
     }
 

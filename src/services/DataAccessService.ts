@@ -1,3 +1,4 @@
+import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { SessionManager } from './SessionManager.js';
 import { VectorQueryService } from './VectorQueryService.js';
@@ -13,25 +14,13 @@ import { toMarkdown } from 'mdast-util-to-markdown';
 import { v4 as uuidv4 } from 'uuid';
 import type { Root } from 'mdast';
 
+@singleton()
 export class DataAccessService {
-    private static instance: DataAccessService;
-
-    private constructor(
-        private sessionManager: SessionManager,
-        private vectorQueryService: VectorQueryService,
-        private astService: AstService
+    public constructor(
+        @inject(SessionManager) private sessionManager: SessionManager,
+        @inject(VectorQueryService) private vectorQueryService: VectorQueryService,
+        @inject(AstService) private astService: AstService
     ) {}
-
-    public static getInstance(
-        sessionManager: SessionManager,
-        vectorQueryService: VectorQueryService,
-        astService: AstService
-    ): DataAccessService {
-        if (!DataAccessService.instance) {
-            DataAccessService.instance = new DataAccessService(sessionManager, vectorQueryService, astService);
-        }
-        return DataAccessService.instance;
-    }
 
     public getSimilarityGroups(): Promise<SimilarityGroup[]> {
         return this.vectorQueryService.getSimilarityGroups();

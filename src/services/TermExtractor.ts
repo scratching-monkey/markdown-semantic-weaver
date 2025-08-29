@@ -1,16 +1,12 @@
+import { injectable } from "tsyringe";
 import { ContentBlock } from "../models/ContentBlock.js";
 import { GlossaryTerm } from "../models/GlossaryTerm.js";
 import * as natural from 'natural';
 import { v4 as uuidv4 } from 'uuid';
 
+@injectable()
 export class TermExtractor {
-    private readonly sourceFile: string;
-
-    constructor(sourceFile: string) {
-        this.sourceFile = sourceFile;
-    }
-
-    public extract(blocks: ContentBlock[]): Omit<GlossaryTerm, 'embedding' | 'metadata'>[] {
+    public extract(blocks: ContentBlock[], sourceFile: string): Omit<GlossaryTerm, 'embedding' | 'metadata'>[] {
         const text = blocks.map(b => b.rawContent).join('\n');
         const linguisticTerms = this.linguisticPass(text);
         const statisticalTerms = this.statisticalPass(text);
@@ -37,7 +33,7 @@ export class TermExtractor {
             id: uuidv4(),
             term: term,
             definition: data.definition,
-            sourceFileUri: this.sourceFile
+            sourceFileUri: sourceFile
         }));
     }
 

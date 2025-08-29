@@ -1,6 +1,6 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+import 'reflect-metadata';
 import * as vscode from 'vscode';
+import { container } from 'tsyringe';
 import { LoggerService } from './services/LoggerService.js';
 import { SessionManager } from './services/SessionManager.js';
 import { DataAccessService } from './services/DataAccessService.js';
@@ -22,32 +22,23 @@ import { VectorQueryService } from './services/VectorQueryService.js';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	const logger = LoggerService.getInstance();
+	container.register<vscode.ExtensionContext>("vscode.ExtensionContext", { useValue: context });
+	const logger = container.resolve(LoggerService);
 	logger.info('Extension activating.');
 
-	const sessionManager = SessionManager.getInstance();
-	const vectorStoreService = VectorStoreService.getInstance(sessionManager, logger);
-	const astService = AstService.getInstance();
-	const documentManager = DestinationDocumentManager.getInstance();
-	const vectorQueryService = VectorQueryService.getInstance(vectorStoreService);
-	const dataAccessService = DataAccessService.getInstance(sessionManager, vectorQueryService, astService);
-	const embeddingService = EmbeddingService.getInstance(context);
-	const parser = new MarkdownASTParser();
-	const segmenter = new ContentSegmenter();
-	const sourceProcessingService = SourceProcessingService.getInstance(parser, segmenter, embeddingService, vectorStoreService, logger);
-	const commandHandlerService = new CommandHandlerService(sessionManager, dataAccessService, sourceProcessingService, embeddingService, parser, documentManager);
+	const commandHandlerService = container.resolve(CommandHandlerService);
 	commandHandlerService.registerCommands(context);
 
-	const destinationDocumentsProvider = new DestinationDocumentsProvider(documentManager);
+	const destinationDocumentsProvider = container.resolve(DestinationDocumentsProvider);
 	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.destinationDocuments', destinationDocumentsProvider);
 
-	const destinationDocumentOutlinerProvider = new DestinationDocumentOutlinerProvider(documentManager, dataAccessService);
+	const destinationDocumentOutlinerProvider = container.resolve(DestinationDocumentOutlinerProvider);
 	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.documentOutliner', destinationDocumentOutlinerProvider);
 
-	const sectionsProvider = new SectionsProvider(dataAccessService);
+	const sectionsProvider = container.resolve(SectionsProvider);
 	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.sections', sectionsProvider);
 
-	const termsProvider = new TermsProvider(dataAccessService);
+	const termsProvider = container.resolve(TermsProvider);
 	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.terms', termsProvider);
 
 	context.subscriptions.push(
@@ -69,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	// Initialize the EmbeddingService
-	EmbeddingService.getInstance(context);
+	container.resolve(EmbeddingService);
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
@@ -87,7 +78,7 @@ export function activate(context: vscode.ExtensionContext) {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from Markdown Semantic Weaver!');
-		sessionManager.startSessionIfNeeded();
+		container.resolve(SessionManager).startSessionIfNeeded();
 	});
 
 	context.subscriptions.push(disposable);
@@ -95,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
 	logger.info('Extension activation complete.');
 }// This method is called when your extension is deactivated
 export function deactivate() {
-	const logger = LoggerService.getInstance();
+	const logger = container.resolve(LoggerService);
 	logger.info('Extension deactivating.');
-	SessionManager.getInstance().endSession();
+	container.resolve(SessionManager).endSession();
 }
