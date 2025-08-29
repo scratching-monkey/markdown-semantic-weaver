@@ -34,7 +34,7 @@ suite('Integration Test: addSource command', () => {
         await sessionManager.startSessionIfNeeded();
 
         // 2. Add sources
-        const fixturePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'fixtures');
+        const fixturePath = path.resolve(__dirname, '..', '..', '..', 'dist', 'fixtures');
         const file1 = vscode.Uri.file(path.join(fixturePath, 'sample-1.md'));
         const file2 = vscode.Uri.file(path.join(fixturePath, 'sample-2.md'));
         await vscode.commands.executeCommand('markdown-semantic-weaver.addSource', file1, [file1, file2]);

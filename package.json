@@ -214,10 +214,12 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint --config eslint.config.mts src",
     "test": "xvfb-run vscode-test",
+    "test:e2e": "npm run compile-tests && npm run compile && npm run lint && xvfb-run vscode-test",
     "clean": "rimraf dist out"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
+    "@types/chai": "^4.3.14",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
     "@types/sinon": "^17.0.4",
@@ -228,6 +230,10 @@
     "@typescript-eslint/parser": "^8.39.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
+    "@wdio/cli": "^9.19.2",
+    "@wdio/mocha-framework": "^8.40.0",
+    "@wdio/spec-reporter": "^8.40.0",
+    "chai": "^4.3.10",
     "copy-webpack-plugin": "^13.0.1",
     "eslint": "^9.34.0",
     "globals": "^16.3.0",
@@ -238,6 +244,9 @@
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0",
+    "vscode-extension-tester": "^8.0.0",
+    "wdio-vscode-service": "^6.0.0",
+    "webdriverio": "^8.40.0",
     "webpack": "^5.101.0",
     "webpack-cli": "^6.0.1",
     "webpack-node-externals": "^3.0.0"

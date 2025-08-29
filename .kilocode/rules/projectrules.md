@@ -78,6 +78,8 @@ All essential scripts are defined in `package.json`.
 - **HTML/CSS/Javascript for WebViews:** Use handlebars templates instead of embedding html/javascript/css in the class. If the templates are being added to a new directory, make sure to ignore them in `eslint.config.mts`.
 - **Large files:** If you are writing a file > 80 lines, check to see if your design is SOLID. Consider writing multiple files instead, perhaps in a subdirectory.
 - **Modules:** The project is complex enough that now we are organizing services into sub-directory modules
+- **Naming:**
+  - Don't use terms related to phases of the project. Use domain language of the project.
 
 ## Tools
 

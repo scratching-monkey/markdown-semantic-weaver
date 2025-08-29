@@ -40,6 +40,10 @@ const extensionConfig = {
       patterns: [
         { from: 'resources', to: 'resources' },
         { from: 'src/templates', to: 'templates' },
+        { from: 'src/test/fixtures', to: 'fixtures' },
+        { from: 'node_modules/natural/lib/natural/brill_pos_tagger/data/English/lexicon.json', to: 'lexicon.json' },
+        { from: 'node_modules/natural/lib/natural/brill_pos_tagger/data/English/rules.json', to: 'rules.json' },
+        { from: 'node_modules/natural/lib/natural/wordnet/data/index.json', to: 'index.json' },
         { from: 'node_modules/natural/lib/natural/brill_pos_tagger/data/English/lexicon.json', to: 'lexicon.json' },
         { from: 'node_modules/natural/lib/natural/brill_pos_tagger/data/English/rules.json', to: 'rules.json' },
         { from: 'node_modules/natural/lib/natural/wordnet/data/index.json', to: 'index.json' },
@@ -55,7 +59,9 @@ const extensionConfig = {
     rules: [
       {
         test: /\.ts$/,
-        exclude: /node_modules/,
+        exclude: (file) => {
+          return /node_modules/.test(file) || /test\/e2e/.test(file);
+        },
         use: [
           {
             loader: 'ts-loader'
