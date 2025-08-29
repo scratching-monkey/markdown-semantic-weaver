@@ -75,3 +75,7 @@ All essential scripts are defined in `package.json`.
 - **Dependency Injection:** Services are instantiated by the `tsyringe` container. Dependencies are injected through the constructor. The entry point for the application, `extension.ts`, acts as the composition root, where services are registered. Command handlers are registered in `src/command-handlers/index.ts`.
 - **VS Code API Usage:** Only services that directly interact with the VS Code UI or workspace should import the `vscode` module. Keep business logic decoupled from the VS Code API where possible.
 - **Testing:** Unit tests are located in `src/test/unit` and should test logic in isolation. Integration tests are in `src/test/integration` and test the interaction between components. The test environment is initialized once in `src/test/test-utils.ts` to ensure a consistent and isolated test run. To keep files focused, integration tests are organized by the specific command or UI provider they target (e.g., `destinationDocument.commands.test.ts`, `destinationDocumentsProvider.ui-reactivity.test.ts`).
+
+## Tools
+
+- `edit_file` doesn't work. Use `apply_diff`
