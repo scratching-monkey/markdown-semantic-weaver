@@ -1,0 +1,19 @@
+<div class="term-card" data-term-id="{{TERM_ID}}">
+    <div class="term-header">
+        <div>
+            <div class="term-title">{{TERM}}</div>
+            <div class="term-meta">
+                <span>From: {{SOURCE_FILE}}</span>
+                {{#if SCOPE}}<span> • Scope: {{SCOPE}}</span>{{/if}}
+                <span class="confidence-badge confidence-{{CONFIDENCE_CLASS}}">{{CONFIDENCE_LABEL}}</span>
+                {{#if PATTERN}}<span class="pattern-badge">{{PATTERN}}</span>{{/if}}
+            </div>
+        </div>
+    </div>
+    <div class="term-definition">{{DEFINITION}}</div>
+    <div class="term-actions">
+        <button class="action-button primary" onclick="acceptTerm('{{TERM_ID}}')">Accept</button>
+        <button class="action-button secondary" onclick="editTerm('{{TERM_ID}}')">Edit</button>
+        <button class="action-button danger" onclick="rejectTerm('{{TERM_ID}}')">Reject</button>
+    </div>
+</div>
