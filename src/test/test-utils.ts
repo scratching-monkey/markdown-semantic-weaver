@@ -14,7 +14,8 @@ import { SessionManager } from '../services/SessionManager.js';
 import { SourceFileManager } from '../services/SourceFileManager.js';
 import { SourceProcessingService } from '../services/SourceProcessingService.js';
 import { TermExtractor } from '../services/TermExtractor.js';
-import { VectorQueryService } from '../services/VectorQueryService.js';
+import { SectionQueryService } from '../services/SectionQueryService.js';
+import { TermQueryService } from '../services/TermQueryService.js';
 import { VectorStoreService } from '../services/VectorStoreService.js';
 import { DestinationDocumentOutlinerProvider } from '../views/DestinationDocumentOutlinerProvider.js';
 import { DestinationDocumentsProvider } from '../views/DestinationDocumentsProvider.js';
@@ -43,7 +44,8 @@ export async function initializeTestEnvironment(context: vscode.ExtensionContext
     container.registerSingleton(SourceProcessingService);
     container.registerSingleton(SourceFileManager);
     container.registerSingleton(DestinationDocumentManager);
-    container.registerSingleton(VectorQueryService);
+    container.registerSingleton(SectionQueryService);
+    container.registerSingleton(TermQueryService);
     container.registerSingleton(TermExtractor);
     container.registerSingleton(CommandRegistry);
 

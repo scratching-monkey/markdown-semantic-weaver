@@ -1,7 +1,8 @@
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { SessionManager } from './SessionManager.js';
-import { VectorQueryService } from './VectorQueryService.js';
+import { SectionQueryService } from './SectionQueryService.js';
+import { TermQueryService } from './TermQueryService.js';
 import { AstService } from './AstService.js';
 import { SimilarityGroup } from '../models/SimilarityGroup.js';
 import { SourceSection } from '../models/SourceSection.js';
@@ -18,24 +19,25 @@ import type { Root } from 'mdast';
 export class DataAccessService {
     public constructor(
         @inject(SessionManager) private sessionManager: SessionManager,
-        @inject(VectorQueryService) private vectorQueryService: VectorQueryService,
+        @inject(SectionQueryService) private sectionQueryService: SectionQueryService,
+        @inject(TermQueryService) private termQueryService: TermQueryService,
         @inject(AstService) private astService: AstService
     ) {}
 
     public getSimilarityGroups(): Promise<SimilarityGroup[]> {
-        return this.vectorQueryService.getSimilarityGroups();
+        return this.sectionQueryService.getSimilarityGroups();
     }
 
     public getUniqueSections(): Promise<SourceSection[]> {
-        return this.vectorQueryService.getUniqueSections();
+        return this.sectionQueryService.getUniqueSections();
     }
 
     public getTermGroups(): Promise<TermGroup[]> {
-        return this.vectorQueryService.getTermGroups();
+        return this.termQueryService.getTermGroups();
     }
 
     public getUniqueTerms(): Promise<GlossaryTerm[]> {
-        return this.vectorQueryService.getUniqueTerms();
+        return this.termQueryService.getUniqueTerms();
     }
 
     public computeAstWithBlockDeleted(ast: Root, path: number[]): Root {
