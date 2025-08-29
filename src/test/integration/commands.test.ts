@@ -4,47 +4,27 @@ import * as vscode from "vscode";
 import * as assert from "assert";
 import * as path from 'path';
 import { SessionManager, DestinationDocumentModel } from "../../services/SessionManager.js";
-import { CommandHandlerService } from '../../services/CommandHandlerService.js';
 import { DestinationDocumentManager } from '../../services/DestinationDocumentManager.js';
-import { EmbeddingService } from '../../services/EmbeddingService.js';
+import { initializeTestEnvironment } from '../test-utils.js';
 
 suite("Commands Integration Tests", () => {
   let sessionManager: SessionManager;
-  let commandHandlerService: CommandHandlerService;
   let documentManager: DestinationDocumentManager;
 
   suiteSetup(async function() {
-    this.timeout(60000); // Generous timeout for setup
-
+    this.timeout(60000); // Generous timeout for model download
     const context = {
         globalStorageUri: vscode.Uri.file(path.join(process.cwd(), 'test-output')),
         subscriptions: []
     } as any;
-
-    container.register<vscode.ExtensionContext>("vscode.ExtensionContext", { useValue: context });
-
-    // Instantiate services
+    await initializeTestEnvironment(context);
     sessionManager = container.resolve(SessionManager);
     documentManager = container.resolve(DestinationDocumentManager);
-    const embeddingService = container.resolve(EmbeddingService);
-
-    // Manually activate services and register commands
-    commandHandlerService = container.resolve(CommandHandlerService);
-    commandHandlerService.registerCommands(context);
-
-    // Ensure model is ready before running tests
-    await embeddingService.embed(['test']);
   });
 
   setup(async () => {
     await vscode.commands.executeCommand("workbench.action.closeAllEditors");
-    // Reset session state before each test
     await sessionManager.endSession();
-  });
-
-  teardown(async () => {
-    await sessionManager.endSession();
-    await vscode.commands.executeCommand("workbench.action.closeAllEditors");
   });
 
   test("addNewDestinationDocument command should create a new destination document", async () => {

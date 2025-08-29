@@ -6,8 +6,7 @@ import * as path from 'path';
 import { SessionManager } from "../../services/SessionManager.js";
 import { DestinationDocumentManager } from "../../services/DestinationDocumentManager.js";
 import { DestinationDocumentsProvider } from "../../views/DestinationDocumentsProvider.js";
-import { EmbeddingService } from '../../services/EmbeddingService.js';
-import { CommandHandlerService } from '../../services/CommandHandlerService.js';
+import { initializeTestEnvironment } from '../test-utils.js';
 
 suite("UI Reactivity Integration Tests", () => {
   let sessionManager: SessionManager;
@@ -16,26 +15,14 @@ suite("UI Reactivity Integration Tests", () => {
 
   suiteSetup(async function() {
     this.timeout(60000); // Generous timeout for setup
-
     const context = {
         globalStorageUri: vscode.Uri.file(path.join(process.cwd(), 'test-output')),
         subscriptions: []
     } as any;
-
-    container.register<vscode.ExtensionContext>("vscode.ExtensionContext", { useValue: context });
-
-    // Instantiate services
+    await initializeTestEnvironment(context);
     sessionManager = container.resolve(SessionManager);
     documentManager = container.resolve(DestinationDocumentManager);
-    const embeddingService = container.resolve(EmbeddingService);
-    const commandHandlerService = container.resolve(CommandHandlerService);
-    commandHandlerService.registerCommands(context);
-
-    // Instantiate UI provider
     destinationDocumentsProvider = container.resolve(DestinationDocumentsProvider);
-
-    // Ensure model is ready before running tests
-    await embeddingService.embed(['test']);
   });
 
   setup(async () => {

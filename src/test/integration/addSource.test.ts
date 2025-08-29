@@ -4,51 +4,33 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { DataAccessService } from '../../services/DataAccessService.js';
-import { SessionManager } from '../../services/SessionManager.js';
 import { VectorStoreService } from '../../services/VectorStoreService.js';
-import { CommandHandlerService } from '../../services/CommandHandlerService.js';
-import { EmbeddingService } from '../../services/EmbeddingService.js';
+import { initializeTestEnvironment } from '../test-utils.js';
 
 suite('Integration Test: addSource command', () => {
     let dataAccessService: DataAccessService;
-    let commandHandlerService: CommandHandlerService;
     let vectorStore: VectorStoreService;
 
     suiteSetup(async function() {
         this.timeout(60000); // 60 seconds timeout for model download
-
         const context = {
             globalStorageUri: vscode.Uri.file(path.join(process.cwd(), 'test-output')),
             subscriptions: []
         } as any;
-
-        container.register<vscode.ExtensionContext>("vscode.ExtensionContext", { useValue: context });
-
-        // Instantiate services
-        const sessionManager = container.resolve(SessionManager);
-        vectorStore = container.resolve(VectorStoreService);
+        await initializeTestEnvironment(context);
         dataAccessService = container.resolve(DataAccessService);
-        const embeddingService = container.resolve(EmbeddingService);
-
-        // Manually activate services and register commands
-        commandHandlerService = container.resolve(CommandHandlerService);
-        commandHandlerService.registerCommands(context);
-
-        // Ensure model is ready before running tests
-        await embeddingService.embed(['test']);
+        vectorStore = container.resolve(VectorStoreService);
 
         const fixturePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'fixtures');
         const file1 = vscode.Uri.file(path.join(fixturePath, 'sample-1.md'));
         const file2 = vscode.Uri.file(path.join(fixturePath, 'sample-2.md'));
 
-        // Execute the command
         await vscode.commands.executeCommand('markdown-semantic-weaver.addSource', file1, [file1, file2]);
     });
 
     test('should populate the vector store with all sections', async () => {
         const allItems = await vectorStore.getAllItems();
         const allSections = allItems.filter(item => item.metadata.contentType === 'section');
-        // Each file has a root block, a title block (#), and two subsection blocks (##) = 4 blocks per file
         assert.strictEqual(allSections.length, 8, 'Should find 8 total sections from 2 files');
     });
 

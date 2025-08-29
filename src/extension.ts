@@ -3,31 +3,27 @@ import * as vscode from 'vscode';
 import { container } from 'tsyringe';
 import { LoggerService } from './services/LoggerService.js';
 import { SessionManager } from './services/SessionManager.js';
-import { DataAccessService } from './services/DataAccessService.js';
-import { VectorStoreService } from './services/VectorStoreService.js';
-import { CommandHandlerService } from './services/CommandHandlerService.js';
 import { EmbeddingService } from './services/EmbeddingService.js';
-import { SourceProcessingService } from './services/SourceProcessingService.js';
-import { MarkdownASTParser } from './services/MarkdownASTParser.js';
-import { ContentSegmenter } from './services/ContentSegmenter.js';
 import { DestinationDocumentsProvider } from './views/DestinationDocumentsProvider.js';
 import { DestinationDocumentOutlinerProvider } from './views/DestinationDocumentOutlinerProvider.js';
 import { SectionsProvider } from './views/SectionsProvider.js';
 import { TermsProvider } from './views/TermsProvider.js';
-
-import { AstService } from './services/AstService.js';
-import { DestinationDocumentManager } from './services/DestinationDocumentManager.js';
-import { VectorQueryService } from './services/VectorQueryService.js';
+import { CommandRegistry } from './services/CommandRegistry.js';
+import { registerCommandHandlers } from './command-handlers/index.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 	container.register<vscode.ExtensionContext>("vscode.ExtensionContext", { useValue: context });
+
+	// Register command handlers
+	registerCommandHandlers();
+
 	const logger = container.resolve(LoggerService);
 	logger.info('Extension activating.');
 
-	const commandHandlerService = container.resolve(CommandHandlerService);
-	commandHandlerService.registerCommands(context);
+	const commandRegistry = container.resolve(CommandRegistry);
+	commandRegistry.registerCommands(context);
 
 	const destinationDocumentsProvider = container.resolve(DestinationDocumentsProvider);
 	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.destinationDocuments', destinationDocumentsProvider);
