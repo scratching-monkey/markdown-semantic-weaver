@@ -8,7 +8,9 @@ The extension follows a service-oriented architecture with a strict unidirection
 
 **Core Components:**
 
-- **`CommandHandlerService` (`src/services/CommandHandlerService.ts`):** The entry point for user actions. It acts as a thin orchestrator, delegating all business logic to other services. It should not contain any direct implementation of features.
+- **`CommandRegistry` (`src/services/CommandRegistry.ts`):** Discovers and registers all command handlers. It is responsible for invoking the correct handler for a given command.
+- **`ICommandHandler` (`src/command-handlers/ICommandHandler.ts`):** An interface that all command handler classes must implement.
+- **Command Handlers (`src/command-handlers/*Handler.ts`):** Individual classes, each responsible for the logic of a single command. They are discovered by the `CommandRegistry`.
 - **`SessionManager` (`src/services/SessionManager.ts`):** The single source of truth for the application's state (e.g., `Active`, `Inactive`). It manages the session lifecycle and holds the state of source and destination documents.
 - **`SourceProcessingService` (`src/services/SourceProcessingService.ts`):** A multi-stage pipeline that ingests markdown files, parses them, extracts content (`ContentBlock`) and keywords (`GlossaryTerm`), generates vector embeddings using `fastembed-js`, and stores them in a local `Vectra` vector database.
 - **`DataAccessService` (`src/services/DataAccessService.ts`):** The sole component responsible for querying the vector store and in-memory data. It abstracts the data sources from the UI and other services.
@@ -23,11 +25,12 @@ The extension follows a service-oriented architecture with a strict unidirection
 
 **Data Flow:**
 
-1.  A user action triggers a command in the `CommandHandlerService`.
-2.  The handler calls the relevant services (e.g., `SourceProcessingService` to add a file).
-3.  Services process the data and interact with the `DataAccessService`.
-4.  State changes are orchestrated through the `SessionManager`.
-5.  The `SessionManager` emits events (e.g., `onSourceFileDidChange`) to which UI components will eventually subscribe to refresh.
+1.  A user action triggers a command.
+2.  The `CommandRegistry` receives the command and invokes the appropriate `ICommandHandler`.
+3.  The handler calls the relevant services (e.g., `SourceProcessingService` to add a file).
+4.  Services process the data and interact with the `DataAccessService`.
+5.  State changes are orchestrated through the `SessionManager`.
+6.  The `SessionManager` emits events (e.g., `onSourceFileDidChange`) to which UI components will eventually subscribe to refresh.
 
 ## State Management: Read-Compute-Commit
 
@@ -68,7 +71,7 @@ All essential scripts are defined in `package.json`.
 
 - **`tsconfig.json` is Sacred:** The project **must** be configured to output CommonJS modules (`"module": "NodeNext"` without `"type": "module"` in `package.json`). Previous attempts to use ES Modules caused the VS Code extension test host to hang indefinitely. Do not change `tsconfig.json` to re-enable ES Modules.
 
-- **Singleton Services:** Most services are singletons, accessed via a static `getInstance()` method.
-- **Dependency Injection:** Services are instantiated once in `extension.ts` and their dependencies are injected through the constructor. This makes them easier to test with mocks.
+- **Singleton Services:** Most services are singletons, managed by the `tsyringe` dependency injection container.
+- **Dependency Injection:** Services are instantiated by the `tsyringe` container. Dependencies are injected through the constructor. The entry point for the application, `extension.ts`, acts as the composition root, where services are registered. Command handlers are registered in `src/command-handlers/index.ts`.
 - **VS Code API Usage:** Only services that directly interact with the VS Code UI or workspace should import the `vscode` module. Keep business logic decoupled from the VS Code API where possible.
-- **Testing:** Unit tests are located in `src/test/unit` and should test logic in isolation. Integration tests are in `src/test/integration` and are used for testing components that require a live VS Code API.
+- **Testing:** Unit tests are located in `src/test/unit` and should test logic in isolation. Integration tests are in `src/test/integration` and test the interaction between components. The test environment is initialized once in `src/test/test-utils.ts` to ensure a consistent and isolated test run.
