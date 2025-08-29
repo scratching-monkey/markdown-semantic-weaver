@@ -63,6 +63,31 @@
         "command": "markdown-semantic-weaver.moveContentBlock",
         "title": "Move Content Block",
         "icon": "$(arrow-up)"
+      },
+      {
+        "command": "markdown-semantic-weaver.openComparisonEditor",
+        "title": "Compare Similar Sections",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "markdown-semantic-weaver-comparison.insertSection",
+        "title": "Insert Section"
+      },
+      {
+        "command": "markdown-semantic-weaver-comparison.deleteSection",
+        "title": "Delete Section"
+      },
+      {
+        "command": "markdown-semantic-weaver-comparison.popSection",
+        "title": "Pop Section from Group"
+      },
+      {
+        "command": "markdown-semantic-weaver-comparison.mergeWithAI",
+        "title": "Merge with AI"
+      },
+      {
+        "command": "markdown-semantic-weaver-comparison.refresh",
+        "title": "Refresh Comparison View"
       }
     ],
     "menus": {
@@ -104,6 +129,11 @@
         {
           "command": "markdown-semantic-weaver.insertSection",
           "when": "view == 'markdown-semantic-weaver.sections' && viewItem == 'section'",
+          "group": "inline"
+        },
+        {
+          "command": "markdown-semantic-weaver.openComparisonEditor",
+          "when": "view == 'markdown-semantic-weaver.sections' && viewItem == 'similarityGroup'",
           "group": "inline"
         }
       ]

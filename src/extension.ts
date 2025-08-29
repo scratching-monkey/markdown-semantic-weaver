@@ -17,6 +17,10 @@ import { EditorCoordinator } from './services/EditorCoordinator.js';
 import { AutoSaveManager } from './services/AutoSaveManager.js';
 import { ContentPersistenceService } from './services/ContentPersistenceService.js';
 import { BlockEditorCoordinator } from './services/BlockEditorCoordinator.js';
+// Import comparison editor services
+import { ComparisonVirtualProvider } from './services/ComparisonVirtualProvider.js';
+import { ComparisonCodeLensProvider } from './services/ComparisonCodeLensProvider.js';
+import { ComparisonCodeActionProvider } from './services/ComparisonCodeActionProvider.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -72,6 +76,18 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Initialize the AutoSaveManager to set up event listeners
 	container.resolve(AutoSaveManager);
+
+	// Register comparison editor providers
+	const comparisonVirtualProvider = container.resolve(ComparisonVirtualProvider);
+	const comparisonCodeLensProvider = container.resolve(ComparisonCodeLensProvider);
+	const comparisonCodeActionProvider = container.resolve(ComparisonCodeActionProvider);
+
+	context.subscriptions.push(
+		vscode.workspace.registerTextDocumentContentProvider(
+			comparisonVirtualProvider.scheme,
+			comparisonVirtualProvider
+		)
+	);
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated

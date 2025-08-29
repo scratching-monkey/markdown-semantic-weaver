@@ -9,8 +9,8 @@ import { MarkdownASTParser } from '../services/MarkdownASTParser.js';
 import type { Root } from 'mdast';
 
 @injectable()
-export class ComparisonInsertSectionHandler implements ICommandHandler {
-    public readonly command = 'markdown-semantic-weaver-comparison.insertSection';
+export class RegularInsertSectionHandler implements ICommandHandler {
+    public readonly command = 'markdown-semantic-weaver.insertSection';
 
     constructor(
         @inject(LoggerService) private logger: LoggerService,
@@ -20,9 +20,9 @@ export class ComparisonInsertSectionHandler implements ICommandHandler {
         @inject(MarkdownASTParser) private markdownParser: MarkdownASTParser
     ) {}
 
-    public async execute(sectionId: string, _comparisonUri: vscode.Uri): Promise<void> {
+    public async execute(section: any): Promise<void> {
         try {
-            if (!sectionId) {
+            if (!section) {
                 vscode.window.showErrorMessage('No section selected for insertion');
                 return;
             }
@@ -31,15 +31,6 @@ export class ComparisonInsertSectionHandler implements ICommandHandler {
             const activeDocument = this.documentManager.getActive();
             if (!activeDocument) {
                 vscode.window.showErrorMessage('No active destination document found');
-                return;
-            }
-
-            // Get the section content from the data access service
-            const uniqueSections = await this.dataAccessService.getUniqueSections();
-            const section = uniqueSections.find(s => s.id === sectionId);
-
-            if (!section) {
-                vscode.window.showErrorMessage('Section not found');
                 return;
             }
 
@@ -63,14 +54,8 @@ export class ComparisonInsertSectionHandler implements ICommandHandler {
             // Update the document AST
             await this.documentManager.updateAst(activeDocument.uri, newAst);
 
-            // Mark the section as resolved in the vector store
-            // TODO: Implement this when we have the resolution methods
-
-            // Refresh the comparison view
-            vscode.commands.executeCommand('markdown-semantic-weaver-comparison.refresh');
-
             vscode.window.showInformationMessage(`Section inserted into ${activeDocument.uri.toString()}`);
-            this.logger.info(`Inserted section ${sectionId} into document ${activeDocument.uri.toString()}`);
+            this.logger.info(`Inserted section into document ${activeDocument.uri.toString()}`);
 
         } catch (error) {
             this.logger.error(`Failed to insert section: ${error}`);

@@ -18,11 +18,18 @@ export class SectionsProvider implements vscode.TreeDataProvider<SimilarityGroup
     getTreeItem(element: SimilarityGroup | SourceSection): vscode.TreeItem {
         if ('memberSections' in element) { // SimilarityGroup
             const item = new vscode.TreeItem(`Similar Sections (${element.memberSections.length})`, vscode.TreeItemCollapsibleState.Collapsed);
-            item.contextValue = 'similarityGroup';
+            item.contextValue = 'markdown-semantic-weaver:similarityGroup';
+            item.tooltip = `Click to compare and resolve ${element.memberSections.length} similar sections`;
+            item.command = {
+                command: 'markdown-semantic-weaver.openComparisonEditor',
+                title: 'Compare Similar Sections',
+                arguments: [element.id]
+            };
             return item;
         } else { // SourceSection
-            const item = new vscode.TreeItem(element.content, vscode.TreeItemCollapsibleState.None);
-            item.contextValue = 'sourceSection';
+            const item = new vscode.TreeItem(element.content.substring(0, 100) + (element.content.length > 100 ? '...' : ''), vscode.TreeItemCollapsibleState.None);
+            item.contextValue = 'markdown-semantic-weaver:section';
+            item.tooltip = `From: ${element.sourceFileUri}\nLines: ${element.metadata.startLine}-${element.metadata.endLine}`;
             item.command = {
                 command: 'vscode.open',
                 title: 'Open Source',
