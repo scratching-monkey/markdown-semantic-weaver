@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as sinon from 'sinon';
-import { ModelAssetService } from '../../services/ModelAssetService.js';
+import { ModelAssetService } from '../../services/processing/ModelAssetService.js';
 
 suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests.');

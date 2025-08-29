@@ -4,7 +4,7 @@ import { container } from 'tsyringe';
 import * as vscode from "vscode";
 import * as assert from "assert";
 import * as path from 'path';
-import { SessionManager, DestinationDocumentModel } from "../../services/SessionManager.js";
+import { SessionManager, DestinationDocumentModel } from "../../services/core/SessionManager.js";
 import { initializeTestEnvironment } from '../test-utils.js';
 
 suite("Commands Integration Tests", () => {

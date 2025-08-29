@@ -1,6 +1,6 @@
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
-import { LoggerService } from '../../../services/LoggerService.js';
+import { LoggerService } from '../../../services/utilities/LoggerService.js';
 
 /**
  * Mock context and setup utilities for ModelAssetService tests

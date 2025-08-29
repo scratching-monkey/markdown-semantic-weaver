@@ -1,8 +1,8 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { ICommandHandler } from "./ICommandHandler.js";
-import { LoggerService } from '../services/LoggerService.js';
-import { DataAccessService } from '../services/DataAccessService.js';
+import { LoggerService } from '../services/utilities/LoggerService.js';
+import { DataAccessService } from '../services/core/DataAccessService.js';
 
 @injectable()
 export class DeleteSectionHandler implements ICommandHandler {

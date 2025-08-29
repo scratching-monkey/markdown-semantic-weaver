@@ -1,11 +1,11 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { ICommandHandler } from "./ICommandHandler.js";
-import { LoggerService } from '../services/LoggerService.js';
-import { DataAccessService } from '../services/DataAccessService.js';
-import { DestinationDocumentManager } from '../services/DestinationDocumentManager.js';
-import { AstService } from '../services/AstService.js';
-import { MarkdownASTParser } from '../services/MarkdownASTParser.js';
+import { LoggerService } from '../services/utilities/LoggerService.js';
+import { DataAccessService } from '../services/core/DataAccessService.js';
+import { DestinationDocumentManager } from '../services/core/DestinationDocumentManager.js';
+import { AstService } from '../services/core/AstService.js';
+import { MarkdownASTParser } from '../services/processing/MarkdownASTParser.js';
 import type { Root } from 'mdast';
 
 @injectable()

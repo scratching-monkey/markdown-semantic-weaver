@@ -1,8 +1,8 @@
 import { singleton, inject } from "tsyringe";
 import { FlagEmbedding, EmbeddingModel } from "fastembed";
 import * as vscode from 'vscode';
-import { LoggerService } from "./LoggerService";
-import { EnvironmentService } from "./EnvironmentService";
+import { LoggerService } from "../utilities/LoggerService.js";
+import { EnvironmentService } from "../utilities/EnvironmentService.js";
 
 @singleton()
 export class EmbeddingService {

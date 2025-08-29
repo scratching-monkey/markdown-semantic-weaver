@@ -1,8 +1,8 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
-import { DestinationDocumentManager } from '../services/DestinationDocumentManager.js';
+import { DestinationDocumentManager } from '../core/DestinationDocumentManager.js';
 import { ContentBlock } from '../models/ContentBlock.js';
-import { DataAccessService } from '../services/DataAccessService.js';
+import { DataAccessService } from '../core/DataAccessService.js';
 
 @injectable()
 export class DestinationDocumentOutlinerProvider implements vscode.TreeDataProvider<ContentBlock> {

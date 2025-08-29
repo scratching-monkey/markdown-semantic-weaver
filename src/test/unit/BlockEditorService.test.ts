@@ -2,7 +2,7 @@
 import * as assert from 'assert';
 import { container } from 'tsyringe';
 import * as vscode from 'vscode';
-import { BlockEditorService } from '../../services/BlockEditorService.js';
+import { BlockEditorService } from '../../services/ui/BlockEditorService.js';
 import { initializeTestEnvironment } from '../test-utils.js';
 
 suite('BlockEditorService', () => {

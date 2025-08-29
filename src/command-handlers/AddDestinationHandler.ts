@@ -2,9 +2,9 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { ICommandHandler } from "./ICommandHandler.js";
-import { DestinationDocumentManager } from "../services/DestinationDocumentManager.js";
-import { MarkdownASTParser } from "../services/MarkdownASTParser.js";
-import { AstService } from "../services/AstService.js";
+import { DestinationDocumentManager } from "../services/core/DestinationDocumentManager.js";
+import { MarkdownASTParser } from "../services/processing/MarkdownASTParser.js";
+import { AstService } from "../services/core/AstService.js";
 
 @injectable()
 export class AddDestinationHandler implements ICommandHandler {

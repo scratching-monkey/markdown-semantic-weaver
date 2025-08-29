@@ -4,8 +4,8 @@ import { container } from 'tsyringe';
 import * as vscode from "vscode";
 import * as assert from "assert";
 import * as path from 'path';
-import { SessionManager } from "../../services/SessionManager.js";
-import { DestinationDocumentsProvider } from "../../views/DestinationDocumentsProvider.js";
+import { SessionManager } from "../../services/core/SessionManager.js";
+import { DestinationDocumentsProvider } from "../../services/ui/DestinationDocumentsProvider.js";
 import { initializeTestEnvironment } from '../test-utils.js';
 
 suite("UI Reactivity Integration Tests", () => {

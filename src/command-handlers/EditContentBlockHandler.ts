@@ -1,9 +1,9 @@
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { ICommandHandler } from './ICommandHandler.js';
-import { BlockEditorService } from '../services/BlockEditorService.js';
-import { LoggerService } from '../services/LoggerService.js';
-import { SessionManager } from '../services/SessionManager.js';
+import { BlockEditorService } from '../services/ui/BlockEditorService.js';
+import { LoggerService } from '../services/utilities/LoggerService.js';
+import { SessionManager } from '../services/core/SessionManager.js';
 
 @singleton()
 export class EditContentBlockHandler implements ICommandHandler {

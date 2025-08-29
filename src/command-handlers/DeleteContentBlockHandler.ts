@@ -1,8 +1,8 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { ICommandHandler } from "./ICommandHandler.js";
-import { DataAccessService } from "../services/DataAccessService.js";
-import { DestinationDocumentManager } from "../services/DestinationDocumentManager.js";
+import { DataAccessService } from "../services/core/DataAccessService.js";
+import { DestinationDocumentManager } from "../services/core/DestinationDocumentManager.js";
 import { ContentBlock } from "../models/ContentBlock.js";
 
 @injectable()

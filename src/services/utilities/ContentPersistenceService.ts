@@ -1,7 +1,7 @@
 import { singleton, inject } from "tsyringe";
 import { LoggerService } from './LoggerService.js';
-import { DestinationDocumentManager } from './DestinationDocumentManager.js';
-import { MarkdownASTParser } from './MarkdownASTParser.js';
+import { DestinationDocumentManager } from '../core/DestinationDocumentManager.js';
+import { MarkdownASTParser } from '../processing/MarkdownASTParser.js';
 import type { Root } from 'mdast';
 import { DocumentMetadata } from './TemporaryDocumentManager.js';
 

@@ -77,6 +77,7 @@ All essential scripts are defined in `package.json`.
 - **Testing:** Unit tests are located in `src/test/unit` and should test logic in isolation. Integration tests are in `src/test/integration` and test the interaction between components. The test environment is initialized once in `src/test/test-utils.ts` to ensure a consistent and isolated test run. To keep files focused, integration tests are organized by the specific command or UI provider they target (e.g., `destinationDocument.commands.test.ts`, `destinationDocumentsProvider.ui-reactivity.test.ts`).
 - **HTML/CSS/Javascript for WebViews:** Use handlebars templates instead of embedding html/javascript/css in the class. If the templates are being added to a new directory, make sure to ignore them in `eslint.config.mts`.
 - **Large files:** If you are writing a file > 80 lines, check to see if your design is SOLID. Consider writing multiple files instead, perhaps in a subdirectory.
+- **Modules:** The project is complex enough that now we are organizing services into sub-directory modules
 
 ## Tools
 

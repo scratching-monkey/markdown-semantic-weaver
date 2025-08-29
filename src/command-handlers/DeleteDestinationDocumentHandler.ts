@@ -1,7 +1,7 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { ICommandHandler } from "./ICommandHandler.js";
-import { DestinationDocumentManager } from "../services/DestinationDocumentManager.js";
+import { DestinationDocumentManager } from "../services/core/DestinationDocumentManager.js";
 
 @injectable()
 export class DeleteDestinationDocumentHandler implements ICommandHandler {

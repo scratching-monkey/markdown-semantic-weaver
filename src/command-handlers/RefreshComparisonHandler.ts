@@ -1,8 +1,8 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { ICommandHandler } from "./ICommandHandler.js";
-import { LoggerService } from '../services/LoggerService.js';
-import { ComparisonVirtualProvider } from '../services/ComparisonVirtualProvider.js';
+import { LoggerService } from '../services/utilities/LoggerService.js';
+import { ComparisonVirtualProvider } from '../services/ui/ComparisonVirtualProvider.js';
 
 @injectable()
 export class RefreshComparisonHandler implements ICommandHandler {

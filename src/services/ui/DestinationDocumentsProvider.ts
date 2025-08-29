@@ -1,7 +1,7 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { DestinationDocumentManager } from '../services/DestinationDocumentManager.js';
+import { DestinationDocumentManager } from '../core/DestinationDocumentManager.js';
 import { DestinationDocument } from '../models/DestinationDocument.js';
 
 @injectable()

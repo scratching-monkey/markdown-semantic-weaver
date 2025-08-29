@@ -4,8 +4,8 @@ import { container } from 'tsyringe';
 import * as vscode from "vscode";
 import * as assert from "assert";
 import * as path from 'path';
-import { SessionManager } from "../../services/SessionManager.js";
-import { DataAccessService } from '../../services/DataAccessService.js';
+import { SessionManager } from "../../services/core/SessionManager.js";
+import { DataAccessService } from '../../services/core/DataAccessService.js';
 import { initializeTestEnvironment } from '../test-utils.js';
 
 suite("insertSection Command Integration Test", () => {

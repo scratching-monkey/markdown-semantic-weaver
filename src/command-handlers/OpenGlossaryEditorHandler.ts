@@ -1,10 +1,10 @@
 import { injectable } from "tsyringe";
 import * as vscode from "vscode";
 import { ICommandHandler } from "./ICommandHandler.js";
-import { SessionManager } from "../services/SessionManager.js";
-import { DataAccessService } from "../services/DataAccessService.js";
-import { LoggerService } from "../services/LoggerService.js";
-import { GlossaryWebviewManager } from "../services/GlossaryWebviewManager.js";
+import { SessionManager } from "../services/core/SessionManager.js";
+import { DataAccessService } from "../services/core/DataAccessService.js";
+import { LoggerService } from "../services/utilities/LoggerService.js";
+import { GlossaryWebviewManager } from "../services/ui/GlossaryWebviewManager.js";
 
 @injectable()
 export class OpenGlossaryEditorHandler implements ICommandHandler {

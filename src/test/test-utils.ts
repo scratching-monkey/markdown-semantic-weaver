@@ -1,12 +1,12 @@
 import { container } from 'tsyringe';
 import * as vscode from 'vscode';
-import { EmbeddingService } from '../services/EmbeddingService.js';
-import { EnvironmentService } from '../services/EnvironmentService.js';
+import { EmbeddingService } from '../services/processing/EmbeddingService.js';
+import { EnvironmentService } from '../services/utilities/EnvironmentService.js';
 import { registerCommandHandlers } from '../command-handlers/index.js';
-import { CommandRegistry } from '../services/CommandRegistry.js';
-import { LoggerService } from '../services/LoggerService.js';
-import { VectorStoreService } from '../services/VectorStoreService.js';
-import { SessionManager } from '../services/SessionManager.js';
+import { CommandRegistry } from '../services/ui/CommandRegistry.js';
+import { LoggerService } from '../services/utilities/LoggerService.js';
+import { VectorStoreService } from '../services/core/VectorStoreService.js';
+import { SessionManager } from '../services/core/SessionManager.js';
 
 // Global flag to ensure commands are only registered once across all test suites
 let commandsRegistered = false;

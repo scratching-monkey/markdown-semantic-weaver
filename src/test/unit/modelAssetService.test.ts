@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 import * as path from 'path';
-import { ModelAssetService } from '../../services/ModelAssetService.js';
+import { ModelAssetService } from '../../services/processing/ModelAssetService.js';
 import {
     createMockExtensionContext,
     createMockLogger,

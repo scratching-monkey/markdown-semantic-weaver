@@ -1,8 +1,8 @@
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
-import { TermExtractor } from '../../services/TermExtractor.js';
-import { MarkdownASTParser } from '../../services/MarkdownASTParser.js';
+import { TermExtractor } from '../../services/processing/TermExtractor.js';
+import { MarkdownASTParser } from '../../services/processing/MarkdownASTParser.js';
 import { ContentBlock } from '../../models/ContentBlock.js';
 
 suite('TermExtractor Test Suite', () => {

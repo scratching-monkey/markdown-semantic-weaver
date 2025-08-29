@@ -1,6 +1,6 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
-import { DataAccessService } from '../services/DataAccessService.js';
+import { DataAccessService } from '../core/DataAccessService.js';
 import { TermGroup } from '../models/TermGroup.js';
 import { GlossaryTerm } from '../models/GlossaryTerm.js';
 

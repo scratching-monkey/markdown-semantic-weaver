@@ -1,10 +1,10 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { ICommandHandler } from "./ICommandHandler.js";
-import { LoggerService } from '../services/LoggerService.js';
-import { ComparisonVirtualProvider } from '../services/ComparisonVirtualProvider.js';
-import { ComparisonCodeLensProvider } from '../services/ComparisonCodeLensProvider.js';
-import { ComparisonCodeActionProvider } from '../services/ComparisonCodeActionProvider.js';
+import { LoggerService } from '../services/utilities/LoggerService.js';
+import { ComparisonVirtualProvider } from '../services/ui/ComparisonVirtualProvider.js';
+import { ComparisonCodeLensProvider } from '../services/ui/ComparisonCodeLensProvider.js';
+import { ComparisonCodeActionProvider } from '../services/ui/ComparisonCodeActionProvider.js';
 
 @injectable()
 export class OpenComparisonEditorHandler implements ICommandHandler {

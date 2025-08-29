@@ -1,34 +1,34 @@
 import 'reflect-metadata';
 import * as vscode from 'vscode';
 import { container } from 'tsyringe';
-import { LoggerService } from './services/LoggerService.js';
-import { SessionManager } from './services/SessionManager.js';
-import { EmbeddingService } from './services/EmbeddingService.js';
-import { DestinationDocumentsProvider } from './views/DestinationDocumentsProvider.js';
-import { DestinationDocumentOutlinerProvider } from './views/DestinationDocumentOutlinerProvider.js';
-import { SectionsProvider } from './views/SectionsProvider.js';
-import { TermsProvider } from './views/TermsProvider.js';
-import { CommandRegistry } from './services/CommandRegistry.js';
+import { LoggerService } from './services/utilities/LoggerService.js';
+import { SessionManager } from './services/core/SessionManager.js';
+import { EmbeddingService } from './services/processing/EmbeddingService.js';
+import { DestinationDocumentsProvider } from './services/ui/DestinationDocumentsProvider.js';
+import { DestinationDocumentOutlinerProvider } from './services/ui/DestinationDocumentOutlinerProvider.js';
+import { SectionsProvider } from './services/ui/SectionsProvider.js';
+import { TermsProvider } from './services/ui/TermsProvider.js';
+import { CommandRegistry } from './services/ui/CommandRegistry.js';
 import { registerCommandHandlers } from './command-handlers/index.js';
-import { VectorStoreService } from './services/VectorStoreService.js';
+import { VectorStoreService } from './services/core/VectorStoreService.js';
 // Import new SOLID services
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { TemporaryDocumentManager } from './services/TemporaryDocumentManager.js';
+import { TemporaryDocumentManager } from './services/utilities/TemporaryDocumentManager.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { EditorCoordinator } from './services/EditorCoordinator.js';
-import { AutoSaveManager } from './services/AutoSaveManager.js';
+import { EditorCoordinator } from './services/ui/EditorCoordinator.js';
+import { AutoSaveManager } from './services/utilities/AutoSaveManager.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ContentPersistenceService } from './services/ContentPersistenceService.js';
+import { ContentPersistenceService } from './services/utilities/ContentPersistenceService.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { BlockEditorCoordinator } from './services/BlockEditorCoordinator.js';
+import { BlockEditorCoordinator } from './services/ui/BlockEditorCoordinator.js';
 // Import comparison editor services
-import { ComparisonVirtualProvider } from './services/ComparisonVirtualProvider.js';
-import { ComparisonCodeLensProvider } from './services/ComparisonCodeLensProvider.js';
-import { ComparisonCodeActionProvider } from './services/ComparisonCodeActionProvider.js';
+import { ComparisonVirtualProvider } from './services/ui/ComparisonVirtualProvider.js';
+import { ComparisonCodeLensProvider } from './services/ui/ComparisonCodeLensProvider.js';
+import { ComparisonCodeActionProvider } from './services/ui/ComparisonCodeActionProvider.js';
 // Import glossary editor service
-import { GlossaryWebviewManager } from './services/GlossaryWebviewManager.js';
+import { GlossaryWebviewManager } from './services/ui/GlossaryWebviewManager.js';
 // Import template engine
-import { TemplateEngine } from './services/TemplateEngine.js';
+import { TemplateEngine } from './services/utilities/TemplateEngine.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed

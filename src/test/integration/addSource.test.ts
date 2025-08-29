@@ -4,9 +4,9 @@ import { container } from 'tsyringe';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { DataAccessService } from '../../services/DataAccessService.js';
-import { VectorStoreService } from '../../services/VectorStoreService.js';
-import { SessionManager } from '../../services/SessionManager.js';
+import { DataAccessService } from '../../services/core/DataAccessService.js';
+import { VectorStoreService } from '../../services/core/VectorStoreService.js';
+import { SessionManager } from '../../services/core/SessionManager.js';
 import { initializeTestEnvironment } from '../test-utils.js';
 
 suite('Integration Test: addSource command', () => {
