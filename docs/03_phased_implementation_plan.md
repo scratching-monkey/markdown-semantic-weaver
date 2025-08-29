@@ -22,13 +22,13 @@ In contrast, the vertical slicing approach ensures that a tangible, testable pie
 
 The following table provides a high-level summary of the five-phase implementation plan, outlining the primary objective and key deliverables for each stage of the project.
 
-| Phase | Title                                            | Primary Objective                                                                                                                               | Key Deliverables                                                                                                                                                                 |
-| :---- | :----------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1** | Foundational Scaffolding & Core Services         | To establish a stable, secure, and testable development foundation and implement the core, non-UI architectural skeleton.                       | Configured Dev Environment, Workspace Trust Implementation, Multi-Layered Testing Harness, Core Service Singletons (SessionManager, DataAccessService), Unified Logging Service. |
-| **2** | Source Data Ingestion & Analysis Pipeline        | To implement the end-to-end asynchronous pipeline for processing source files into a queryable, semantically indexed vector database.           | Functional SourceProcessingModule, Populated Vectra Vector Index, DataAccessService Query Methods, Unit & Integration Tests for Data Pipeline.                                   |
-| **3** | Destination Document Authoring & Core Workflow   | To build the core authoring UI, enabling users to create, view, and structurally manipulate destination documents in response to state changes. | Reactive TreeView UI Components, Document & Content Block CRUD Commands, Implementation of Read-Compute-Commit Pattern.                                                          |
-| **4** | Advanced Weaving & Interactive Editing           | To deliver the specialized, high-value custom editor experiences for content weaving, comparison, and glossary management.                      | Functional Block Editor, Comparison Editor (with CodeLenses), and Glossary Editor (Webview), Data Resolution Logic, "Golden Path" E2E Test.                                      |
-| **5** | Productionization, Publishing, & User Onboarding | To complete the end-to-end user workflow with publishing capabilities and add the final polish for a production release.                        | Functional "Publish" & "Preview" Commands, Document Serialization Service, User Settings, Telemetry, Onboarding Walkthrough, Packaged .vsix File.                                |
+| Phase | Title                                            | Primary Objective                                                                                                                               | Key Deliverables                                                                                                                                                                 | **Status** |
+| :---- | :----------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------- |
+| **1** | Foundational Scaffolding & Core Services         | To establish a stable, secure, and testable development foundation and implement the core, non-UI architectural skeleton.                       | Configured Dev Environment, Workspace Trust Implementation, Multi-Layered Testing Harness, Core Service Singletons (SessionManager, DataAccessService), Unified Logging Service. | ✅ **Complete** |
+| **2** | Source Data Ingestion & Analysis Pipeline        | To implement the end-to-end asynchronous pipeline for processing source files into a queryable, semantically indexed vector database.           | Functional SourceProcessingModule, Populated Vectra Vector Index, DataAccessService Query Methods, Unit & Integration Tests for Data Pipeline.                                   | ✅ **Complete** |
+| **3** | Destination Document Authoring & Core Workflow   | To build the core authoring UI, enabling users to create, view, and structurally manipulate destination documents in response to state changes. | Reactive TreeView UI Components, Document & Content Block CRUD Commands, Implementation of Read-Compute-Commit Pattern.                                                          | ✅ **Complete** |
+| **4** | Advanced Weaving & Interactive Editing           | To deliver the specialized, high-value custom editor experiences for content weaving, comparison, and glossary management.                      | Functional Block Editor, Comparison Editor (with CodeLenses), and Glossary Editor (Webview), Data Resolution Logic, "Golden Path" E2E Test.                                      | ✅ **~90% Complete** |
+| **5** | Productionization, Publishing, & User Onboarding | To complete the end-to-end user workflow with publishing capabilities and add the final polish for a production release.                        | Functional "Publish" & "Preview" Commands, Document Serialization Service, User Settings, Telemetry, Onboarding Walkthrough, Packaged .vsix File.                                | 🔄 **In Progress** |
 
 ## **Phase 1 \- Foundational Scaffolding and Core Services**
 
@@ -252,6 +252,54 @@ This workstream implements the remaining non-functional requirements identified 
 
 - **Task: Finalize README and Documentation:** The extension's README.md file will be updated to include comprehensive usage instructions. A clear privacy statement will be added, explaining what anonymous telemetry data is collected and for what purpose, to maintain user trust and transparency.1
 - **Task: Package and Test .vsix:** The vsce command-line tool will be used to package the extension into a .vsix file. Final installation and functionality tests will be performed using this packaged file to ensure it behaves identically to the development version.1
+
+## **Phase 4 Implementation Status**
+
+Phase 4 has been substantially completed with the following advanced features implemented:
+
+### ✅ **Completed Phase 4 Deliverables:**
+
+#### **Block Editor**
+- `BlockEditorService` - Manages temporary document lifecycle
+- `EditContentBlockHandler` - Seamless integration with outliner
+- Auto-save functionality for content persistence
+
+#### **Comparison Editor**
+- `ComparisonVirtualProvider` - Read-only virtual document display
+- `ComparisonCodeLensProvider` - Interactive CodeLenses ("Insert", "Delete", "Pop")
+- `ComparisonCodeActionProvider` - "Merge with AI" functionality
+- `OpenComparisonEditorHandler` - Editor orchestration and state management
+- `MergeWithAIHandler` - AI-powered content merging
+- `PopSectionHandler` - False positive handling for similarity groups
+
+#### **Glossary Editor**
+- `GlossaryWebviewManager` - Webview lifecycle and message handling
+- `OpenGlossaryEditorHandler` - Editor integration
+- Custom HTML/CSS/JS frontend with card-based UI
+- Term selection, qualification, and merging workflows
+
+#### **Advanced Command Handlers**
+- `RefreshComparisonHandler` - View synchronization
+- `RegularInsertSectionHandler` - Alternative insertion workflows
+- Enhanced error handling and user feedback
+
+### 🔄 **Phase 5: Current Status**
+
+Phase 5 implementation is currently in progress with the following components:
+
+#### **In Progress:**
+- **Preview Command** - Virtual document generation (not yet implemented)
+- **Publish Command** - Document serialization with confirmation (not yet implemented)
+- **DocumentSerializationService** - AST-to-Markdown conversion (not yet implemented)
+- **Glossary Scoping** - Contextual term filtering (not yet implemented)
+
+#### **Ready for Implementation:**
+- User onboarding walkthrough
+- Telemetry service integration
+- Enhanced user settings
+- .vsix packaging and publishing
+
+## **Implementation Notes**
 
 The implementation of the user onboarding walkthrough and the telemetry system in this final phase are not merely isolated features for polish; they are symbiotically linked components that create a powerful feedback loop for future development. The walkthrough is designed to guide users through the intended "happy path" workflow.1 The telemetry system is designed to measure how users actually engage with the extension's features.1 After the initial release, the collected telemetry data can be analyzed to identify friction points. For example, if the data reveals that a high percentage of users trigger the
 sessionStarted event but very few trigger the documentPublished event, it strongly indicates a drop-off point in the workflow. This quantitative evidence can then be used to inform targeted improvements to the onboarding walkthrough, such as adding a new step or clarifying an existing one, to better guide users past that specific hurdle. This creates a continuous, data-driven cycle of product improvement, ensuring the extension can evolve to better meet user needs over time.

@@ -73,13 +73,13 @@ The provided design documents, while architecturally sound from a runtime perspe
 The first step is to select an appropriate testing framework and toolchain. The VS Code ecosystem has a well-established standard for extension testing. The official documentation and tooling heavily favor **Mocha** as the test runner for integration tests that require access to the VS Code API.15 The
 @vscode/test-cli and @vscode/test-electron packages, maintained by the VS Code team, provide the necessary infrastructure to programmatically download, launch, and run tests within a special instance of VS Code.15
 Adopting this standard stack provides the path of least resistance and ensures compatibility with future VS Code updates. For more advanced end-to-end (E2E) testing that simulates direct user UI interactions (e.g., clicking on buttons in a view), this core stack can be supplemented with specialized frameworks like vscode-extension-tester (which builds on Mocha and Selenium WebDriver) or WebdriverIO.17
-The project will adopt a testing strategy based on the Mocha framework, organized into three distinct layers as detailed in the following table.
+The project adopts a testing strategy based on the Jest framework, organized into three distinct layers as detailed in the following table. (Note: Implementation uses Jest instead of the originally documented Mocha framework for better integration with the existing TypeScript setup.)
 **Table 3: Testing Strategy and Toolchain**
 
 | Layer | Test Type | Target Components | Tools | Goal |
 | :---- | :---- | :---- | :---- | :---- |
-| 1 | **Unit Tests** | DataAccessService, SessionManager, SourceProcessingModule algorithms, DocumentGeneration serializers | Mocha, assert, sinon (for mocks/stubs) | Verify the correctness of pure business logic and algorithms in complete isolation from the VS Code API, running in a standard Node.js environment. |
-| 2 | **Integration Tests** | CommandHandlerService, UI TreeDataProvider implementations, Custom Editor providers | Mocha, @vscode/test-electron, VS Code API | Verify the correct interaction of components with the live VS Code API within a real, programmatically controlled extension host instance. |
+| 1 | **Unit Tests** | DataAccessService, SessionManager, SourceProcessingModule algorithms, DocumentGeneration serializers | Jest, ts-jest, sinon (for mocks/stubs) | Verify the correctness of pure business logic and algorithms in complete isolation from the VS Code API, running in a standard Node.js environment. |
+| 2 | **Integration Tests** | CommandHandlerService, UI TreeDataProvider implementations, Custom Editor providers | Jest, @vscode/test-electron, VS Code API | Verify the correct interaction of components with the live VS Code API within a real, programmatically controlled extension host instance. |
 | 3 | **End-to-End (E2E) Tests** | Full user workflows (e.g., "Add Source" \-\> "Resolve Similarity" \-\> "Publish") | vscode-extension-tester or WebdriverIO | Verify that all components of the system function together correctly to fulfill critical user stories from a user's perspective. |
 
 ### **2.2 The Test Plan**
@@ -169,7 +169,7 @@ The analysis has identified several key areas in the project's foundational scaf
 | **P0** | **Establish .devcontainer Configuration** | Environment | Ensures a consistent, reproducible development environment for all team members and CI, eliminating a major source of project friction. |
 | **P0** | **Implement Workspace Trust Support** | Security | A fundamental security requirement for any extension that interacts with the file system. Prevents a poor user experience in Restricted Mode. |
 | **P0** | **Define ML Model Asset Strategy** | Architecture | A decision on how to package and deliver large binary assets is required before the source processing module can be fully implemented. |
-| **P0** | **Set up Mocha Testing Harness** | Quality | Establishes the foundational tooling for unit and integration tests, enabling a test-driven development approach from the outset. |
+| **P0** | **Set up Jest Testing Harness** | Quality | Establishes the foundational tooling for unit and integration tests, enabling a test-driven development approach from the outset. |
 | **P1** | **Add contributes.configuration Schema** | Configuration | Provides necessary user-facing settings for performance tuning and future-proofing, moving away from hardcoded values. |
 | **P1** | **Implement the LoggerService** | Observability | A basic logging framework is essential for effective debugging during development and for diagnosing user-reported issues post-release. |
 | **P1** | **Define Lazy activationEvents** | Performance | Ensures the extension has zero impact on VS Code startup performance, a critical factor for user satisfaction. |
