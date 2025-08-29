@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */ //TODO: Refactor unused vars later
+/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any later
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 import { ComparisonVirtualProvider } from '../../../src/services/ComparisonVirtualProvider.js';

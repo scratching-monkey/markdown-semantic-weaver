@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-{{NONCE}}';">
+    <title>Glossary Editor</title>
+    <style>
+        {{CSS_CONTENT}}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Glossary Editor</h1>
+        <p>Review and manage extracted terms and definitions</p>
+    </div>
+
+    <div class="stats">
+        <span>Total Terms: <strong>{{TOTAL_TERMS}}</strong></span>
+        <span>High Confidence: <strong>{{HIGH_CONFIDENCE_COUNT}}</strong></span>
+        <span>Patterns Found: <strong>{{PATTERN_COUNT}}</strong></span>
+    </div>
+
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Search terms..." id="searchInput">
+    </div>
+
+    <div class="filter-buttons">
+        <button class="filter-button active" data-filter="all">All ({{TOTAL_TERMS}})</button>
+        <button class="filter-button" data-filter="high">High Confidence ({{HIGH_CONFIDENCE_COUNT}})</button>
+        <button class="filter-button" data-filter="medium">Medium Confidence ({{MEDIUM_CONFIDENCE_COUNT}})</button>
+        <button class="filter-button" data-filter="low">Low Confidence ({{LOW_CONFIDENCE_COUNT}})</button>
+    </div>
+
+    <div id="termsContainer">
+        {{TERMS_CONTENT}}
+    </div>
+
+    <script nonce="{{NONCE}}">
+        {{JS_CONTENT}}
+    </script>
+</body>
+</html>

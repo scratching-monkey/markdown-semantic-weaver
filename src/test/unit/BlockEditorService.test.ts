@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any later
 import * as assert from 'assert';
 import { container } from 'tsyringe';
 import * as vscode from 'vscode';

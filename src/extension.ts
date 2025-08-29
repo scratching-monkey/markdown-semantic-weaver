@@ -12,15 +12,23 @@ import { CommandRegistry } from './services/CommandRegistry.js';
 import { registerCommandHandlers } from './command-handlers/index.js';
 import { VectorStoreService } from './services/VectorStoreService.js';
 // Import new SOLID services
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TemporaryDocumentManager } from './services/TemporaryDocumentManager.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { EditorCoordinator } from './services/EditorCoordinator.js';
 import { AutoSaveManager } from './services/AutoSaveManager.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ContentPersistenceService } from './services/ContentPersistenceService.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BlockEditorCoordinator } from './services/BlockEditorCoordinator.js';
 // Import comparison editor services
 import { ComparisonVirtualProvider } from './services/ComparisonVirtualProvider.js';
 import { ComparisonCodeLensProvider } from './services/ComparisonCodeLensProvider.js';
 import { ComparisonCodeActionProvider } from './services/ComparisonCodeActionProvider.js';
+// Import glossary editor service
+import { GlossaryWebviewManager } from './services/GlossaryWebviewManager.js';
+// Import template engine
+import { TemplateEngine } from './services/TemplateEngine.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -79,8 +87,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Register comparison editor providers
 	const comparisonVirtualProvider = container.resolve(ComparisonVirtualProvider);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const comparisonCodeLensProvider = container.resolve(ComparisonCodeLensProvider);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const comparisonCodeActionProvider = container.resolve(ComparisonCodeActionProvider);
+
+	// Initialize glossary editor service
+	container.resolve(GlossaryWebviewManager);
+
+	// Initialize template engine service
+	container.resolve(TemplateEngine);
 
 	context.subscriptions.push(
 		vscode.workspace.registerTextDocumentContentProvider(

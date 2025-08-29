@@ -1,6 +1,8 @@
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
-import { ICommandHandler, commandHandlerToken } from "./ICommandHandler.js";
+import { ICommandHandler } from "./ICommandHandler.js";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { commandHandlerToken } from "./ICommandHandler.js";
 import { LoggerService } from "../services/LoggerService.js";
 import { SessionManager } from "../services/SessionManager.js";
 import { SourceProcessingService } from "../services/SourceProcessingService.js";

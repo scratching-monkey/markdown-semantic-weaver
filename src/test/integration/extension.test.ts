@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as sinon from 'sinon';
+import * as fs from 'fs';
 import { ModelAssetService } from '../../services/ModelAssetService.js';
-import { LoggerService } from '../../services/LoggerService.js';
 
 suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests.');
@@ -32,7 +33,7 @@ suite('Extension Test Suite', () => {
         container.register("vscode.ExtensionContext", { useValue: context });
         const modelAssetService = container.resolve(ModelAssetService);
         const downloadStub = sandbox.stub(modelAssetService as any, 'downloadModel').resolves();
-        sandbox.stub(require('fs'), 'existsSync').returns(false);
+        sandbox.stub(fs, 'existsSync').returns(false);
 
         await modelAssetService.ensureModelIsAvailable();
 

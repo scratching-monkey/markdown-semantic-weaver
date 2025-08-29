@@ -13,7 +13,7 @@ export class PopSectionHandler implements ICommandHandler {
         @inject(DataAccessService) private dataAccessService: DataAccessService
     ) {}
 
-    public async execute(sectionId: string, _comparisonUri: vscode.Uri): Promise<void> {
+    public async execute(sectionId: string, _comparisonUri: vscode.Uri): Promise<void> { // eslint-disable-line @typescript-eslint/no-unused-vars
         try {
             if (!sectionId) {
                 vscode.window.showErrorMessage('No section selected for popping');

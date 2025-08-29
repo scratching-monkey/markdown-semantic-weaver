@@ -79,4 +79,33 @@ export class TermQueryService {
             }
         };
     }
+
+    public async markTermAsResolved(termId: string): Promise<void> {
+        const item = await this.vectorStore.getItem(termId);
+        if (item) {
+            item.metadata.isResolved = true;
+            await this.vectorStore.updateItem(item);
+        }
+    }
+
+    public async removeTerm(termId: string): Promise<void> {
+        await this.vectorStore.deleteItem(termId);
+    }
+
+    public async updateTermDefinition(termId: string, newTerm: string, newDefinition: string): Promise<void> {
+        const item = await this.vectorStore.getItem(termId);
+        if (item) {
+            item.metadata.term = newTerm;
+            item.metadata.definition = newDefinition;
+            await this.vectorStore.updateItem(item);
+        }
+    }
+
+    public async getTermById(termId: string): Promise<GlossaryTerm | null> {
+        const item = await this.vectorStore.getItem(termId);
+        if (item && item.metadata.contentType === 'term') {
+            return this.mapIndexItemToGlossaryTerm(item);
+        }
+        return null;
+    }
 }

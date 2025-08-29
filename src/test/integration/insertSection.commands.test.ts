@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import * as vscode from "vscode";
@@ -5,9 +6,7 @@ import * as assert from "assert";
 import * as path from 'path';
 import { SessionManager } from "../../services/SessionManager.js";
 import { DataAccessService } from '../../services/DataAccessService.js';
-import { VectorStoreService } from '../../services/VectorStoreService.js';
 import { initializeTestEnvironment } from '../test-utils.js';
-import { SourceSection } from '../../models/SourceSection.js';
 
 suite("insertSection Command Integration Test", () => {
   let sessionManager: SessionManager;

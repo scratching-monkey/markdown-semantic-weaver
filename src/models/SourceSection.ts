@@ -13,6 +13,7 @@ export interface SourceSection {
     groupId?: string; // The ID of the SimilarityGroup this section belongs to, if any
     isResolved: boolean; // Flag indicating if the user has addressed this section
     isPopped: boolean; // Flag indicating if this section was a false positive popped from a group
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any; // Allow other properties
   };
 }

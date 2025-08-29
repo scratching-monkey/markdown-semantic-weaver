@@ -43,10 +43,12 @@ export const mockWithProgress = <R>(
 export const mockVSCodeAPIs = () => {
     // Mock vscode.window.withProgress
     const originalWithProgress = vscode.window.withProgress;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (vscode.window as any).withProgress = mockWithProgress;
 
     // Return cleanup function
     return () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (vscode.window as any).withProgress = originalWithProgress;
     };
 };

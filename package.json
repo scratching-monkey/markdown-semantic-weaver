@@ -93,6 +93,11 @@
       {
         "command": "markdown-semantic-weaver-comparison.refresh",
         "title": "Refresh Comparison View"
+      },
+      {
+        "command": "markdown-semantic-weaver.openGlossaryEditor",
+        "title": "Open Glossary Editor",
+        "icon": "$(book)"
       }
     ],
     "menus": {
@@ -145,6 +150,11 @@
           "command": "markdown-semantic-weaver.openComparisonEditor",
           "when": "view == 'markdown-semantic-weaver.sections' && viewItem == 'similarityGroup'",
           "group": "inline"
+        },
+        {
+          "command": "markdown-semantic-weaver.openGlossaryEditor",
+          "when": "view == 'markdown-semantic-weaver.terms'",
+          "group": "navigation"
         }
       ]
     },
@@ -202,11 +212,12 @@
     "compile-tests": "rimraf out && tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "lint": "eslint src",
+    "lint": "eslint --config eslint.config.mts src",
     "test": "xvfb-run vscode-test",
     "clean": "rimraf dist out"
   },
   "devDependencies": {
+    "@eslint/js": "^9.34.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
     "@types/sinon": "^17.0.4",
@@ -218,12 +229,15 @@
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
     "copy-webpack-plugin": "^13.0.1",
-    "eslint": "^9.32.0",
+    "eslint": "^9.34.0",
+    "globals": "^16.3.0",
+    "jiti": "^2.5.1",
     "node-loader": "^2.1.0",
     "rimraf": "^6.0.1",
     "sinon": "^21.0.0",
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0",
     "webpack": "^5.101.0",
     "webpack-cli": "^6.0.1",
     "webpack-node-externals": "^3.0.0"

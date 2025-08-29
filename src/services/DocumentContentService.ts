@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { SessionManager } from './SessionManager.js';
 import { ContentBlock } from '../models/ContentBlock.js';
-import { visit } from 'unist-util-visit';
 import { toMarkdown } from 'mdast-util-to-markdown';
 import { v4 as uuidv4 } from 'uuid';
-import type { Root, Node } from 'mdast';
+import type { Node } from 'mdast';
 
 @singleton()
 export class DocumentContentService {

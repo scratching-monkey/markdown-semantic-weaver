@@ -77,7 +77,7 @@ export class ModelAssetService {
                 }).on('error', (err: Error) => {
                     fs.unlink(this.modelPath, () => {}); // Delete the file if an error occurs
                     this.logger.error(`Failed to download model: ${err.message}`);
-                    vscode.window.showErrorMessage(`Failed to download model: ${err.message}`);
+                    vscode.window.showErrorMessage(`Failed to download model: ${err.message || 'Unknown error'}`);
                     reject(err);
                 });
             });

@@ -11,6 +11,7 @@ export class MergeWithAIHandler implements ICommandHandler {
         @inject(LoggerService) private logger: LoggerService
     ) {}
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public async execute(_comparisonUri: vscode.Uri, _range: vscode.Range): Promise<void> {
         try {
             // TODO: Implement AI-powered merge functionality

@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import { injectable } from "tsyringe";
 import { ContentBlock } from "../models/ContentBlock.js";
 import { GlossaryTerm } from "../models/GlossaryTerm.js";
-import * as natural from 'natural';
 import { v4 as uuidv4 } from 'uuid';
 import { MarkdownASTParser } from './MarkdownASTParser.js';
-import { Root, Heading, Paragraph, Strong, List, ListItem, Table, TableRow, TableCell } from 'mdast';
+import { Heading, Paragraph, List, Table, TableRow, TableCell } from 'mdast';
 
 interface ExtractedTerm {
     term: string;

@@ -32,7 +32,8 @@ export class EditContentBlockHandler implements ICommandHandler {
 
         } catch (error) {
             this.logger.error(`Failed to execute editContentBlock command: ${error}`);
-            vscode.window.showErrorMessage(`Failed to open block editor: ${error}`);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            vscode.window.showErrorMessage(`Failed to open block editor: ${errorMessage}`);
         }
     }
 

@@ -73,4 +73,21 @@ export class DataAccessService {
     public async getSectionById(sectionId: string): Promise<SourceSection | null> {
         return this.sectionResolutionService.getSectionById(sectionId);
     }
+
+    // Term resolution operations - delegate to TermQueryService
+    public async markTermAsResolved(termId: string): Promise<void> {
+        return this.termQueryService.markTermAsResolved(termId);
+    }
+
+    public async removeTerm(termId: string): Promise<void> {
+        return this.termQueryService.removeTerm(termId);
+    }
+
+    public async updateTermDefinition(termId: string, newTerm: string, newDefinition: string): Promise<void> {
+        return this.termQueryService.updateTermDefinition(termId, newTerm, newDefinition);
+    }
+
+    public async getTermById(termId: string): Promise<GlossaryTerm | null> {
+        return this.termQueryService.getTermById(termId);
+    }
 }

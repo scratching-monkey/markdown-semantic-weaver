@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import { singleton } from "tsyringe";
 import { Node } from 'unist';
 import type { Root } from 'mdast';

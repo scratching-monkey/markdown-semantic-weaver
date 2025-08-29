@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ //Refactor use of any
 import { singleton } from "tsyringe";
 import { v4 as uuidv4 } from 'uuid';
 import { Node } from 'unist';
@@ -56,7 +57,7 @@ export class ContentSegmenter {
         };
 
         // Handle content before the first heading
-        let firstHeadingIndex = ast.children.findIndex(node => node.type === 'heading');
+        const firstHeadingIndex = ast.children.findIndex(node => node.type === 'heading');
         if (firstHeadingIndex > 0) {
             const initialContent = ast.children.slice(0, firstHeadingIndex);
             blocks.push(createBlockFromNodes(null, initialContent));

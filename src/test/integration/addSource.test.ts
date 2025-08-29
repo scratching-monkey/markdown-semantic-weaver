@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import * as assert from 'assert';

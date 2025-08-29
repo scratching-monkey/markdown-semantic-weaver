@@ -1,6 +1,8 @@
-import { singleton, inject, container } from "tsyringe";
+/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
+import { singleton, inject } from "tsyringe";
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as os from 'os';
 import { LocalIndex, QueryResult } from 'vectra';
 import type { IndexItem } from 'vectra';
 import { SessionManager } from './SessionManager.js';
@@ -55,8 +57,7 @@ export class VectorStoreService {
         if (!this.sessionManager || !this.sessionManager.isSessionActive()) {
             return null;
         }
-        const tempDir = require('os').tmpdir();
-        const path = require('path');
+        const tempDir = os.tmpdir();
         return vscode.Uri.file(path.join(tempDir, 'markdown-semantic-weaver', this.sessionManager.getState().sessionId));
     }
 
@@ -129,6 +130,30 @@ export class VectorStoreService {
             const errorMessage = error instanceof Error ? error.message : String(error);
             this.logger.error(`Error getting all items from index: ${errorMessage}`);
             return [];
+        }
+    }
+
+    public async updateItem(item: IndexItem): Promise<void> {
+        try {
+            const index = await this.getIndex();
+            await index.upsertItem(item);
+            this.logger.info(`Updated item ${item.id}`);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.logger.error(`Error updating item ${item.id}: ${errorMessage}`);
+            throw error;
+        }
+    }
+
+    public async deleteItem(id: string): Promise<void> {
+        try {
+            const index = await this.getIndex();
+            await index.deleteItem(id);
+            this.logger.info(`Deleted item ${id}`);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.logger.error(`Error deleting item ${id}: ${errorMessage}`);
+            throw error;
         }
     }
 

@@ -1,0 +1,204 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+    padding: 20px;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+.header h1 {
+    color: var(--vscode-titleBar-activeForeground);
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: var(--vscode-descriptionForeground);
+    font-size: 0.9em;
+}
+
+.stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    color: var(--vscode-descriptionForeground);
+}
+
+.term-card {
+    background: var(--vscode-editorWidget-background);
+    border: 1px solid var(--vscode-panel-border);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+}
+
+.term-card:hover {
+    border-color: var(--vscode-focusBorder);
+}
+
+.term-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.term-title {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: var(--vscode-textLink-foreground);
+    margin-bottom: 4px;
+}
+
+.term-meta {
+    font-size: 0.8em;
+    color: var(--vscode-descriptionForeground);
+    margin-bottom: 8px;
+}
+
+.term-definition {
+    color: var(--vscode-editor-foreground);
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.term-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.action-button {
+    padding: 6px 12px;
+    border: 1px solid var(--vscode-button-border);
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s;
+}
+
+.action-button:hover {
+    background: var(--vscode-button-hoverBackground);
+    border-color: var(--vscode-focusBorder);
+}
+
+.action-button.primary {
+    background: var(--vscode-button-background);
+    border-color: var(--vscode-button-border);
+}
+
+.action-button.secondary {
+    background: var(--vscode-button-secondaryBackground);
+    border-color: var(--vscode-button-secondaryBorder);
+    color: var(--vscode-button-secondaryForeground);
+}
+
+.action-button.danger {
+    background: var(--vscode-errorForeground);
+    border-color: var(--vscode-errorForeground);
+    color: white;
+}
+
+.confidence-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7em;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+.confidence-high {
+    background: var(--vscode-charts-green);
+    color: white;
+}
+
+.confidence-medium {
+    background: var(--vscode-charts-yellow);
+    color: black;
+}
+
+.confidence-low {
+    background: var(--vscode-charts-red);
+    color: white;
+}
+
+.pattern-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+    border-radius: 10px;
+    font-size: 0.7em;
+    margin-left: 8px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.empty-state h2 {
+    color: var(--vscode-titleBar-activeForeground);
+    margin-bottom: 10px;
+}
+
+.search-container {
+    margin-bottom: 20px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-border);
+    color: var(--vscode-input-foreground);
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--vscode-focusBorder);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.filter-button {
+    padding: 4px 8px;
+    background: var(--vscode-button-secondaryBackground);
+    border: 1px solid var(--vscode-button-secondaryBorder);
+    color: var(--vscode-button-secondaryForeground);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+.filter-button.active {
+    background: var(--vscode-button-background);
+    border-color: var(--vscode-button-border);
+    color: var(--vscode-button-foreground);
+}

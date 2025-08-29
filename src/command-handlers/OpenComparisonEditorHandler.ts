@@ -29,6 +29,7 @@ export class OpenComparisonEditorHandler implements ICommandHandler {
 
             // Open the comparison document
             const document = await vscode.workspace.openTextDocument(comparisonUri);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const editor = await vscode.window.showTextDocument(document, {
                 preview: false,
                 preserveFocus: false

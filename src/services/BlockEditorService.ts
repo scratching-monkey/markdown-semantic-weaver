@@ -62,7 +62,8 @@ export class BlockEditorService {
 
         } catch (error) {
             this.logger.error(`Failed to open block editor: ${error}`);
-            vscode.window.showErrorMessage(`Failed to open block editor: ${error}`);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            vscode.window.showErrorMessage(`Failed to open block editor: ${errorMessage}`);
         }
     }
 
@@ -89,7 +90,8 @@ export class BlockEditorService {
 
         } catch (error) {
             this.logger.error(`Failed to save block editor changes: ${error}`);
-            vscode.window.showErrorMessage(`Failed to save changes: ${error}`);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            vscode.window.showErrorMessage(`Failed to save changes: ${errorMessage}`);
         }
     }
 

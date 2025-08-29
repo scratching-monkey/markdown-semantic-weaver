@@ -8,7 +8,6 @@ import { LoggerService } from './LoggerService';
 import { IndexItem } from 'vectra';
 import { v4 as uuidv4 } from 'uuid';
 import { TermExtractor } from './TermExtractor';
-import { container } from 'tsyringe';
 
 @singleton()
 export class SourceProcessingService {
@@ -80,7 +79,7 @@ export class SourceProcessingService {
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             this.logger.error(`Error processing file ${uri.fsPath}: ${errorMessage}`);
-            vscode.window.showErrorMessage(`Failed to process file: ${uri.fsPath}`);
+            vscode.window.showErrorMessage(`Failed to process file: ${uri.fsPath.split('/').pop()}`);
         }
     }
 
@@ -99,7 +98,7 @@ export class SourceProcessingService {
 
             if (similarItems.length > 0) {
                 let groupId = uuidv4();
-                let groupMembers = [item];
+                const groupMembers = [item];
 
                 // Check if any similar items already belong to a group
                 for (const similarItem of similarItems) {

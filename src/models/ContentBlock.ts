@@ -1,6 +1,3 @@
-import { Node } from 'unist';
-
-
 /**
  * Represents the type of a content block.
  */

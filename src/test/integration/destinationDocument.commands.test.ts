@@ -1,15 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import * as vscode from "vscode";
 import * as assert from "assert";
 import * as path from 'path';
 import { SessionManager, DestinationDocumentModel } from "../../services/SessionManager.js";
-import { DestinationDocumentManager } from '../../services/DestinationDocumentManager.js';
 import { initializeTestEnvironment } from '../test-utils.js';
 
 suite("Commands Integration Tests", () => {
   let sessionManager: SessionManager;
-  let documentManager: DestinationDocumentManager;
 
   suiteSetup(async function() {
     this.timeout(60000); // Generous timeout for model download
@@ -19,8 +18,7 @@ suite("Commands Integration Tests", () => {
     } as any;
     await initializeTestEnvironment(context);
     sessionManager = container.resolve(SessionManager);
-    documentManager = container.resolve(DestinationDocumentManager);
-  });
+    });
 
   setup(async () => {
     await vscode.commands.executeCommand("workbench.action.closeAllEditors");

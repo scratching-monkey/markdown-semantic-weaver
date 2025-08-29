@@ -2,11 +2,9 @@ import 'reflect-metadata';
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { v4 as uuidv4 } from 'uuid';
-import type { Root } from 'mdast';
 import { WeavingSessionState } from '../models/WeavingSessionState.js';
 import { DestinationDocumentModel } from '../models/DestinationDocumentModel.js';
 import { DestinationDocumentManager } from './DestinationDocumentManager.js';
-import { AstService } from './AstService.js';
 import { SourceFileManager } from './SourceFileManager.js';
 
 export { DestinationDocumentModel, WeavingSessionState };
