@@ -1,30 +1,57 @@
-import { injectable, inject } from "tsyringe";
+import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
-import { ICommandHandler } from "./ICommandHandler.js";
-import { BlockEditorCoordinator } from "../services/BlockEditorCoordinator.js";
-import { ContentBlock } from "../models/ContentBlock.js";
+import { ICommandHandler } from './ICommandHandler.js';
+import { BlockEditorService } from '../services/BlockEditorService.js';
+import { LoggerService } from '../services/LoggerService.js';
+import { SessionManager } from '../services/SessionManager.js';
 
-@injectable()
+@singleton()
 export class EditContentBlockHandler implements ICommandHandler {
     public readonly command = 'markdown-semantic-weaver.editContentBlock';
 
-    constructor(
-        @inject(BlockEditorCoordinator) private blockEditorCoordinator: BlockEditorCoordinator
+    public constructor(
+        @inject(BlockEditorService) private blockEditorService: BlockEditorService,
+        @inject(LoggerService) private logger: LoggerService,
+        @inject(SessionManager) private sessionManager: SessionManager
     ) {}
 
-    public async execute(contentBlock: ContentBlock): Promise<void> {
+    public async execute(contentBlockId: string, documentUri?: vscode.Uri): Promise<void> {
         try {
-            if (!contentBlock || !contentBlock.id) {
-                vscode.window.showErrorMessage('Invalid content block selected for editing');
+            this.logger.info(`Executing editContentBlock command for block: ${contentBlockId}`);
+
+            // Get the active document
+            const activeDocument = documentUri || this.getActiveDocument();
+
+            if (!activeDocument) {
+                vscode.window.showErrorMessage('No active destination document found. Please select a document in the Destination Documents view.');
                 return;
             }
 
-            // Open the content block in the Block Editor
-            await this.blockEditorCoordinator.openContentBlockEditor(contentBlock);
+            // Open the block editor
+            await this.blockEditorService.openBlockEditor(activeDocument, contentBlockId);
 
         } catch (error) {
-            console.error('Failed to open content block editor:', error);
-            vscode.window.showErrorMessage('Failed to open content block editor');
+            this.logger.error(`Failed to execute editContentBlock command: ${error}`);
+            vscode.window.showErrorMessage(`Failed to open block editor: ${error}`);
         }
+    }
+
+    /**
+     * Gets the active destination document URI
+     */
+    private getActiveDocument(): vscode.Uri | null {
+        // Get from session manager's active document
+        const sessionState = this.sessionManager.getState();
+        if (sessionState.activeDestinationDocumentUri) {
+            return sessionState.activeDestinationDocumentUri;
+        }
+
+        // Fallback: try to get from active text editor
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor) {
+            return activeEditor.document.uri;
+        }
+
+        return null;
     }
 }

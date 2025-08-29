@@ -55,6 +55,11 @@
         "icon": "$(trash)"
       },
       {
+        "command": "markdown-semantic-weaver.editContentBlock",
+        "title": "Edit Content Block",
+        "icon": "$(edit)"
+      },
+      {
         "command": "markdown-semantic-weaver.insertSection",
         "title": "Insert Section",
         "icon": "$(add)"
@@ -118,6 +123,11 @@
         },
         {
           "command": "markdown-semantic-weaver.deleteContentBlock",
+          "when": "view == 'markdown-semantic-weaver.documentOutliner' && viewItem == 'contentBlock'",
+          "group": "inline"
+        },
+        {
+          "command": "markdown-semantic-weaver.editContentBlock",
           "when": "view == 'markdown-semantic-weaver.documentOutliner' && viewItem == 'contentBlock'",
           "group": "inline"
         },
