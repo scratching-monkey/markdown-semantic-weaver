@@ -20,6 +20,7 @@ import { RefreshComparisonHandler } from "./RefreshComparisonHandler.js";
 import { OpenGlossaryEditorHandler } from "./OpenGlossaryEditorHandler.js";
 import { PreviewDocumentHandler } from "./PreviewDocumentHandler.js";
 import { PublishDocumentsHandler } from "./PublishDocumentsHandler.js";
+import { SetActiveDocumentHandler } from "./SetActiveDocumentHandler.js";
 
 /**
  * Checks if AI features should be enabled based on user settings and language model availability
@@ -83,4 +84,5 @@ export async function registerCommandHandlers(): Promise<void> {
 	container.register(commandHandlerToken, { useClass: OpenGlossaryEditorHandler });
 	container.register(commandHandlerToken, { useClass: PreviewDocumentHandler });
 	container.register(commandHandlerToken, { useClass: PublishDocumentsHandler });
+	container.register(commandHandlerToken, { useClass: SetActiveDocumentHandler });
 }

@@ -20,7 +20,7 @@ export class ComparisonInsertSectionHandler implements ICommandHandler {
         @inject(MarkdownASTParser) private markdownParser: MarkdownASTParser
     ) {}
 
-    public async execute(sectionId: string, _comparisonUri: vscode.Uri): Promise<void> { // eslint-disable-line @typescript-eslint/no-unused-vars
+    public async execute(sectionId: string): Promise<void> {
         try {
             if (!sectionId) {
                 vscode.window.showErrorMessage('No section selected for insertion');

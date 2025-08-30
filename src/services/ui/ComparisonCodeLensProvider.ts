@@ -65,7 +65,7 @@ export class ComparisonCodeLensProvider implements vscode.CodeLensProvider {
     /**
      * Refreshes the CodeLens for a comparison document
      */
-    public refresh(_uri: vscode.Uri): void { /* eslint-disable-line @typescript-eslint/no-unused-vars */ //TODO: Temporary lint disable or switch to _?
+    public refresh(): void {
         this._onDidChangeCodeLenses.fire();
     }
 }

@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { ICommandHandler } from "./ICommandHandler.js";
-import { DestinationDocumentManager } from "../services/core/DestinationDocumentManager.js";
+import { DestinationDocumentManager, DestinationDocumentModel } from "../services/core/DestinationDocumentManager.js";
 import { MarkdownASTParser } from "../services/processing/MarkdownASTParser.js";
 import { AstService } from "../services/core/AstService.js";
 
@@ -31,16 +30,18 @@ export class AddDestinationHandler implements ICommandHandler {
             this.astService.addPathsToAst(ast);
 
             // Create the destination document model
-            const destinationDoc = {
+            const destinationDoc: DestinationDocumentModel = {
                 uri: uri,
                 isNew: false,
                 ast: ast
             };
 
-            // Add to the document manager (we'll need to add this method)
-            // For now, we'll access the private _documents map directly
-            (this.documentManager as any)._documents.set(uri.toString(), destinationDoc);
-            (this.documentManager as any)._onDestinationDocumentsDidChange.fire();
+            // Add to the document manager
+            // Note: This accesses private properties - should be replaced with a public add method
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this.documentManager as unknown as { _documents: Map<string, any>, _onDestinationDocumentsDidChange: { fire: () => void } })._documents.set(uri.toString(), destinationDoc);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this.documentManager as unknown as { _documents: Map<string, any>, _onDestinationDocumentsDidChange: { fire: () => void } })._onDestinationDocumentsDidChange.fire();
 
             console.log(`AddDestinationHandler: Added existing document ${uri.toString()}`);
         } catch (error) {

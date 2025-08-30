@@ -10,7 +10,21 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"${workspaceFolder}/test-workspace"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
+			"preLaunchTask": "${defaultBuildTask}"
+		},
+		{
+			"name": "Run Extension (Current Workspace)",
+			"type": "extensionHost",
+			"request": "launch",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"${workspaceFolder}"
 			],
 			"outFiles": [
 				"${workspaceFolder}/dist/**/*.js"

@@ -1,0 +1,2 @@
+# Test workspace files
+# This .gitignore prevents VS Code extensions from trying to index this test directory

@@ -2,8 +2,10 @@ import { singleton, inject } from "tsyringe";
 import { LoggerService } from './LoggerService.js';
 import { DestinationDocumentManager } from '../core/DestinationDocumentManager.js';
 import { MarkdownASTParser } from '../processing/MarkdownASTParser.js';
+import { DataAccessService } from '../core/DataAccessService.js';
 import type { Root } from 'mdast';
 import { DocumentMetadata } from './TemporaryDocumentManager.js';
+import { GlossaryTerm } from '../../models/GlossaryTerm.js';
 
 export interface IContentPersistor {
     save(content: string, metadata: DocumentMetadata): Promise<void>;
@@ -53,12 +55,29 @@ export class ContentBlockPersistor implements IContentPersistor {
 @singleton()
 export class GlossaryTermPersistor implements IContentPersistor {
     constructor(
-        @inject(LoggerService) private logger: LoggerService
+        @inject(LoggerService) private logger: LoggerService,
+        @inject(DataAccessService) private dataAccessService: DataAccessService
     ) {}
 
-    public async save(_newContent: string, metadata: DocumentMetadata): Promise<void> {
-        // TODO: Implement glossary term updates in the vector database
-        this.logger.info(`Glossary term updates not yet implemented for term ${metadata.id}`);
+    public async save(newContent: string, metadata: DocumentMetadata): Promise<void> {
+        try {
+            // For glossary terms, the new content represents the updated definition
+            // We need to get the current term to preserve it
+            const terms = await this.dataAccessService.getUniqueTerms();
+            const currentTerm = terms.find((t: GlossaryTerm) => t.id === metadata.id);
+
+            if (!currentTerm) {
+                throw new Error(`Term ${metadata.id} not found`);
+            }
+
+            // Update the term definition in the vector database
+            await (this.dataAccessService as { updateTermDefinition: (id: string, term: string, definition: string) => Promise<void> }).updateTermDefinition(metadata.id, currentTerm.term, newContent);
+
+            this.logger.info(`Updated glossary term ${metadata.id} with new definition`);
+        } catch (error) {
+            this.logger.error(`Failed to save glossary term changes: ${error}`);
+            throw error;
+        }
     }
 }
 

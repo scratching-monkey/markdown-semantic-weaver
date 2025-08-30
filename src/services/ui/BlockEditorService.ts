@@ -1,8 +1,12 @@
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
+import type { Root } from 'mdast';
 import { LoggerService } from '../utilities/LoggerService.js';
 import { SessionManager } from '../core/SessionManager.js';
 import { DataAccessService } from '../core/DataAccessService.js';
+import { DestinationDocumentManager } from '../core/DestinationDocumentManager.js';
+import { MarkdownASTParser } from '../processing/MarkdownASTParser.js';
+import { AstService } from '../core/AstService.js';
 
 interface BlockEditorSession {
     documentUri: vscode.Uri;
@@ -18,7 +22,10 @@ export class BlockEditorService {
     public constructor(
         @inject(LoggerService) private logger: LoggerService,
         @inject(SessionManager) private sessionManager: SessionManager,
-        @inject(DataAccessService) private dataAccessService: DataAccessService
+        @inject(DataAccessService) private dataAccessService: DataAccessService,
+        @inject(DestinationDocumentManager) private documentManager: DestinationDocumentManager,
+        @inject(MarkdownASTParser) private markdownParser: MarkdownASTParser,
+        @inject(AstService) private astService: AstService
     ) {
         // Listen for document close events to save changes
         vscode.workspace.onDidCloseTextDocument(document => {
@@ -99,15 +106,43 @@ export class BlockEditorService {
      * Updates the content block in the AST
      */
     private async updateContentBlock(session: BlockEditorSession, newContent: string): Promise<void> {
-        // This is a simplified implementation
-        // In a real implementation, we would need to:
-        // 1. Parse the new content as Markdown AST
-        // 2. Replace the specific node in the document AST
-        // 3. Update the session state
+        try {
+            // Get the document
+            const document = this.documentManager.getActive();
+            if (!document) {
+                throw new Error('No active destination document found');
+            }
 
-        this.logger.info(`Updating content block ${session.contentBlockId} with new content (length: ${newContent.length})`);
-        // TODO: Implement AST manipulation to update the specific content block
-        // For now, we'll just log the change
+            // Get the content blocks to find the one we're updating
+            const contentBlocks = this.dataAccessService.getDocumentContent(session.documentUri);
+            const contentBlock = contentBlocks.find(block => block.id === session.contentBlockId);
+
+            if (!contentBlock) {
+                throw new Error(`Content block ${session.contentBlockId} not found`);
+            }
+
+            // Parse the new content as Markdown AST
+            const newContentAst = this.markdownParser.parse(newContent);
+            if (newContentAst.children.length === 0) {
+                throw new Error('New content is empty or invalid');
+            }
+
+            // For now, we'll replace the entire content with the new content
+            // In a more sophisticated implementation, we could try to preserve
+            // the structure and only update the specific node
+            const newAst: Root = {
+                type: 'root',
+                children: newContentAst.children
+            };
+
+            // Update the document AST
+            await this.documentManager.updateAst(session.documentUri, newAst);
+
+            this.logger.info(`Updated content block ${session.contentBlockId} with new content (length: ${newContent.length})`);
+        } catch (error) {
+            this.logger.error(`Failed to update content block: ${error}`);
+            throw error;
+        }
     }
 
     /**

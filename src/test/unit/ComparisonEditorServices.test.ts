@@ -73,7 +73,7 @@ suite('Comparison Editor Services Test Suite', () => {
             getText: () => ''
         } as any;
 
-        const actions = comparisonCodeActionProvider.provideCodeActions(mockDocument, {} as any, {} as any);
+        const actions = comparisonCodeActionProvider.provideCodeActions(mockDocument, {} as any);
         assert.strictEqual(actions.length, 0);
     });
 
@@ -84,7 +84,7 @@ suite('Comparison Editor Services Test Suite', () => {
         } as any;
 
         const _range = { start: { line: 0 }, end: { line: 10 } } as any;
-        const actions = comparisonCodeActionProvider.provideCodeActions(mockDocument, _range, {} as any);
+        const actions = comparisonCodeActionProvider.provideCodeActions(mockDocument, _range);
 
         assert.strictEqual(actions.length, 1);
         assert.strictEqual(actions[0].title, '🤖 Merge with AI');
@@ -99,7 +99,7 @@ suite('Comparison Editor Services Test Suite', () => {
         } as any;
 
         const _range = { start: { line: 0 }, end: { line: 2 } } as any;
-        const actions = comparisonCodeActionProvider.provideCodeActions(mockDocument, _range, {} as any);
+        const actions = comparisonCodeActionProvider.provideCodeActions(mockDocument, _range);
 
         assert.strictEqual(actions.length, 0);
     });

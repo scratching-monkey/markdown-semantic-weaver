@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import { singleton, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { LoggerService } from '../utilities/LoggerService.js';
 import { DataAccessService } from '../core/DataAccessService.js';
+import { SimilarityGroup } from '../../models/SimilarityGroup.js';
 
 @singleton()
 export class ComparisonVirtualProvider implements vscode.TextDocumentContentProvider {
@@ -66,7 +66,7 @@ export class ComparisonVirtualProvider implements vscode.TextDocumentContentProv
     /**
      * Generates the comparison document content from a similarity group
      */
-    private generateComparisonContent(similarityGroup: any): string {
+    private generateComparisonContent(similarityGroup: SimilarityGroup): string {
         const content: string[] = [];
 
         // Add header

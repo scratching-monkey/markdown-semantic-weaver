@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { container } from 'tsyringe';
 import { LoggerService } from './services/utilities/LoggerService.js';
 import { SessionManager } from './services/core/SessionManager.js';
+import { DataAccessService } from './services/core/DataAccessService.js';
 import { EmbeddingService } from './services/processing/EmbeddingService.js';
 import { DestinationDocumentsProvider } from './services/ui/DestinationDocumentsProvider.js';
 import { DestinationDocumentOutlinerProvider } from './services/ui/DestinationDocumentOutlinerProvider.js';
@@ -12,15 +13,7 @@ import { CommandRegistry } from './services/ui/CommandRegistry.js';
 import { registerCommandHandlers } from './command-handlers/index.js';
 import { VectorStoreService } from './services/core/VectorStoreService.js';
 // Import new SOLID services
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { TemporaryDocumentManager } from './services/utilities/TemporaryDocumentManager.js';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { EditorCoordinator } from './services/ui/EditorCoordinator.js';
 import { AutoSaveManager } from './services/utilities/AutoSaveManager.js';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ContentPersistenceService } from './services/utilities/ContentPersistenceService.js';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { BlockEditorCoordinator } from './services/ui/BlockEditorCoordinator.js';
 // Import comparison editor services
 import { ComparisonVirtualProvider } from './services/ui/ComparisonVirtualProvider.js';
 import { ComparisonCodeLensProvider } from './services/ui/ComparisonCodeLensProvider.js';
@@ -91,6 +84,23 @@ export async function activate(context: vscode.ExtensionContext) {
 	const termsProvider = container.resolve(TermsProvider);
 	vscode.window.registerTreeDataProvider('markdown-semantic-weaver.terms', termsProvider);
 
+	// Subscribe UI providers to session events for automatic refresh
+	const sessionManagerForEvents = container.resolve(SessionManager);
+	sessionManagerForEvents.onSourceFileDidChange(() => {
+		// Refresh immediately when files are added
+		sectionsProvider.refresh();
+		termsProvider.refresh();
+	});
+
+	// Also refresh when source data changes (after processing)
+	const dataAccessService = container.resolve(DataAccessService);
+	// Note: We need to add an event for when data processing is complete
+	// For now, we'll use a simple approach with a delay
+	setTimeout(() => {
+		sectionsProvider.refresh();
+		termsProvider.refresh();
+	}, 2000); // Refresh after 2 seconds to allow processing to complete
+
 	context.subscriptions.push(
 		vscode.workspace.onDidSaveTextDocument(document => {
 			if (document.languageId === 'markdown') {
@@ -122,10 +132,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Register comparison editor providers
 	const comparisonVirtualProvider = container.resolve(ComparisonVirtualProvider);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const comparisonCodeLensProvider = container.resolve(ComparisonCodeLensProvider);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const comparisonCodeActionProvider = container.resolve(ComparisonCodeActionProvider);
+	// Note: CodeLens and CodeAction providers are registered but may cause issues
+	// container.resolve(ComparisonCodeLensProvider);
+	// container.resolve(ComparisonCodeActionProvider);
 
 	// Initialize glossary editor service
 	container.resolve(GlossaryWebviewManager);

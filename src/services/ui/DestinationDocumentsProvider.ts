@@ -26,12 +26,11 @@ export class DestinationDocumentsProvider implements vscode.TreeDataProvider<Des
         treeItem.tooltip = element.uri.fsPath;
         treeItem.iconPath = new vscode.ThemeIcon('markdown');
         treeItem.contextValue = 'markdown-semantic-weaver:destinationDocument';
-        // TODO: Implement setActiveDocument command
-        // treeItem.command = {
-        //     command: 'markdown-semantic-weaver.setActiveDocument',
-        //     title: 'Set Active Document',
-        //     arguments: [element.uri],
-        // };
+        treeItem.command = {
+            command: 'markdown-semantic-weaver.setActiveDocument',
+            title: 'Set Active Document',
+            arguments: [element.uri],
+        };
         return treeItem;
     }
 

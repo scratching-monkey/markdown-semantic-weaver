@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -27,7 +26,7 @@ export class TemplateEngine {
                     template = fs.readFileSync(templatePath, 'utf8');
                     break;
                 }
-            } catch (error) { /* eslint-disable-line @typescript-eslint/no-unused-vars */ //TODO: Disable lint or _?
+            } catch {
                 // Continue to next path
             }
         }
@@ -43,7 +42,7 @@ export class TemplateEngine {
     /**
      * Render a template with the given data
      */
-    public render(templateName: string, data: Record<string, any>): string {
+    public render(templateName: string, data: Record<string, unknown>): string {
         let template = this.loadTemplate(templateName);
 
         // Replace variables in the template

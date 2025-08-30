@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */ //TODO: Refactor use of any
 import { injectable, inject } from "tsyringe";
 import * as vscode from 'vscode';
 import { ICommandHandler } from "./ICommandHandler.js";
@@ -7,6 +6,7 @@ import { DataAccessService } from '../services/core/DataAccessService.js';
 import { DestinationDocumentManager } from '../services/core/DestinationDocumentManager.js';
 import { AstService } from '../services/core/AstService.js';
 import { MarkdownASTParser } from '../services/processing/MarkdownASTParser.js';
+import { SourceSection } from '../models/SourceSection.js';
 
 @injectable()
 export class RegularInsertSectionHandler implements ICommandHandler {
@@ -20,7 +20,7 @@ export class RegularInsertSectionHandler implements ICommandHandler {
         @inject(MarkdownASTParser) private markdownParser: MarkdownASTParser
     ) {}
 
-    public async execute(section: any): Promise<void> {
+    public async execute(section: SourceSection): Promise<void> {
         try {
             if (!section) {
                 vscode.window.showErrorMessage('No section selected for insertion');

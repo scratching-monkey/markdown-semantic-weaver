@@ -15,8 +15,7 @@ export class ComparisonCodeActionProvider implements vscode.CodeActionProvider {
      */
     public provideCodeActions(
         document: vscode.TextDocument,
-        range: vscode.Range | vscode.Selection,
-        _context: vscode.CodeActionContext /* eslint-disable-line @typescript-eslint/no-unused-vars */  //TODO: Temporary lint disable or switch to _?
+        range: vscode.Range | vscode.Selection
     ): vscode.CodeAction[] {
         // Only provide actions for comparison documents
         if (!document.uri.scheme.startsWith('markdown-semantic-weaver-compare')) {
