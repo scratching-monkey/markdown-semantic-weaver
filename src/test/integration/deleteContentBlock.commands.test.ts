@@ -42,7 +42,7 @@ suite("deleteContentBlock Command Integration Test", () => {
     const similarityGroups = await dataAccessService.getSimilarityGroups();
     const allSections = [...await dataAccessService.getUniqueSections(), ...similarityGroups.flatMap(g => g.memberSections)];
     assert.ok(allSections.length >= 2, `Not enough sections found in hockey-ontology.md to run tests, found ${allSections.length}`);
-    
+
     await vscode.commands.executeCommand("markdown-semantic-weaver.insertSection", allSections[0]);
     await vscode.commands.executeCommand("markdown-semantic-weaver.insertSection", allSections[1]);
 
