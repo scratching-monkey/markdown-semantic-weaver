@@ -50,7 +50,7 @@
       }
     }
   },
-  "postCreateCommand": "npm install",
+  "postCreateCommand": ".devcontainer/setup.sh",
   "forwardPorts": [],
   "remoteUser": "node",
   "mounts": [

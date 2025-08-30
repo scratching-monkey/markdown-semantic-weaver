@@ -34,6 +34,8 @@ RUN apt-get update && apt-get install -y \
     xvfb \
     && rm -rf /var/lib/apt/lists/*
 
+RUN npm install -g npm
+
 # Set up proper permissions for the node user to access Docker
 RUN usermod -aG docker node
 
