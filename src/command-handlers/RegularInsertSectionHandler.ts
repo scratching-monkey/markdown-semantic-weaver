@@ -7,7 +7,6 @@ import { DataAccessService } from '../services/core/DataAccessService.js';
 import { DestinationDocumentManager } from '../services/core/DestinationDocumentManager.js';
 import { AstService } from '../services/core/AstService.js';
 import { MarkdownASTParser } from '../services/processing/MarkdownASTParser.js';
-import type { Root } from 'mdast';
 
 @injectable()
 export class RegularInsertSectionHandler implements ICommandHandler {
@@ -42,15 +41,7 @@ export class RegularInsertSectionHandler implements ICommandHandler {
                 return;
             }
 
-            // Get the current document AST
-            const currentAst = activeDocument.ast;
-
-            // For now, append the section to the end of the document
-            // In a more sophisticated implementation, we could insert at a specific position
-            const newAst: Root = {
-                type: 'root',
-                children: [...currentAst.children, ...sectionAst.children]
-            };
+            const newAst = this.astService.computeAstWithNewSection(activeDocument.ast, sectionAst);
 
             // Update the document AST
             await this.documentManager.updateAst(activeDocument.uri, newAst);

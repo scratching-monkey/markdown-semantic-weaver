@@ -77,6 +77,20 @@ export class AstService {
         return newAst;
     }
 
+    public computeAstWithNewSection(ast: Root, sectionAst: Root): Root {
+        const newAst = JSON.parse(JSON.stringify(ast));
+
+        // Wrap the section's content in a blockquote to ensure it's a single block
+        const newBlock = {
+            type: 'blockquote',
+            children: sectionAst.children,
+        };
+
+        newAst.children.push(newBlock);
+
+        return newAst;
+    }
+
     public addPathsToAst(node: Node, path: number[] = []) {
         if (!node.data) {
             node.data = {};

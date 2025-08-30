@@ -34,22 +34,22 @@ suite('Integration Test: addSource command', () => {
         await sessionManager.startSessionIfNeeded();
 
         // 2. Add sources
-        const fixturePath = path.resolve(__dirname, '..', '..', '..', 'dist', 'fixtures');
-        const file1 = vscode.Uri.file(path.join(fixturePath, 'sample-1.md'));
-        const file2 = vscode.Uri.file(path.join(fixturePath, 'sample-2.md'));
+        const fixturePath = path.resolve(process.cwd(), 'src', 'test', 'fixtures');
+        const file1 = vscode.Uri.file(path.join(fixturePath, 'hockey-ontology.md'));
+        const file2 = vscode.Uri.file(path.join(fixturePath, 'offensive-strategy-framework.md'));
         await vscode.commands.executeCommand('markdown-semantic-weaver.addSource', file1, [file1, file2]);
 
         // 3. Check vector store
         const allItems = await vectorStore.getAllItems();
         const allSections = allItems.filter(item => item.metadata.contentType === 'section');
-        assert.strictEqual(allSections.length, 8, 'Should find 8 total sections from 2 files');
+        assert.strictEqual(allSections.length, 32, 'Should find 32 total sections from 2 files');
 
         // 4. Check similarity groups
         const similarityGroups = await dataAccessService.getSimilarityGroups();
         assert.ok(similarityGroups.length > 0, 'Should find at least one similarity group');
 
         const uniqueSections = await dataAccessService.getUniqueSections();
-        assert.strictEqual(uniqueSections.length, 0, 'Should find no unique sections as they are all similar');
+        assert.strictEqual(uniqueSections.length, 8, 'Should find 8 unique sections');
 
         // 5. Clean up
         await sessionManager.endSession();

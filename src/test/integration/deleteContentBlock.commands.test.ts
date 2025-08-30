@@ -29,7 +29,7 @@ suite("deleteContentBlock Command Integration Test", () => {
     await sessionManager.endSession();
     await sessionManager.startSessionIfNeeded();
 
-    const sourceUri = vscode.Uri.file(path.join(process.cwd(), 'src', 'test', 'fixtures', 'sample-1.md'));
+    const sourceUri = vscode.Uri.file(path.join(process.cwd(), 'src', 'test', 'fixtures', 'hockey-ontology.md'));
     await vscode.commands.executeCommand('markdown-semantic-weaver.addSource', sourceUri);
 
     await vscode.commands.executeCommand("markdown-semantic-weaver.addNewDestinationDocument");
@@ -38,22 +38,23 @@ suite("deleteContentBlock Command Integration Test", () => {
     assert.ok(newDoc, "A new document should have been created");
     const testDocUri = newDoc.uri;
 
-    // Insert two sections to have initial content
+    // Insert sections until we have at least two blocks
     const similarityGroups = await dataAccessService.getSimilarityGroups();
     const allSections = [...await dataAccessService.getUniqueSections(), ...similarityGroups.flatMap(g => g.memberSections)];
-    assert.ok(allSections.length >= 2, "Not enough sections found in sample-1.md to run tests");
+    assert.ok(allSections.length >= 2, `Not enough sections found in hockey-ontology.md to run tests, found ${allSections.length}`);
+    
     await vscode.commands.executeCommand("markdown-semantic-weaver.insertSection", allSections[0]);
     await vscode.commands.executeCommand("markdown-semantic-weaver.insertSection", allSections[1]);
 
     let contentBlocks = await dataAccessService.getDocumentContent(testDocUri);
     const initialBlockCount = contentBlocks.length;
-    assert.ok(initialBlockCount >= 2, `Precondition: Document should have at least 2 blocks, found ${initialBlockCount}`);
+    assert.strictEqual(initialBlockCount, 2, `Precondition: Document should have 2 blocks, found ${initialBlockCount}`);
     const blockToDelete = contentBlocks[0];
 
     await vscode.commands.executeCommand("markdown-semantic-weaver.deleteContentBlock", blockToDelete);
 
     contentBlocks = await dataAccessService.getDocumentContent(testDocUri);
-    assert.strictEqual(contentBlocks.length, initialBlockCount - 1, `Document should have ${initialBlockCount - 1} blocks after deletion, found ${contentBlocks.length}`);
+    assert.strictEqual(contentBlocks.length, 1, `Document should have 1 block after deletion, found ${contentBlocks.length}`);
     assert.ok(contentBlocks.every(block => block.id !== blockToDelete.id), "The deleted block should not be present");
     assert.ok(contentBlocks.length > 0, "Document should still have at least one block remaining");
 

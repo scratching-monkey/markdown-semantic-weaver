@@ -29,7 +29,7 @@ suite("moveContentBlock Command Integration Test", () => {
     await sessionManager.endSession();
     await sessionManager.startSessionIfNeeded();
 
-    const sourceUri = vscode.Uri.file(path.join(process.cwd(), 'src', 'test', 'fixtures', 'sample-1.md'));
+    const sourceUri = vscode.Uri.file(path.join(process.cwd(), 'src', 'test', 'fixtures', 'hockey-ontology.md'));
     await vscode.commands.executeCommand('markdown-semantic-weaver.addSource', sourceUri);
 
     await vscode.commands.executeCommand("markdown-semantic-weaver.addNewDestinationDocument");
@@ -38,15 +38,16 @@ suite("moveContentBlock Command Integration Test", () => {
     assert.ok(newDoc, "A new document should have been created");
     const testDocUri = newDoc.uri;
 
-    // Insert two sections to have initial content
+    // Insert sections until we have at least two blocks
     const similarityGroups = await dataAccessService.getSimilarityGroups();
     const allSections = [...await dataAccessService.getUniqueSections(), ...similarityGroups.flatMap(g => g.memberSections)];
-    assert.ok(allSections.length >= 2, "Not enough sections found in sample-1.md to run tests");
+    assert.ok(allSections.length >= 2, `Not enough sections found in hockey-ontology.md to run tests, found ${allSections.length}`);
+    
     await vscode.commands.executeCommand("markdown-semantic-weaver.insertSection", allSections[0]);
     await vscode.commands.executeCommand("markdown-semantic-weaver.insertSection", allSections[1]);
 
     let contentBlocks = await dataAccessService.getDocumentContent(testDocUri);
-    assert.strictEqual(contentBlocks.length, 4, "Precondition: Document should have 4 blocks");
+    assert.strictEqual(contentBlocks.length, 2, `Precondition: Document should have 2 blocks, but found ${contentBlocks.length}`);
 
     const firstBlockOriginalContent = contentBlocks[0].rawContent;
     const secondBlockOriginalContent = contentBlocks[1].rawContent;
@@ -58,7 +59,7 @@ suite("moveContentBlock Command Integration Test", () => {
     });
 
     contentBlocks = await dataAccessService.getDocumentContent(testDocUri);
-    assert.strictEqual(contentBlocks.length, 4, "Document should still have 2 blocks after move");
+    assert.strictEqual(contentBlocks.length, 2, "Document should still have 2 blocks after move");
 
     assert.strictEqual(contentBlocks[0].rawContent, secondBlockOriginalContent, "First block has incorrect content after move");
     assert.strictEqual(contentBlocks[1].rawContent, firstBlockOriginalContent, "Second block has incorrect content after move");

@@ -29,7 +29,7 @@ suite("insertSection Command Integration Test", () => {
     await sessionManager.endSession(); // Ensures a clean state
     await sessionManager.startSessionIfNeeded();
 
-    const sourceUri = vscode.Uri.file(path.join(process.cwd(), 'src', 'test', 'fixtures', 'sample-1.md'));
+    const sourceUri = vscode.Uri.file(path.join(process.cwd(), 'src', 'test', 'fixtures', 'hockey-ontology.md'));
     await vscode.commands.executeCommand('markdown-semantic-weaver.addSource', sourceUri);
 
     await vscode.commands.executeCommand("markdown-semantic-weaver.addNewDestinationDocument");
@@ -49,7 +49,7 @@ suite("insertSection Command Integration Test", () => {
     await vscode.commands.executeCommand("markdown-semantic-weaver.insertSection", sectionToInsert);
 
     contentBlocks = await dataAccessService.getDocumentContent(testDocUri);
-    assert.strictEqual(contentBlocks.length, 3, "Document should have 3 blocks after insertion");
+    assert.strictEqual(contentBlocks.length, 1, "Document should have 1 block after insertion");
 
     // Check that the section content is present in one of the blocks
     const blockContents = contentBlocks.map(b => b.rawContent);
