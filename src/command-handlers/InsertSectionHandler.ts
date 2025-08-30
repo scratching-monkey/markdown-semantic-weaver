@@ -64,7 +64,7 @@ export class ComparisonInsertSectionHandler implements ICommandHandler {
             await this.documentManager.updateAst(activeDocument.uri, newAst);
 
             // Mark the section as resolved in the vector store
-            // TODO: Implement this when we have the resolution methods
+            await this.dataAccessService.markSectionAsResolved(sectionId);
 
             // Refresh the comparison view
             vscode.commands.executeCommand('markdown-semantic-weaver-comparison.refresh');

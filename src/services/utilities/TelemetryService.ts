@@ -66,7 +66,7 @@ export class TelemetryService {
     /**
      * Send telemetry for document operations
      */
-    public trackDocumentOperation(operation: 'preview' | 'publish', properties?: Record<string, string>): void {
+    public trackDocumentOperation(operation: 'preview' | 'publish' | 'mergeWithAI', properties?: Record<string, string>): void {
         this.sendEvent('documentOperation', {
             operation,
             ...properties

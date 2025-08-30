@@ -88,7 +88,8 @@
       },
       {
         "command": "markdown-semantic-weaver-comparison.mergeWithAI",
-        "title": "Merge with AI"
+        "title": "Merge with AI",
+        "enablement": "markdown-semantic-weaver.languageModelAvailable"
       },
       {
         "command": "markdown-semantic-weaver-comparison.refresh",
@@ -237,6 +238,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show confirmation dialog before publishing documents."
+        },
+        "markdown-semantic-weaver.ai.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable AI-powered features like intelligent content merging. Requires GitHub Copilot or compatible language models."
         }
       }
     },

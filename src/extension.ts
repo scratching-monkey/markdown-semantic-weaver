@@ -30,13 +30,48 @@ import { GlossaryWebviewManager } from './services/ui/GlossaryWebviewManager.js'
 // Import template engine
 import { TemplateEngine } from './services/utilities/TemplateEngine.js';
 
+/**
+ * Checks if AI features should be enabled based on user settings and language model availability
+ */
+async function shouldEnableAIFeatures(): Promise<boolean> {
+    try {
+        // First check if user has enabled AI features
+        const aiEnabled = vscode.workspace.getConfiguration('markdown-semantic-weaver').get('ai.enabled', false);
+        if (!aiEnabled) {
+            console.log('AI features disabled by user setting');
+            return false;
+        }
+
+        // Then check if language models are available
+        const models = await vscode.lm.selectChatModels({
+            vendor: 'copilot',
+            family: 'gpt-4o'
+        });
+
+        if (models.length > 0) {
+            return true;
+        }
+
+        // Fallback to any available models
+        const fallbackModels = await vscode.lm.selectChatModels();
+        return fallbackModels.length > 0;
+    } catch (error) {
+        console.warn(`Error checking AI feature availability: ${error}`);
+        return false;
+    }
+}
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	container.register<vscode.ExtensionContext>("vscode.ExtensionContext", { useValue: context });
 
-	// Register command handlers
-	registerCommandHandlers();
+	// Check if AI features should be enabled and set context
+	const aiFeaturesEnabled = await shouldEnableAIFeatures();
+	await vscode.commands.executeCommand('setContext', 'markdown-semantic-weaver.languageModelAvailable', aiFeaturesEnabled);
+
+	// Register command handlers (now async to check language model availability)
+	await registerCommandHandlers();
 
 	const logger = container.resolve(LoggerService);
 	logger.info('Extension activating.');

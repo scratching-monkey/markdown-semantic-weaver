@@ -66,7 +66,7 @@ export async function initializeTestEnvironment(context: vscode.ExtensionContext
     // Register command handlers only once across all test suites
     if (!commandsRegistered) {
         console.log('Test environment: Registering command handlers...');
-        registerCommandHandlers();
+        await registerCommandHandlers();
 
         const logger = container.resolve(LoggerService);
         logger.info('Test environment: Extension activating.');
