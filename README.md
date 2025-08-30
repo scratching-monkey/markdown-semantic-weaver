@@ -29,6 +29,41 @@ Markdown Semantic Weaver helps you author new documents from existing Markdown f
   - **Live Preview:** Generate a read-only preview of your composed document at any time.
   - **Publish:** Finalize your work by saving your new, structured documents as standard Markdown files, complete with a relevant glossary appended to each.
 
+## Usage Guide
+
+### Getting Started
+
+1. **Install the Extension**: Install Markdown Semantic Weaver from the VS Code Marketplace.
+
+2. **First Time Setup**: On first use, the extension will automatically download the required language model for semantic analysis. This requires an internet connection but only happens once.
+
+3. **Open Your Project**: Open a folder containing your Markdown source files in VS Code.
+
+### Basic Workflow
+
+1. **Start a Session**: Right-click on Markdown files in the Explorer and select "Add as Source" to begin analysis.
+
+2. **Create Destination**: Click "Add New Destination Document" in the Markdown Semantic Weaver sidebar to create your output document.
+
+3. **Weave Content**:
+   - Browse sections in the "Sections" view
+   - Click the "+" icon next to any section to insert it into your destination document
+   - Use the "Comparison Editor" for similar sections to resolve conflicts
+
+4. **Edit Content**: Click the edit icon next to any content block in the "Outline" view to modify it directly.
+
+5. **Manage Terms**: Use the "Terms" view to review and consolidate glossary definitions.
+
+6. **Preview & Publish**:
+   - Click "Preview" on any destination document to see the final result
+   - Click "Publish Documents" to save all documents as physical files
+
+### Advanced Features
+
+- **Comparison Editor**: For sections with high similarity, use the comparison editor to merge content intelligently
+- **Glossary Editor**: Webview-based editor for managing term definitions and resolving conflicts
+- **Block Editor**: Focused editing experience for individual content blocks
+
 ## Requirements
 
 This extension is designed to be self-contained and works offline. The only requirements are:
@@ -42,6 +77,46 @@ This extension contributes the following settings:
 
 - `markdown-semantic-weaver.logging.level`: Controls the verbosity of the extension's log output. Options: "error", "warn", "info", "trace". (Default: `"error"`)
 - `markdown-semantic-weaver.performance.maxSourceCorpusSizeMB`: The maximum total size (in MB) of source files to process before displaying a performance warning to the user. (Default: `100`)
+- `markdown-semantic-weaver.preview.autoSave`: Automatically save changes when editing content blocks. (Default: `true`)
+- `markdown-semantic-weaver.publish.confirmation`: Show confirmation dialog before publishing documents. (Default: `true`)
+
+## Privacy Statement
+
+### Data Collection and Usage
+
+Markdown Semantic Weaver respects your privacy and follows VS Code's telemetry guidelines. Here's what you need to know:
+
+#### Anonymous Usage Analytics (Optional)
+
+The extension may collect anonymous usage statistics to help improve the product. This data includes:
+
+- **Command Usage**: Which commands are executed and how often
+- **Session Events**: When sessions start and end
+- **Document Operations**: Preview and publish actions with success/failure counts
+- **Error Reports**: Non-sensitive error information to help fix bugs
+
+**All data is completely anonymous** - no personal information, file contents, or document names are ever collected.
+
+#### What We Don't Collect
+
+- Your actual document content or file names
+- Personal information or identifiers
+- Network requests or browsing history
+- Any data that could identify you or your projects
+
+#### Control Your Privacy
+
+- **Disable Telemetry**: Set VS Code's global telemetry setting to "off" to disable all telemetry
+- **Extension-Specific**: The extension respects VS Code's telemetry configuration
+- **No External Services**: All processing happens locally on your machine
+
+#### Local Processing Only
+
+- All semantic analysis and document processing happens on your local machine
+- No documents or content are ever sent to external servers
+- The language model download is the only internet requirement, and it's cached locally
+
+If you have any privacy concerns, you can disable telemetry entirely or contact us for more information.
 
 ## Status
 
@@ -96,13 +171,19 @@ This extension contributes the following settings:
   - `BlockEditorService` - Temporary document management
   - `EditContentBlockHandler` - Seamless content editing workflow
 
-### 🔄 **In Progress (Phase 5):**
+### ✅ **Complete (Phase 5): Productionization, Publishing & User Onboarding**
 
 #### **Document Generation & Publishing**
-- ❌ **Preview Command** - Generate read-only virtual documents
-- ❌ **Publish Command** - Serialize documents with glossary scoping
-- ❌ **DocumentSerializationService** - AST-to-Markdown conversion
-- ❌ **Glossary Scoping** - Contextual term filtering per document
+- ✅ **Preview Command** - Generate read-only virtual documents
+- ✅ **Publish Command** - Serialize documents with glossary scoping
+- ✅ **DocumentSerializationService** - AST-to-Markdown conversion with contextual glossary
+- ✅ **Glossary Scoping** - Two-pass algorithm for contextual term filtering
+
+#### **Production Features**
+- ✅ **User Settings** - Configurable logging, performance, and behavior options
+- ✅ **Telemetry Service** - Anonymous usage analytics respecting user privacy
+- ✅ **User Onboarding** - Interactive walkthrough for new users
+- ✅ **Package Generation** - Ready for .vsix packaging and marketplace publishing
 
 ### 🎯 **Key Features Delivered:**
 

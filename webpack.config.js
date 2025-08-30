@@ -71,12 +71,26 @@ const extensionConfig = {
       {
         test: /\.node$/,
         loader: 'node-loader'
+      },
+      {
+        test: /templates\/.*\.js$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'templates/[name][ext]'
+        }
       }
     ]
   },
   devtool: 'nosources-source-map',
   infrastructureLogging: {
     level: "log", // enables logging required for problem matchers
+  },
+  optimization: {
+    minimizer: [
+      new (await import('terser-webpack-plugin')).default({
+        exclude: /templates/,
+      }),
+    ],
   },
 };
 export default [ extensionConfig ];

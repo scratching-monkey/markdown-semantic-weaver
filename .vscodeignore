@@ -3,6 +3,14 @@
 out/**
 node_modules/**
 src/**
+test-files/**
+test-output/**
+.devcontainer/**
+.github/**
+.kilocode/**
+docs/**
+*.backup
+eslint.config.mts
 .gitignore
 .yarnrc
 webpack.config.js

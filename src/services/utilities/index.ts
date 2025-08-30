@@ -8,6 +8,7 @@
 // Infrastructure Services
 export { LoggerService, type LogLevel } from './LoggerService.js';
 export { EnvironmentService } from './EnvironmentService.js';
+export { TelemetryService } from './TelemetryService.js';
 
 // Content Management
 export { TemplateEngine } from './TemplateEngine.js';

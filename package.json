@@ -98,6 +98,16 @@
         "command": "markdown-semantic-weaver.openGlossaryEditor",
         "title": "Open Glossary Editor",
         "icon": "$(book)"
+      },
+      {
+        "command": "markdown-semantic-weaver.previewDocument",
+        "title": "Preview Document",
+        "icon": "$(preview)"
+      },
+      {
+        "command": "markdown-semantic-weaver.publishDocuments",
+        "title": "Publish Documents",
+        "icon": "$(export)"
       }
     ],
     "menus": {
@@ -117,6 +127,11 @@
         {
           "command": "markdown-semantic-weaver.addNewDestinationDocument",
           "when": "view == 'markdown-semantic-weaver.destinationDocuments'",
+          "group": "navigation"
+        },
+        {
+          "command": "markdown-semantic-weaver.publishDocuments",
+          "when": "view == 'markdown-semantic-weaver.destinationDocuments' && markdown-semantic-weaver.sessionActive",
           "group": "navigation"
         }
       ],
@@ -155,6 +170,11 @@
           "command": "markdown-semantic-weaver.openGlossaryEditor",
           "when": "view == 'markdown-semantic-weaver.terms'",
           "group": "navigation"
+        },
+        {
+          "command": "markdown-semantic-weaver.previewDocument",
+          "when": "view == 'markdown-semantic-weaver.destinationDocuments' && viewItem == 'destinationDocument'",
+          "group": "inline"
         }
       ]
     },
@@ -200,12 +220,84 @@
           ],
           "default": "error",
           "description": "The logging level for the extension."
+        },
+        "markdown-semantic-weaver.performance.maxSourceCorpusSizeMB": {
+          "type": "number",
+          "default": 100,
+          "minimum": 10,
+          "maximum": 1000,
+          "description": "Maximum size of source corpus in MB before showing performance warnings."
+        },
+        "markdown-semantic-weaver.preview.autoSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically save changes when editing content blocks."
+        },
+        "markdown-semantic-weaver.publish.confirmation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show confirmation dialog before publishing documents."
         }
       }
-    }
+    },
+    "commandPalette": [
+      {
+        "command": "markdown-semantic-weaver.publishDocuments",
+        "when": "markdown-semantic-weaver.sessionActive"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "markdown-semantic-weaver.gettingStarted",
+        "title": "Get Started with Markdown Semantic Weaver",
+        "description": "Learn how to semantically combine and weave your Markdown documents",
+        "steps": [
+          {
+            "id": "addSourceFiles",
+            "title": "Add Source Files",
+            "description": "Start by adding Markdown files as sources for analysis.\n[Add Source Files](command:markdown-semantic-weaver.addSource)",
+            "media": {
+              "markdown": "Right-click on Markdown files in the Explorer and select 'Add as Source' to begin semantic analysis."
+            }
+          },
+          {
+            "id": "createDestination",
+            "title": "Create Destination Document",
+            "description": "Create a new document where you'll weave together content from your sources.\n[Create New Destination](command:markdown-semantic-weaver.addNewDestinationDocument)",
+            "media": {
+              "markdown": "Use the 'Add New Destination Document' button in the Destination Documents view to create your output document."
+            }
+          },
+          {
+            "id": "weaveContent",
+            "title": "Weave Content Together",
+            "description": "Insert sections from your source files into your destination document.\n[View Sections](command:workbench.view.extension.markdown-semantic-weaver)",
+            "media": {
+              "markdown": "Browse similar sections in the Sections view and insert them into your destination document using the inline actions."
+            }
+          },
+          {
+            "id": "editAndRefine",
+            "title": "Edit and Refine",
+            "description": "Edit content blocks directly and resolve conflicts between similar sections.\n[Open Comparison Editor](command:markdown-semantic-weaver.openComparisonEditor)",
+            "media": {
+              "markdown": "Use the block editor for focused editing and the comparison editor to resolve similar sections."
+            }
+          },
+          {
+            "id": "previewAndPublish",
+            "title": "Preview and Publish",
+            "description": "Preview your final document and publish it to physical files.\n[Preview Document](command:markdown-semantic-weaver.previewDocument)\n[Publish Documents](command:markdown-semantic-weaver.publishDocuments)",
+            "media": {
+              "markdown": "Use Preview to see your document before publishing, then use Publish to create the final files."
+            }
+          }
+        ]
+      }
+    ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
+    "vscode:prepublish": "npm run package 2>/dev/null || npm run package",
     "compile": "rimraf dist && webpack",
     "watch": "webpack --watch",
     "package": "webpack --mode production --devtool hidden-source-map",
@@ -231,6 +323,7 @@
     "@typescript-eslint/parser": "^8.39.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.6.0",
     "@wdio/cli": "^8.46.0",
     "@wdio/mocha-framework": "^8.40.0",
     "@wdio/spec-reporter": "^8.40.0",
@@ -263,6 +356,7 @@
   "dependencies": {
     "@types/follow-redirects": "^1.14.4",
     "@types/natural": "^5.1.5",
+    "@vscode/extension-telemetry": "^1.0.0",
     "fastembed": "^1.1.0",
     "follow-redirects": "^1.15.11",
     "mdast-util-to-markdown": "^2.1.2",

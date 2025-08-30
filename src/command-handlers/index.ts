@@ -17,6 +17,8 @@ import { PopSectionHandler } from "./PopSectionHandler.js";
 import { MergeWithAIHandler } from "./MergeWithAIHandler.js";
 import { RefreshComparisonHandler } from "./RefreshComparisonHandler.js";
 import { OpenGlossaryEditorHandler } from "./OpenGlossaryEditorHandler.js";
+import { PreviewDocumentHandler } from "./PreviewDocumentHandler.js";
+import { PublishDocumentsHandler } from "./PublishDocumentsHandler.js";
 
 export function registerCommandHandlers(): void {
     container.register(commandHandlerToken, { useClass: AddSourceHandler });
@@ -36,4 +38,6 @@ export function registerCommandHandlers(): void {
 	container.register(commandHandlerToken, { useClass: MergeWithAIHandler });
 	container.register(commandHandlerToken, { useClass: RefreshComparisonHandler });
 	container.register(commandHandlerToken, { useClass: OpenGlossaryEditorHandler });
+	container.register(commandHandlerToken, { useClass: PreviewDocumentHandler });
+	container.register(commandHandlerToken, { useClass: PublishDocumentsHandler });
 }

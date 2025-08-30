@@ -14,6 +14,7 @@ export { SourceFileManager } from './SourceFileManager.js';
 export { DataAccessService } from './DataAccessService.js';
 export { VectorStoreService, type VectorStoreMetadata, type TypedIndexItem } from './VectorStoreService.js';
 export { AstService } from './AstService.js';
+export { DocumentSerializationService, type PublishResult } from './DocumentSerializationService.js';
 
 // Query Services
 export { SectionQueryService } from './SectionQueryService.js';
