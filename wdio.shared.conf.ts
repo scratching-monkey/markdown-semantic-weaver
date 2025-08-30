@@ -1,6 +1,6 @@
-import { config as vscodeServiceConfig } from 'wdio-vscode-service';
+const { config: vscodeServiceConfig } = require('wdio-vscode-service');
 
-const config: WebdriverIO.Config = {
+const sharedConfig = {
     ...vscodeServiceConfig,
 
     // ============
@@ -79,4 +79,4 @@ const config: WebdriverIO.Config = {
     }
 };
 
-export default config;
+module.exports = { config: sharedConfig };

@@ -1,13 +1,13 @@
-import { config as sharedConfig } from './wdio.shared.conf.js';
+const { config: sharedConfig } = require('./wdio.shared.conf.js');
 
-const config: WebdriverIO.Config = {
+const wdioConfig = {
     ...sharedConfig,
 
     // ============
     // Specs
     // ============
     specs: [
-        './test/e2e/**/*.test.ts'
+        './src/test/e2e/**/*.test.ts'
     ],
 
     // ============
@@ -37,4 +37,4 @@ const config: WebdriverIO.Config = {
     ]
 };
 
-export default config;
+module.exports = wdioConfig;
